@@ -1,4 +1,28 @@
-# Releasing 1.1.0 to WordPress.org
+# Releasing to WordPress.org
+
+Current release: **1.1.1**. Update the version references below when cutting a
+new one, or run `../build-svn-release.ps1`, which reads the version out of the
+plugin header and refuses to run when readme.txt disagrees.
+
+## What is in 1.1.1
+
+Two wording changes and nothing else. Verified by diffing the local tree
+against the published 1.1.0 zip from wordpress.org:
+
+```
+admin/bulk-page.php      "One-time purchase, no subscription"
+                      -> "Scheduling is a Pro feature"
+
+admin/upgrade-page.php   "Everything here is a one-time purchase"
+                         "No subscription. Pricing, a full feature ..."
+                      -> "Everything here comes with Pro"
+                         "Pricing, a full feature ..."
+```
+
+Both described how Pro is sold. Pro moves from a one-time purchase to annual
+licences on 1 October 2026, and directory updates take days to reach installs,
+so this needs to go out well before then rather than on the day.
+
 
 The SVN repo is `https://plugins.svn.wordpress.org/docxtowp/`. It has three
 top-level directories and they are not interchangeable:

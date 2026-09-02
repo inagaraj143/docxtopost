@@ -76,6 +76,12 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 					</div>
 				</div>
 			</form>
+
+			<?php
+			// Below the upload card, not above it. Someone who came here to
+			// convert a document gets to do that first.
+			dtpost_render_lifetime_notice();
+			?>
 		</div>
 
 		<div class="dtpost-col-sidebar">

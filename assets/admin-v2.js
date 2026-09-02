@@ -453,11 +453,16 @@
    come back on the next page load.                                        */
 (function () {
 	document.addEventListener('click', function (e) {
-		var btn = e.target.closest('.notice-dismiss');
+		// Two shapes: WordPress draws .notice-dismiss on its own notices, and
+		// the in-page deadline panel draws its own close button.
+		var btn = e.target.closest('.notice-dismiss, .dtpost-deadline__dismiss');
 		if (!btn) { return; }
 
 		var notice = btn.closest('[data-dtpost-notice]');
 		if (!notice || typeof DTPOST === 'undefined') { return; }
+
+		// WordPress hides its own notices. This one is ours, so hide it here.
+		if (btn.classList.contains('dtpost-deadline__dismiss')) { notice.style.display = 'none'; }
 
 		var body = new FormData();
 		body.append('action', 'dtpost_dismiss_notice');

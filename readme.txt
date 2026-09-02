@@ -4,7 +4,7 @@ Tags:              docx, word, importer, document, converter
 Requires at least: 6.0
 Tested up to:      7.1
 Requires PHP:      8.0
-Stable tag:        1.1.0
+Stable tag:        1.1.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,11 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 
 == Changelog ==
 
+= 1.1.1 =
+* Added: a dismissible notice on the plugin's own upload screen, letting you know that lifetime access to the Pro version ends on 30 September 2026. It counts down from your own server clock, disappears by itself once the date passes, and never appears anywhere outside this plugin's pages. The free plugin is not affected by the change and stays free.
+* Changed: the two pages describing the Pro version no longer say how Pro is sold. They pointed at a one-time purchase, and the pricing model is changing, so they now point at the website for current pricing instead. Wording only.
+* Note: nothing else changed. No functional differences, no new settings, and nothing about importing behaves differently.
+
 = 1.1.0 =
 * Added: **block editor output.** Imported documents now become real paragraph, heading, list, image, table and quote blocks instead of one Classic block containing the whole document. Anything without a block equivalent is preserved in an HTML block.
 * Added: Settings → Content Format, with "Match the editor" (the default, which follows whichever editor the post type uses), "Always block editor" and "Always classic HTML".
@@ -134,6 +139,9 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Wording change on the two Pro description pages. No functional changes. Safe to skip if you never open those pages.
 
 = 1.1.0 =
 Imports now produce real editor blocks instead of one Classic block, and numbered lists, nested bullets and table headers all import correctly. Recommended for everyone.

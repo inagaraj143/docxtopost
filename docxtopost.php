@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX Files to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx files into WordPress posts with preserved formatting. Upload, preview, and publish — no copy-paste needed.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.1.0');
+define('DTPOST_VERSION', '1.1.1');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -181,6 +181,128 @@ function dtpost_pro_url(string $placement = 'plugin'): string
  *
  * @param string $placement Campaign slug for the CTA link.
  */
+/**
+ * The date the one-time purchase stops being sold, 23:59:59 UTC.
+ *
+ * Announced publicly on docxtowp.com, so this is a real deadline rather than
+ * manufactured urgency. Do not move it. A date that slips quietly is the same
+ * deceptive pattern as a countdown that restarts.
+ */
+define('DTPOST_LIFETIME_DEADLINE', '2026-09-30T23:59:59+00:00');
+
+/**
+ * Seconds until the deadline. Negative once it has passed.
+ *
+ * The gate uses this rather than a day count. ceil() on a small negative
+ * fraction returns 0, not -1, so "days left" is still zero for the first
+ * 24 hours AFTER the deadline, and a day-based check kept the notice up for
+ * a whole extra day advertising an offer that had closed.
+ */
+function dtpost_lifetime_seconds_left(): int
+{
+    return strtotime(DTPOST_LIFETIME_DEADLINE) - time();
+}
+
+/**
+ * Whole days remaining, for display only. Never used to decide visibility.
+ */
+function dtpost_lifetime_days_left(): int
+{
+    return (int) ceil(dtpost_lifetime_seconds_left() / DAY_IN_SECONDS);
+}
+
+/**
+ * Tells free users that the one-time purchase is ending.
+ *
+ * ── Why this is safe to ship in a frozen release ──────────────────────────
+ *
+ * A plugin release sits on someone's site until they update, and directory
+ * updates take days or weeks to propagate. Plenty of installs never update at
+ * all. So a hardcoded "29 days left" would be wrong the day after release, and
+ * even a hardcoded date would still be advertising a dead offer in December on
+ * every site that stayed on this version.
+ *
+ * The day count is therefore computed from the server clock against a fixed
+ * deadline, and the whole notice removes itself the moment that deadline
+ * passes. No outbound request, nothing to maintain, and an install still
+ * running this version in 2027 shows nothing at all.
+ *
+ * That self-expiry is the entire reason this belongs in a free plugin. Without
+ * it, it would be an advertisement with no end date.
+ *
+ * ── Guideline 11 ──────────────────────────────────────────────────────────
+ *
+ * "Upgrade prompts, notices, alerts, and the like must be limited in scope and
+ * used sparingly." So it is dismissible, the dismissal is remembered per user,
+ * and it renders only on this plugin's own screens. It is never a site-wide
+ * admin notice and never appears on the dashboard, where the user did not come
+ * looking for this plugin.
+ */
+function dtpost_render_lifetime_notice(): void
+{
+    $remaining = dtpost_lifetime_seconds_left();
+
+    // Past the deadline this is a no-op, on every install, forever.
+    // Compared in seconds, not days: see dtpost_lifetime_seconds_left().
+    if ($remaining <= 0) {
+        return;
+    }
+
+    if (dtpost_notice_dismissed('lifetime-ending')) {
+        return;
+    }
+
+    $when = wp_date('F j', strtotime(DTPOST_LIFETIME_DEADLINE));
+
+    $days = dtpost_lifetime_days_left();
+
+    if ($remaining <= DAY_IN_SECONDS) {
+        $countdown = __('last day', 'docxtowp');
+    } else {
+        $countdown = sprintf(
+            /* translators: %d: number of days remaining */
+            _n('%d day left', '%d days left', $days, 'docxtowp'),
+            $days
+        );
+    }
+    ?>
+    <div class="dtpost-deadline" data-dtpost-notice="lifetime-ending">
+        <button type="button" class="dtpost-deadline__dismiss"
+            aria-label="<?php esc_attr_e('Dismiss this notice', 'docxtowp'); ?>">&times;</button>
+
+        <p class="dtpost-deadline__head">
+            <?php
+            printf(
+                /* translators: 1: date such as "September 30", 2: countdown such as "29 days left" */
+                esc_html__('Lifetime access to Pro ends %1$s (%2$s)', 'docxtowp'),
+                esc_html($when),
+                esc_html($countdown)
+            );
+            ?>
+        </p>
+
+        <p class="dtpost-deadline__body">
+            <?php
+            esc_html_e(
+                'From October 1, DocxToWP Pro moves to annual licences. Buy before then and you keep lifetime access with free updates, forever. No renewals.',
+                'docxtowp'
+            );
+            ?>
+        </p>
+
+        <p class="dtpost-deadline__foot">
+            <a class="dtpost-deadline__link" href="<?php echo esc_url(dtpost_pro_url('deadline-notice')); ?>"
+                target="_blank" rel="noopener noreferrer">
+                <?php esc_html_e('See what Pro costs', 'docxtowp'); ?>
+            </a>
+            <span class="dtpost-deadline__note">
+                <?php esc_html_e('This free plugin is not affected and stays free.', 'docxtowp'); ?>
+            </span>
+        </p>
+    </div>
+    <?php
+}
+
 function dtpost_render_pro_card(string $placement = 'upload-sidebar'): void
 {
 	// Three, matching the three pillars on the Upgrade page. Rollback used to

@@ -1779,3 +1779,78 @@
 		flex-basis: 100%;
 	}
 }
+
+/* ── Lifetime deadline notice ─────────────────────────────────────────────
+   Sits below the upload card, inside the plugin's own page, never as a
+   site-wide admin notice. Removes itself after 30 September 2026 without
+   anyone touching it: see dtpost_render_lifetime_notice(). */
+.dtpost-deadline {
+	position: relative;
+	margin-top: 20px;
+	padding: 16px 44px 16px 18px;
+	border: 1px solid #f0c36d;
+	border-left: 4px solid #f0a32a;
+	border-radius: 8px;
+	background: #fffaf0;
+}
+
+.dtpost-deadline__head {
+	margin: 0 0 6px;
+	font-size: 14px;
+	font-weight: 700;
+	color: #7a4d00;
+}
+
+.dtpost-deadline__body {
+	margin: 0 0 10px;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #50575e;
+	max-width: 68ch;
+}
+
+.dtpost-deadline__foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+}
+
+.dtpost-deadline__link {
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+/* Deliberately quiet. It is reassurance, not a second call to action. */
+.dtpost-deadline__note {
+	font-size: 12px;
+	color: #787c82;
+}
+
+.dtpost-deadline__dismiss {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	color: #8a6d3b;
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.dtpost-deadline__dismiss:hover {
+	background: rgba(0, 0, 0, .05);
+	color: #50575e;
+}
+
+.dtpost-deadline__dismiss:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 1px;
+}
