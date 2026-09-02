@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="DocxToPost">
+    <description>Custom ruleset for DocxToPost plugin to fix VS Code text domain linter errors.</description>
+    
+    <!-- Check all PHP files -->
+    <arg name="extensions" value="php"/>
+    
+    <!-- Rule for Text Domains -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array" value="docxtowp"/>
+        </properties>
+    </rule>
+</ruleset>

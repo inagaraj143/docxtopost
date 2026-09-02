@@ -1,0 +1,439 @@
+# Copyright (C) 2024 DocxToPost
+# This file is distributed under the GPL v2 or later.
+# DocxToPost translation template.
+msgid ""
+msgstr ""
+"Project-Id-Version: DocxToPost 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: WP-CLI\n"
+"X-Domain: docxtowp\n"
+
+#: docxtopost.php
+msgid "DocxToPost"
+msgstr ""
+
+#: docxtopost.php
+msgid "Upload Document"
+msgstr ""
+
+#: docxtopost.php
+msgid "Preview"
+msgstr ""
+
+#: docxtopost.php
+msgid "Publish Post"
+msgstr ""
+
+#: docxtopost.php
+msgid "Activity Log"
+msgstr ""
+
+#: docxtopost.php
+msgid "Settings"
+msgstr ""
+
+#: docxtopost.php
+msgid "Uploading\u2026"
+msgstr ""
+
+#: docxtopost.php
+msgid "Parsing document\u2026"
+msgstr ""
+
+#: docxtopost.php
+msgid "Are you sure you want to publish this post?"
+msgstr ""
+
+#: docxtopost.php
+msgid "Delete selected log entries?"
+msgstr ""
+
+#: docxtopost.php
+msgid "File exceeds maximum allowed size."
+msgstr ""
+
+#: docxtopost.php
+msgid "Only .docx files are allowed."
+msgstr ""
+
+#: docxtopost.php
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: docxtopost.php
+msgid "Permission denied."
+msgstr ""
+
+#: docxtopost.php
+msgid "No file uploaded."
+msgstr ""
+
+#: docxtopost.php
+msgid "Invalid file type. Only .docx files are allowed."
+msgstr ""
+
+#: docxtopost.php
+msgid "Failed to save uploaded file."
+msgstr ""
+
+#: docxtopost.php
+msgid "Session expired. Please re-upload your document."
+msgstr ""
+
+#: docxtopost.php
+msgid "No entries selected."
+msgstr ""
+
+#: docxtopost.php
+msgid "Log entry not found."
+msgstr ""
+
+#: docxtopost.php
+msgid "Original file no longer available. Please re-upload."
+msgstr ""
+
+#: admin/upload-page.php
+msgid "DocxToPost \u2014 Upload Document"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "You have an active session."
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Continue to preview \u2192"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Drag & drop your .docx file here"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "or click to browse \u2014 max %s MB"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Featured Image"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "(optional)"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Click to select image"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Uploading\u2026"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "Upload & Parse Document"
+msgstr ""
+
+#: admin/upload-page.php
+msgid "How it works"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "DocxToPost \u2014 Preview"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "No document session found."
+msgstr ""
+
+#: admin/preview-page.php
+msgid "\u2190 Upload a document"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "DocxToPost \u2014 Preview & Edit"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Post Title"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Excerpt / Description"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Content Preview"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Click any paragraph to edit inline"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Featured Image"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "No featured image uploaded."
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Actions"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Re-upload Document"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Continue to Publish Settings \u2192"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Document Info"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "File"
+msgstr ""
+
+#: admin/preview-page.php
+msgid "Detected title"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Post Published!"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Post Created"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Status: %s"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "View Post"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Edit Post"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Upload Another"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "DocxToPost \u2014 Publish Settings"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Post Details"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "URL Slug"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Taxonomy"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Categories"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Tags"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Yoast SEO"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "RankMath SEO"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "SEO Title"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Meta Description"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Publish"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Post Status"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Publish Now"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Save as Draft"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Schedule"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Publish Date & Time"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Author"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Confirm Publish"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Are you sure you want to publish this post?"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Yes, Publish"
+msgstr ""
+
+#: admin/publish-page.php
+msgid "Cancel"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Settings saved."
+msgstr ""
+
+#: admin/settings-page.php
+msgid "DocxToPost \u2014 Settings"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Upload Settings"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Max Upload Size (MB)"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Extract Embedded Images"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Post Defaults"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Default Category"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Default Post Status"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Permissions"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Allowed Roles"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Logging"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Activity Logging"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Save Settings"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Danger Zone"
+msgstr ""
+
+#: admin/settings-page.php
+msgid "Clear Temp Files"
+msgstr ""
+
+#: admin/log-page.php
+msgid "DocxToPost \u2014 Activity Log"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Select All"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Delete Selected"
+msgstr ""
+
+#: admin/log-page.php
+msgid "%d entry"
+msgstr ""
+
+#: admin/log-page.php
+msgid "%d entries"
+msgstr ""
+
+#: admin/log-page.php
+msgid "No activity logged yet."
+msgstr ""
+
+#: admin/log-page.php
+msgid "Date"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Filename"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Post Title"
+msgstr ""
+
+#: admin/log-page.php
+msgid "User"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Status"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Actions"
+msgstr ""
+
+#: admin/log-page.php
+msgid "Re-import"
+msgstr ""
+
+#: admin/log-page.php
+msgid "File unavailable"
+msgstr ""
+

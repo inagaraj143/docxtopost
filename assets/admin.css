@@ -1,0 +1,1781 @@
+/* ==========================================================================
+   DocxToPost — Admin Styles
+   Clean, modern, WP-native feel
+   ========================================================================== */
+
+/* ── Reset & base ────────────────────────────────────────────────────────── */
+.dtpost-editor-wrap *,
+.dtpost-upload-wrap *,
+.dtpost-wrap * {
+	box-sizing: border-box;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+.dtpost-page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+	/* Avoid wrapping on larger headers */
+	gap: 16px;
+	margin: 10px 0 25px;
+	padding: 0;
+}
+
+@media (max-width: 782px) {
+	.dtpost-page-header {
+		flex-wrap: wrap;
+	}
+}
+
+.dtpost-page-header__left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: nowrap;
+	min-width: 0;
+}
+
+.dtpost-page-header h1 {
+	font-size: 21px;
+	font-weight: 400;
+	color: #1d2327;
+	margin: 0;
+	line-height: 1.3;
+}
+
+.dtpost-file-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	background: #f0f0f1;
+	border: 1px solid #dcdcde;
+	color: #646970;
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 20px;
+	white-space: nowrap;
+	max-width: 220px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.dtpost-file-pill svg {
+	flex-shrink: 0;
+}
+
+/* ── Notice ──────────────────────────────────────────────────────────────── */
+.dtpost-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 10px 14px;
+	border-radius: 4px;
+	font-size: 13px;
+	margin-bottom: 16px;
+	border-left: 4px solid transparent;
+}
+
+.dtpost-notice-error {
+	background: #fcf0f1;
+	border-left-color: #d63638;
+	color: #d63638;
+}
+
+.dtpost-notice svg {
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+/* ── Two-column layout ───────────────────────────────────────────────────── */
+.dtpost-layout {
+	display: grid;
+	grid-template-columns: 3fr 1fr;
+	gap: 32px;
+	align-items: start;
+	max-width: none;
+}
+
+@media (max-width: 1200px) {
+	.dtpost-layout {
+		gap: 24px;
+	}
+}
+
+@media (max-width: 782px) {
+	.dtpost-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.dtpost-col-main {
+	min-width: 0;
+}
+
+.dtpost-col-sidebar {
+	min-width: 0;
+}
+
+/* ── Panels (cards) ──────────────────────────────────────────────────────── */
+.dtpost-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+	overflow: visible;
+}
+
+.dtpost-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-panel-title-text {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	color: #646970;
+}
+
+.dtpost-panel-hint {
+	font-size: 12px;
+	color: #8c8f94;
+	font-style: italic;
+}
+
+/* ── Title panel ─────────────────────────────────────────────────────────── */
+.dtpost-panel-title {
+	padding: 0;
+}
+
+.dtpost-title-field {
+	width: 100%;
+	font-size: 24px;
+	font-weight: 400;
+	line-height: 1.4;
+	padding: 12px 16px;
+	border: none;
+	border-bottom: 1px solid #f0f0f1;
+	outline: none;
+	background: transparent;
+	display: block;
+	color: #1d2327;
+	transition: border-color .15s;
+}
+
+.dtpost-title-field:focus {
+	border-bottom-color: #2271b1;
+	box-shadow: 0 1px 0 0 #2271b1;
+}
+
+.dtpost-title-field::placeholder {
+	color: #b4b9be;
+}
+
+/* Permalink row */
+.dtpost-permalink-row {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 7px 16px 9px;
+	font-size: 12px;
+	color: #646970;
+	background: #fcfcfc;
+}
+
+.dtpost-permalink-label {
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.dtpost-permalink-base {
+	color: #646970;
+}
+
+.dtpost-permalink-slug {
+	color: #2271b1;
+	font-weight: 500;
+}
+
+.dtpost-permalink-edit {
+	color: #2271b1;
+	text-decoration: none;
+	font-size: 11px;
+	padding: 1px 6px;
+	border: 1px solid #2271b1;
+	border-radius: 3px;
+	margin-left: 2px;
+}
+
+.dtpost-permalink-edit:hover {
+	background: #2271b1;
+	color: #fff;
+}
+
+.dtpost-slug-edit-wrap {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin-left: 4px;
+}
+
+.dtpost-slug-input {
+	width: 220px;
+	font-size: 12px;
+	padding: 3px 6px !important;
+	height: auto !important;
+}
+
+/* ── Editor panel ────────────────────────────────────────────────────────── */
+.dtpost-panel-editor {
+	padding: 0;
+	border: 1px solid #dcdcde;
+}
+
+.dtpost-panel-editor .wp-editor-container {
+	border: none !important;
+}
+
+.dtpost-panel-editor .wp-editor-tabs {
+	background: #f6f7f7 !important;
+	border-bottom: 1px solid #dcdcde !important;
+}
+
+.dtpost-panel-editor .wp-editor-wrap {
+	border: none !important;
+	border-radius: 0 !important;
+}
+
+#wp-dtpost_content_editor-wrap {
+	margin: 0;
+}
+
+/* ── Excerpt & SEO panels ────────────────────────────────────────────────── */
+.dtpost-panel .dtpost-textarea {
+	width: 100%;
+	display: block;
+	padding: 8px 14px;
+	font-size: 13px;
+	font-family: inherit;
+	line-height: 1.6;
+	border: none;
+	border-top: 1px solid #f0f0f1;
+	outline: none;
+	resize: vertical;
+	background: #fff;
+	color: #1d2327;
+}
+
+.dtpost-panel .dtpost-textarea:focus {
+	border-top-color: #2271b1;
+	box-shadow: none;
+}
+
+.dtpost-panel .dtpost-panel-header+.dtpost-textarea {
+	border-top: none;
+	margin-top: 0;
+}
+
+.dtpost-field {
+	padding: 12px 14px 0;
+}
+
+.dtpost-field:last-child {
+	padding-bottom: 12px;
+}
+
+.dtpost-label {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 12px;
+	font-weight: 600;
+	color: #1d2327;
+	margin-bottom: 5px;
+}
+
+.dtpost-char-counter {
+	font-weight: 400;
+	font-size: 11px;
+	color: #646970;
+}
+
+.dtpost-input-full {
+	width: 100%;
+	padding: 7px 10px;
+	font-size: 13px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	line-height: 1.5;
+}
+
+.dtpost-input-full:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.dtpost-seo-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.dtpost-seo-bar {
+	height: 3px;
+	background: #f0f0f1;
+	border-radius: 2px;
+	margin-top: 6px;
+	overflow: hidden;
+}
+
+.dtpost-seo-bar-fill {
+	height: 100%;
+	width: 0;
+	background: #00a32a;
+	border-radius: 2px;
+	transition: width .2s, background .2s;
+}
+
+/* ── PUBLISH PANEL ───────────────────────────────────────────────────────── */
+.dtpost-panel-publish {
+	border-color: #c3c4c7;
+}
+
+.dtpost-panel-header-publish {
+	background: #f6f7f7;
+	border-bottom: 1px solid #dcdcde;
+	border-radius: 4px 4px 0 0;
+}
+
+.dtpost-panel-header-publish .dtpost-panel-title-text {
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .08em;
+	color: #1d2327;
+}
+
+.dtpost-pub-body {
+	padding: 4px 0;
+}
+
+/* Each meta row in publish panel */
+.dtpost-meta-row,
+.dtpost-schedule-row {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	padding: 9px 14px;
+	border-bottom: 1px solid #f6f7f7;
+}
+
+.dtpost-meta-row:last-child {
+	border-bottom: none;
+}
+
+.dtpost-meta-icon {
+	width: 28px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	color: #8c8f94;
+}
+
+.dtpost-meta-icon svg {
+	display: block;
+}
+
+.dtpost-meta-label {
+	width: 62px;
+	flex-shrink: 0;
+	font-size: 12px;
+	font-weight: 600;
+	color: #1d2327;
+	line-height: 1.4;
+}
+
+.dtpost-meta-select {
+	flex: 1;
+	min-width: 0;
+	font-size: 13px;
+	padding: 4px 6px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	color: #1d2327;
+	height: 30px;
+}
+
+.dtpost-meta-select:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* Schedule row special: stacks below the label row */
+.dtpost-schedule-row {
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+	background: #f9f9f9;
+	padding: 10px 14px;
+	border-top: 1px solid #f0f0f1;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-schedule-row .dtpost-schedule-label-row {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin-bottom: 7px;
+}
+
+#dtpost-schedule-date {
+	width: 100%;
+	font-size: 13px;
+	padding: 6px 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+}
+
+#dtpost-schedule-date:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+/* Publish footer buttons */
+.dtpost-pub-footer {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	padding: 12px 14px;
+	border-top: 1px solid #f0f0f1;
+	background: #fcfcfc;
+	border-radius: 0 0 4px 4px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.dtpost-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 7px 14px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1;
+	border-radius: 3px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	text-decoration: none;
+	transition: all .12s;
+	white-space: nowrap;
+}
+
+.dtpost-btn svg {
+	flex-shrink: 0;
+}
+
+.dtpost-btn:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.dtpost-btn-primary {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff !important;
+}
+
+.dtpost-btn-primary:hover {
+	background: #135e96;
+	border-color: #135e96;
+	color: #fff !important;
+}
+
+.dtpost-btn-primary:active {
+	transform: scale(.98);
+}
+
+.dtpost-btn-secondary {
+	background: #fff;
+	border-color: #8c8f94;
+	color: #1d2327 !important;
+}
+
+.dtpost-btn-secondary:hover {
+	border-color: #1d2327;
+	background: #f6f7f7;
+}
+
+.dtpost-btn-ghost {
+	background: transparent;
+	border-color: #8c8f94;
+	color: #646970 !important;
+}
+
+.dtpost-btn-ghost:hover {
+	border-color: #1d2327;
+	color: #1d2327 !important;
+	background: #f6f7f7;
+}
+
+.dtpost-btn-full {
+	width: 100%;
+	justify-content: center;
+}
+
+.dtpost-btn-sm {
+	padding: 5px 10px;
+	font-size: 12px;
+}
+
+.dtpost-btn:disabled,
+.dtpost-btn[disabled] {
+	opacity: .6;
+	cursor: not-allowed;
+	transform: none !important;
+}
+
+/* ── Featured Image ──────────────────────────────────────────────────────── */
+.dtpost-feat-img-wrap {
+	padding: 12px 14px;
+}
+
+.dtpost-feat-img {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 3px;
+}
+
+.dtpost-feat-name {
+	font-size: 11px;
+	color: #646970;
+	margin: 5px 0 0;
+}
+
+/* ── Categories ──────────────────────────────────────────────────────────── */
+.dtpost-cat-list {
+	max-height: 190px;
+	overflow-y: auto;
+	padding: 6px 14px 10px;
+}
+
+.dtpost-cat-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	padding: 3px 0;
+	cursor: pointer;
+	color: #1d2327;
+	line-height: 1.4;
+}
+
+.dtpost-cat-row input[type=checkbox] {
+	margin: 0;
+	flex-shrink: 0;
+}
+
+.dtpost-cat-name {
+	flex: 1;
+}
+
+.dtpost-cat-count {
+	font-size: 11px;
+	color: #8c8f94;
+}
+
+/* ── Tag input ───────────────────────────────────────────────────────────── */
+.dtpost-tag-input-box {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
+	padding: 6px 10px;
+	margin: 0 14px 0;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	cursor: text;
+	min-height: 36px;
+}
+
+.dtpost-tag-input-box:focus-within {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.dtpost-tag-pills {
+	display: contents;
+}
+
+.dtpost-tag-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: #2271b1;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 500;
+	padding: 3px 8px 3px 9px;
+	border-radius: 20px;
+}
+
+.dtpost-pill-x {
+	background: none;
+	border: none;
+	color: rgba(255, 255, 255, .8);
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1;
+	padding: 0;
+	display: flex;
+	align-items: center;
+}
+
+.dtpost-pill-x:hover {
+	color: #fff;
+}
+
+.dtpost-tag-text {
+	flex: 1;
+	min-width: 100px;
+	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
+	font-size: 13px;
+	padding: 0 !important;
+	background: transparent;
+	line-height: 1.5;
+}
+
+.dtpost-tag-suggest {
+	position: absolute;
+	top: calc(100% + 2px);
+	left: -1px;
+	right: -1px;
+	z-index: 9999;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	list-style: none;
+	margin: 0;
+	padding: 4px 0;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+	max-height: 160px;
+	overflow-y: auto;
+}
+
+.dtpost-tag-suggest li {
+	padding: 6px 12px;
+	font-size: 13px;
+	cursor: pointer;
+	color: #1d2327;
+}
+
+.dtpost-tag-suggest li:hover {
+	background: #f0f6fc;
+}
+
+/* ── Hint text ───────────────────────────────────────────────────────────── */
+.dtpost-hint-text {
+	font-size: 12px;
+	color: #8c8f94;
+	margin: 0;
+	padding: 10px 14px;
+	line-height: 1.5;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.dtpost-modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, .45);
+	z-index: 999999;
+	display: none;
+	/* hidden by default — JS adds .dtpost-modal-open */
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.dtpost-modal-backdrop.dtpost-modal-open {
+	display: flex;
+}
+
+.dtpost-modal-card {
+	background: #fff;
+	border-radius: 6px;
+	width: 100%;
+	max-width: 400px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, .2);
+	overflow: hidden;
+}
+
+.dtpost-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 18px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-modal-header h3 {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.dtpost-modal-close {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #646970;
+	padding: 2px;
+	border-radius: 3px;
+	display: flex;
+}
+
+.dtpost-modal-close:hover {
+	color: #1d2327;
+	background: #f0f0f1;
+}
+
+.dtpost-modal-body {
+	padding: 16px 18px;
+	font-size: 13px;
+	background: #f9f9f9;
+}
+
+.dtpost-modal-body p {
+	margin: 5px 0;
+}
+
+.dtpost-modal-body p:first-child {
+	margin-top: 0;
+}
+
+.dtpost-modal-body strong {
+	color: #1d2327;
+}
+
+.dtpost-modal-footer {
+	display: flex;
+	gap: 8px;
+	padding: 14px 18px;
+	border-top: 1px solid #f0f0f1;
+	justify-content: flex-end;
+}
+
+/* ── Chips / badges ──────────────────────────────────────────────────────── */
+.dtpost-chip {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.dtpost-chip-blue {
+	background: #e7f0fa;
+	color: #2271b1;
+}
+
+.dtpost-chip-publish {
+	background: #edfaef;
+	color: #00a32a;
+}
+
+.dtpost-chip-draft {
+	background: #fcf9e8;
+	color: #b26201;
+}
+
+.dtpost-chip-future {
+	background: #e8f0fe;
+	color: #1a4ed8;
+}
+
+.dtpost-chip-private {
+	background: #f3e8ff;
+	color: #6d28d9;
+}
+
+/* ── Success screen ──────────────────────────────────────────────────────── */
+/* Column, not row. As a row the follow-up cards below became flex siblings
+   of the success card and sat beside it. */
+.dtpost-success-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	padding: 40px 20px 60px;
+}
+
+.dtpost-success-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 40px 40px 36px;
+	text-align: center;
+	max-width: 520px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.dtpost-success-icon {
+	margin: 0 auto 20px;
+	display: block;
+}
+
+.dtpost-success-card h2 {
+	font-size: 22px;
+	font-weight: 400;
+	margin: 0 0 6px;
+}
+
+.dtpost-success-title {
+	font-size: 15px;
+	font-weight: 500;
+	color: #1d2327;
+	margin: 0 0 14px;
+}
+
+.dtpost-success-meta {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	margin-bottom: 24px;
+}
+
+.dtpost-success-actions {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+/* ── Upload page ─────────────────────────────────────────────────────────── */
+.dtpost-upload-wrap {
+	max-width: none;
+	padding-right: 20px;
+}
+
+.dtpost-upload-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 24px;
+	margin-bottom: 16px;
+}
+
+.dtpost-section-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+	margin: 0 0 14px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-dropzone {
+	position: relative;
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	padding: 36px 20px;
+	text-align: center;
+	cursor: pointer;
+	transition: border-color .15s, background .15s;
+	background: #fafafa;
+	margin-bottom: 20px;
+}
+
+.dtpost-dropzone:hover,
+.dtpost-dropzone.dtpost-drag-over {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+.dtpost-dropzone.dtpost-has-file {
+	border-color: #00a32a;
+	background: #f0f8f1;
+}
+
+.dtpost-dropzone__icon {
+	width: 48px;
+	height: 48px;
+	margin: 0 auto 12px;
+	background: #f0f0f1;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #8c8f94;
+	transition: background .15s, color .15s;
+}
+
+.dtpost-dropzone:hover .dtpost-dropzone__icon,
+.dtpost-dropzone.dtpost-drag-over .dtpost-dropzone__icon {
+	background: #dce7f4;
+	color: #2271b1;
+}
+
+.dtpost-dropzone.dtpost-has-file .dtpost-dropzone__icon {
+	background: #d7f5de;
+	color: #00a32a;
+}
+
+.dtpost-dropzone__label {
+	font-size: 15px;
+	font-weight: 500;
+	color: #1d2327;
+	margin: 0 0 4px;
+}
+
+.dtpost-dropzone__sub {
+	font-size: 13px;
+	color: #8c8f94;
+	margin: 0;
+}
+
+.dtpost-dropzone__input {
+	position: absolute !important;
+	inset: 0 !important;
+	opacity: 0 !important;
+	cursor: pointer !important;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	z-index: 2;
+}
+
+.dtpost-dropzone__filename {
+	font-size: 13px;
+	font-weight: 500;
+	color: #00a32a;
+	margin-top: 8px;
+}
+
+.dtpost-img-upload-area {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.dtpost-img-thumb {
+	position: relative;
+	width: 100px;
+	height: 80px;
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fafafa;
+	cursor: pointer;
+	transition: border-color .15s;
+	flex-shrink: 0;
+}
+
+.dtpost-img-thumb:hover {
+	border-color: #2271b1;
+}
+
+.dtpost-img-thumb svg {
+	color: #8c8f94;
+}
+
+.dtpost-img-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.dtpost-img-thumb input[type=file] {
+	position: absolute !important;
+	inset: 0 !important;
+	opacity: 0 !important;
+	cursor: pointer !important;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	z-index: 2;
+	font-size: 0 !important;
+}
+
+.dtpost-img-info {
+	font-size: 12px;
+	color: #646970;
+	line-height: 1.6;
+}
+
+.dtpost-img-info strong {
+	display: block;
+	color: #1d2327;
+	margin-bottom: 2px;
+	font-size: 13px;
+}
+
+.dtpost-upload-progress {
+	margin-top: 16px;
+}
+
+.dtpost-prog-bar {
+	height: 4px;
+	background: #e7e7e7;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.dtpost-prog-fill {
+	height: 100%;
+	width: 0;
+	background: #2271b1;
+	border-radius: 2px;
+	transition: width .3s;
+}
+
+.dtpost-prog-label {
+	font-size: 12px;
+	color: #646970;
+	margin: 5px 0 0;
+}
+
+.dtpost-upload-error {
+	background: #fcf0f1;
+	border-left: 3px solid #d63638;
+	color: #d63638;
+	padding: 9px 12px;
+	font-size: 13px;
+	border-radius: 0 3px 3px 0;
+	margin-top: 12px;
+}
+
+.dtpost-how-it-works {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-top: 3px solid #2271b1;
+	padding: 20px 20px 24px;
+	border-radius: 4px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	margin-top: 0;
+}
+
+.dtpost-how-it-works h3 {
+	font-size: 13px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: #2271b1;
+	margin: 0 0 14px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-how-it-works ol {
+	margin: 0;
+	padding-left: 20px;
+	font-size: 13px;
+	color: #1d2327;
+	line-height: 1;
+}
+
+.dtpost-how-it-works ol li {
+	padding: 7px 0;
+	border-bottom: 1px solid #f6f7f7;
+	line-height: 1.6;
+}
+
+.dtpost-how-it-works ol li:last-child {
+	border-bottom: none;
+}
+
+/* ── Settings page ───────────────────────────────────────────────────────── */
+.dtpost-settings-section {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 20px 24px;
+	margin-bottom: 16px;
+	max-width: 860px;
+}
+
+.dtpost-settings-section h2 {
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: #646970;
+	margin: 0 0 16px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.dtpost-checkbox-label {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 13px;
+	padding: 3px 0;
+	cursor: pointer;
+}
+
+.dtpost-danger-section {
+	border-color: #f0a0a0;
+}
+
+.dtpost-danger-section h2 {
+	color: #d63638;
+}
+
+.dtpost-btn-danger {
+	background: #d63638 !important;
+	border-color: #d63638 !important;
+	color: #fff !important;
+}
+
+.dtpost-btn-danger:hover {
+	background: #b32d2e !important;
+	border-color: #b32d2e !important;
+}
+
+/* ── Activity Log ────────────────────────────────────────────────────────── */
+.dtpost-wrap h1 {
+	font-size: 21px;
+	font-weight: 400;
+	color: #1d2327;
+	margin: 10px 0 20px;
+	line-height: 1.3;
+}
+
+.dtpost-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+	overflow: hidden;
+}
+
+.dtpost-log-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-bottom: 1px solid #dcdcde;
+	background: #f6f7f7;
+	flex-wrap: wrap;
+}
+
+.dtpost-log-toolbar label {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	cursor: pointer;
+	color: #1d2327;
+	font-weight: 500;
+}
+
+.dtpost-log-toolbar .dtpost-btn-danger {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+}
+
+.dtpost-log-toolbar .dtpost-btn-danger .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+}
+
+.dtpost-log-bar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.dtpost-log-count {
+	margin-left: auto;
+	font-size: 13px;
+	color: #646970;
+}
+
+.dtpost-log-table.wp-list-table {
+	border: none;
+	border-collapse: collapse;
+}
+
+.dtpost-log-table.wp-list-table thead th {
+	font-size: 12px;
+	font-weight: 600;
+	color: #1d2327;
+	text-transform: uppercase;
+	letter-spacing: .03em;
+	padding: 10px 12px;
+	background: #fcfcfc;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.dtpost-log-table.wp-list-table td {
+	padding: 10px 12px;
+	font-size: 13px;
+	color: #1d2327;
+	vertical-align: middle;
+}
+
+.dtpost-log-table.wp-list-table tbody tr:hover td {
+	background: #f0f6fc;
+}
+
+.dtpost-log-table a {
+	color: #2271b1;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.dtpost-log-table a:hover {
+	color: #135e96;
+	text-decoration: underline;
+}
+
+.dtpost-muted {
+	color: #8c8f94;
+	font-style: italic;
+	font-size: 13px;
+	padding: 16px;
+}
+
+/* Status badge — used in log table rows */
+.dtpost-status-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 20px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: capitalize;
+	letter-spacing: .02em;
+}
+
+.dtpost-status-published {
+	background: #edfaef;
+	color: #00a32a;
+}
+
+.dtpost-status-draft {
+	background: #fcf9e8;
+	color: #b26201;
+}
+
+.dtpost-status-other {
+	background: #f0f0f1;
+	color: #646970;
+}
+
+/* Status pill — legacy / alt usage */
+.dtpost-status-pill {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 20px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.dtpost-status-pill.publish {
+	background: #edfaef;
+	color: #00a32a;
+}
+
+.dtpost-status-pill.draft {
+	background: #fcf9e8;
+	color: #b26201;
+}
+
+.dtpost-status-pill.future {
+	background: #e8f0fe;
+	color: #1a4ed8;
+}
+
+.dtpost-status-pill.private {
+	background: #f3e8ff;
+	color: #6d28d9;
+}
+
+/* Re-import button alignment */
+.dtpost-reimport-btn {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 4px;
+}
+
+.dtpost-reimport-btn .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+}
+
+/* ── Spin ────────────────────────────────────────────────────────────────── */
+@keyframes dtpost-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.dtpost-spin {
+	animation: dtpost-spin .7s linear infinite;
+	display: inline-block;
+}
+
+/* ── Misc ────────────────────────────────────────────────────────────────── */
+.dtpost-hidden {
+	display: none !important;
+}
+/* ── Pro card ──────────────────────────────────────────────────────────────
+   Informational upsell shown on the plugin's own screens. Dismissible per
+   user; see dtpost_render_pro_card().                                      */
+
+.dtpost-pro-card {
+	margin-top: 20px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-top: 3px solid #2271b1;
+	border-radius: 4px;
+	padding: 18px 20px 16px;
+}
+
+.dtpost-pro-card__head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.dtpost-pro-card__badge {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: #fff;
+	background: #2271b1;
+	padding: 2px 7px;
+	border-radius: 3px;
+	flex: none;
+}
+
+.dtpost-pro-card__head h3 {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.35;
+	color: #1d2327;
+}
+
+.dtpost-pro-card__list {
+	margin: 14px 0 16px;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+}
+
+.dtpost-pro-card__list li {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.5;
+	padding-left: 20px;
+	position: relative;
+	color: #50575e;
+}
+
+.dtpost-pro-card__list li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 6px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #2271b1;
+	opacity: .35;
+}
+
+.dtpost-pro-card__list strong {
+	display: block;
+	color: #1d2327;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.dtpost-pro-card__cta {
+	display: block;
+	text-align: center;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 9px 12px;
+	background: #2271b1;
+	color: #fff;
+	border-radius: 3px;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.dtpost-pro-card__cta:hover,
+.dtpost-pro-card__cta:focus {
+	background: #135e96;
+	color: #fff;
+}
+
+
+
+/* ── Upgrade page ──────────────────────────────────────────────────────────
+   Informational page describing Pro. See admin/upgrade-page.php.          */
+
+.dtpost-upgrade-wrap {
+	max-width: 1000px;
+}
+
+.dtpost-upgrade__standfirst {
+	font-size: 15px;
+	line-height: 1.6;
+	color: #50575e;
+	max-width: 60em;
+	margin: 4px 0 0;
+}
+
+.dtpost-upgrade__context {
+	display: inline-block;
+	margin: 14px 0 0;
+	padding: 7px 12px;
+	background: #f0f6fc;
+	border-left: 3px solid #2271b1;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__pillars {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+	gap: 18px;
+	margin: 26px 0 0;
+}
+
+.dtpost-upgrade__pillar {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-top: 3px solid #2271b1;
+	border-radius: 4px;
+	padding: 18px 20px 20px;
+}
+
+.dtpost-upgrade__pillar h2 {
+	margin: 0;
+	font-size: 16px;
+	line-height: 1.3;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__lead {
+	margin: 6px 0 12px;
+	font-size: 13.5px;
+	color: #1d2327;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.dtpost-upgrade__pillar ul,
+.dtpost-upgrade__also ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 9px;
+}
+
+.dtpost-upgrade__pillar li,
+.dtpost-upgrade__also li {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: #50575e;
+	padding-left: 18px;
+	position: relative;
+}
+
+.dtpost-upgrade__pillar li::before,
+.dtpost-upgrade__also li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 7px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #2271b1;
+	opacity: .4;
+}
+
+.dtpost-upgrade__also {
+	margin-top: 26px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 18px 20px 20px;
+}
+
+.dtpost-upgrade__also h2 {
+	margin: 0 0 14px;
+	font-size: 15px;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__also ul {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 9px 24px;
+}
+
+.dtpost-upgrade__cta {
+	margin-top: 26px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 26px 24px;
+	text-align: center;
+}
+
+.dtpost-upgrade__cta h2 {
+	margin: 0 0 6px;
+	font-size: 18px;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__cta p {
+	margin: 0 0 18px;
+	color: #50575e;
+	font-size: 13.5px;
+}
+
+.dtpost-upgrade__note {
+	margin-top: 18px;
+	font-size: 12.5px;
+	color: #787c82;
+	max-width: 60em;
+}
+
+.dtpost-usage-notice p:first-child {
+	font-size: 13.5px;
+}
+
+
+
+
+.dtpost-duplicate-warning { margin: 0 0 16px; }
+
+/* ── Pro feature banner ────────────────────────────────────────────────────
+   Sits at the top of a page describing a feature the free plugin does not
+   have, so nobody reads three paragraphs before working that out.        */
+
+.dtpost-pro-banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 12px 0 20px;
+	padding: 14px 16px;
+	background: #f0f6fc;
+	border: 1px solid #c5d9ed;
+	border-radius: 4px;
+	max-width: 1000px;
+}
+
+.dtpost-pro-banner .dtpost-pro-card__badge {
+	margin-top: 2px;
+}
+
+.dtpost-pro-banner p {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__pillars--two {
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.dtpost-upgrade__pillars--two .dtpost-upgrade__pillar p {
+	margin: 6px 0 0;
+	font-size: 12.5px;
+	line-height: 1.6;
+	color: #50575e;
+}
+
+/* ── Success-screen follow-up cards ────────────────────────────────────────
+   Stacked under the success card: undo first, then the Pro hook. Same
+   width as the card above them so the column reads as one thing.        */
+
+.dtpost-followup {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	max-width: 520px;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+}
+
+.dtpost-followup__icon {
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+}
+
+.dtpost-followup__icon--danger {
+	background: #fcf0f1;
+	color: #b32d2e;
+}
+
+.dtpost-followup__icon--pro {
+	background: #f0f6fc;
+	color: #2271b1;
+}
+
+.dtpost-followup__body {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.dtpost-followup__body strong {
+	font-size: 13.5px;
+	font-weight: 600;
+	color: #1d2327;
+	line-height: 1.4;
+}
+
+.dtpost-followup__body span {
+	font-size: 12.5px;
+	color: #646970;
+	line-height: 1.5;
+}
+
+.dtpost-followup .dtpost-btn {
+	flex: none;
+}
+
+.dtpost-followup--pro {
+	border-color: #c5d9ed;
+	background: #fbfdff;
+}
+
+/* Destructive action — outlined rather than filled, because this sits one
+   click from deleting the thing the user just made. */
+.dtpost-btn-danger {
+	background: #fff;
+	border: 1px solid #d63638;
+	color: #b32d2e;
+}
+
+.dtpost-btn-danger:hover,
+.dtpost-btn-danger:focus {
+	background: #d63638;
+	border-color: #d63638;
+	color: #fff;
+}
+
+.dtpost-btn-danger[disabled] {
+	opacity: .55;
+	cursor: default;
+	background: #fff;
+	color: #b32d2e;
+}
+
+@media (max-width: 600px) {
+	.dtpost-followup {
+		flex-wrap: wrap;
+	}
+
+	.dtpost-followup__body {
+		flex-basis: calc(100% - 50px);
+	}
+
+	.dtpost-followup .dtpost-btn {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+/* ── Page title with an inline tagline ─────────────────────────────────────
+   The tagline sits on the same line as the heading, separated by a rule,
+   and drops below it when there is no room.                             */
+
+.dtpost-page-title {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+	margin: 0 0 18px;
+}
+
+.dtpost-page-title h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 23px;
+	font-weight: 400;
+	line-height: 1.3;
+	color: #1d2327;
+}
+
+.dtpost-page-title p {
+	margin: 0;
+	padding: 0 0 0 12px;
+	border-left: 1px solid #dcdcde;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #646970;
+}
+
+@media (max-width: 782px) {
+	.dtpost-page-title p {
+		padding-left: 0;
+		border-left: 0;
+		flex-basis: 100%;
+	}
+}
