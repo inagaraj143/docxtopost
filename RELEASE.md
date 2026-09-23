@@ -1,8 +1,129 @@
 # Releasing to WordPress.org
 
-Current release: **1.1.1**. Update the version references below when cutting a
+Current release: **1.2.1**. Update the version references below when cutting a
 new one, or run `../build-svn-release.ps1`, which reads the version out of the
 plugin header and refuses to run when readme.txt disagrees.
+
+## What is in 1.2.1
+
+One fix, from a Pro customer's report, and nothing else.
+
+```
+includes/class-dtpost-parser.php   MOD  headings resolved through styles.xml
+                                        (name, outlineLvl, basedOn), with the
+                                        old ID match kept as the fallback
+tests/test-headings.php            NEW  11 generated .docx fixtures
+includes/class-dtpost-markdown.php MOD  optional image-resolver parameter and
+                                        an images[] return, to stay identical to
+                                        Pro's class; unused here, no behaviour
+                                        change
+admin/bulk-page.php                MOD  Pro description mentions .md in bulk
+readme.txt / README.md             MOD  changelog, stable tag, Pro bullet
+```
+
+Word documents from non-English Word (`berschrift1`, `Titre1`), documents
+with pasted styles (`Heading11`) and documents using custom styles based on
+headings all imported every heading as a plain paragraph. The parser only
+matched the style *ID*. It now reads `word/styles.xml`. Same fix as DocxToWP
+Pro 1.2.6 (`docxtowp/includes/class-dwp-parser.php`), where it has the extra
+`probe_title()` path; keep the two in step.
+
+Before tagging:
+
+```powershell
+php tests/test-headings.php      # expect "11 passed, 0 failed."
+php tests/test-markdown.php      # expect "54 passed, 0 failed."
+php -l includes/class-dtpost-parser.php
+```
+
+On a real site: import a .docx you know has headings and open it in the
+block editor — every heading is a Heading block. If you have a document from
+a non-English Word, that is the one to test. Then:
+
+```powershell
+cd D:\DEV\htdocs\docxtowp
+.\build-svn-release.ps1 -SvnPath D:\DEV\svn-docxtowp -Tag 1.2.1
+cd D:\DEV\svn-docxtowp
+svn status                       # expect A for tests/test-headings.php and tags/1.2.1
+svn commit -m "Release 1.2.1 - recognise headings by style name and outline level" --username nagarajdev
+```
+
+## What is in 1.2.0
+
+Markdown import. One new capability, no changes to Word import.
+
+```
+includes/lib/Parsedown.php            NEW  Parsedown 1.7.4, class renamed
+                                           DTPost_Parsedown, two params made
+                                           explicitly nullable for PHP 8.4
+includes/lib/LICENSE-Parsedown.txt    NEW  MIT — must ship with the file above
+includes/class-dtpost-markdown.php    NEW  .md → title + HTML, same shape as
+                                           DTPost_Parser::parse()
+includes/class-dtpost-blocks.php      MOD  <pre> → core/code block
+docxtopost.php                        MOD  upload handler branches on .md /
+                                           .markdown; session carries
+                                           'source' and 'warnings'
+admin/upload-page.php                 MOD  accept=".docx,.md,.markdown", copy
+admin/preview-page.php                MOD  warnings notice above the editor
+assets/admin-v2.js                    MOD  client-side extension check
+assets/admin.css                      MOD  .dtpost-parse-warning
+tests/test-markdown.php               NEW  54 checks, standalone
+tests/fixtures/sample.md              NEW  round-trip fixture
+```
+
+Design decisions worth knowing before a support thread asks:
+
+- **Markdown files are never written to disk.** The upload buffer is parsed
+  straight into the session transient. There is no `.md` in `dtpost-temp/`
+  and nothing for the cron to clean.
+- **Relative images are dropped, not left broken.** A single uploaded file
+  has nothing to resolve `images/hero.jpg` against. The preview screen lists
+  what was left out. Absolute `https://` images are kept as external images
+  and are *not* sideloaded — that would be the plugin's first outbound
+  request, and it is a Pro-shaped feature anyway.
+- **Front matter: title only.** `slug:`, `categories:`, `date:` are removed
+  with the block and not read. Half a mapping is worse than none.
+- **No `<h2>` title fallback**, unlike .docx. Markdown files routinely open
+  with a section heading; the filename is the better guess.
+- **Everything goes through `wp_kses_post()`** before the preview. Markdown
+  permits raw HTML, and without this a `.md` file is a `<script>` delivery
+  route into wp-admin.
+- **Pro does not have this yet.** Only one of the two plugins can be active,
+  so a free user who upgrades loses Markdown until Pro catches up. Decided
+  and accepted for this release; do not headline Markdown on docxtowp.com
+  until Pro ships it.
+
+Before tagging, run the tests and lint:
+
+```powershell
+php tests/test-markdown.php          # expect "54 passed, 0 failed."
+php tests/test-deadline-expiry.php
+php -l docxtopost.php; php -l includes/class-dtpost-markdown.php; php -l includes/lib/Parsedown.php
+```
+
+Test on a real install, in this order:
+
+- Upload `tests/fixtures/sample.md`. Title reads "DocxToPost Markdown
+  Fixture", the preview shows one warning naming `images/architecture.png`,
+  and the front matter block is nowhere in the content.
+- Publish it to a block-editor post type and open it in the editor. Every
+  heading, paragraph, list, quote, table and the code block should be its own
+  block, with **no** "This block contains unexpected or invalid content".
+  The code block is the one to look at hardest — it is new.
+- The table keeps its column alignment (centre / right) in the editor.
+- Switch Settings → Content Format to **Always classic HTML** and import
+  again; `<pre><code>` arrives as plain HTML.
+- Upload a `.md` containing `<script>alert(1)</script>` and an
+  `onclick=` attribute. Neither reaches the preview.
+- Upload a `.docx`. Nothing about that path has changed; confirm it anyway.
+- Rename a `.jpg` to `.md` and upload it: "This does not look like a text
+  file." Rename a `.docx` to `.md`: same message (a zip has NUL bytes).
+- Drop a `.txt` on the dropzone: rejected client-side with the new message.
+- Tools → Site Health → Status still shows the DocxToPost check.
+
+`screenshot-1.png` shows the old "Word Document (.docx)" label. It is not
+wrong, just behind — re-shoot it whenever you next have a local install open,
+alongside the `screenshot-4.png` already noted below.
 
 ## What is in 1.1.1
 
@@ -73,7 +194,7 @@ and reuse it for every future release — do not re-clone each time.
 
 ```powershell
 cd D:\DEV\htdocs\docxtowp
-.\build-svn-release.ps1 -SvnPath D:\DEV\svn-docxtowp -Tag 1.1.0
+.\build-svn-release.ps1 -SvnPath D:\DEV\svn-docxtowp -Tag 1.2.0
 ```
 
 The script:
@@ -85,7 +206,7 @@ The script:
 - copies the screenshots and both banners to `assets/`, and warns if the
   1544 banner is present without the 772
 - runs `svn add` for new files and `svn delete` for removed ones
-- copies `trunk/` to `tags/1.1.0`
+- copies `trunk/` to `tags/1.2.0`
 - **commits nothing** — it prints `svn status` and stops
 
 Do it by hand instead if you prefer; see "Manual staging" at the bottom.
@@ -101,7 +222,7 @@ Read the letters in the first column:
 
 | | |
 |---|---|
-| `A` | added — expect `readme.txt`, `includes/class-dtpost-blocks.php`, `admin/upgrade-page.php`, `admin/bulk-page.php`, the four screenshots, and `tags/1.1.0` |
+| `A` | added — expect `includes/class-dtpost-markdown.php`, `includes/lib/Parsedown.php`, `includes/lib/LICENSE-Parsedown.txt`, `tests/test-markdown.php`, `tests/fixtures/sample.md`, and `tags/1.2.0` |
 | `M` | modified — the files you changed |
 | `D` | deleted — should be nothing this release |
 | `?` | untracked — **stop.** Something was missed by `svn add` and will not be committed |
@@ -122,14 +243,14 @@ it: `svn revert trunk\screenshot-1.png` and delete the file.
 One commit for everything, including the tag:
 
 ```powershell
-svn commit -m "Release 1.1.0 - block editor output, list and table fixes, upsell pages" --username nagarajdev
+svn commit -m "Release 1.2.0 - Markdown import, code blocks" --username nagarajdev
 ```
 
 You will be asked for your **WordPress.org account password** — the same one
 you log in to wordpress.org with, not an application password. SVN caches it
 after the first time.
 
-The tag directory and the `Stable tag: 1.1.0` line must land in the **same**
+The tag directory and the `Stable tag: 1.2.0` line must land in the **same**
 commit. Commit the readme first and the tag second and the plugin points at a
 tag that does not exist yet, which 404s the download for everyone in between.
 
@@ -137,12 +258,12 @@ tag that does not exist yet, which 404s the download for everyone in between.
 
 WordPress.org rebuilds within a few minutes.
 
-- <https://wordpress.org/plugins/docxtowp/> shows **1.1.0** and four
+- <https://wordpress.org/plugins/docxtowp/> shows **1.2.0** and four
   screenshots
-- <https://plugins.svn.wordpress.org/docxtowp/tags/> lists `1.1.0`
+- <https://plugins.svn.wordpress.org/docxtowp/tags/> lists `1.2.0`
 - An existing install offers the update on its Plugins screen
 
-If the page still says 1.0.0 after fifteen minutes, `Stable tag` and the tag
+If the page still says 1.1.1 after fifteen minutes, `Stable tag` and the tag
 directory have got out of step. Check both.
 
 ---
@@ -269,13 +390,13 @@ svn add --force . --auto-props --parents --depth infinity
 svn status | Where-Object { $_ -match '^!' } | ForEach-Object { svn delete ($_ -split '\s+',2)[1] }
 
 # 6. Tag.
-svn copy trunk tags/1.1.0
+svn copy trunk tags/1.2.0
 ```
 
 Step 3 is the one people forget, and it is the one that costs every user an
 extra 860 KB on every install.
 
-`Stable tag: 1.1.0` in `readme.txt` is already set. WordPress serves whatever
+`Stable tag: 1.2.0` in `readme.txt` is already set. WordPress serves whatever
 `Stable tag` names, so the tag directory must exist in that same commit —
 otherwise the plugin 404s for everyone in between.
 

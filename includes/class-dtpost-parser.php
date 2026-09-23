@@ -30,6 +30,30 @@ class DTPost_Parser {
 	private array $image_rids = [];
 
 	/**
+	 * styleId → heading level (1–6), built from word/styles.xml.
+	 *
+	 * A paragraph's <w:pStyle> carries the style's *ID*, and the ID is not
+	 * stable: English Word writes "Heading1", German Word writes
+	 * "berschrift1", French "Titre1", Spanish "Ttulo1"; Word also mints
+	 * "Heading11" when a heading style is copied between documents; and a
+	 * custom style based on a heading has whatever ID its author gave it.
+	 * Matching the ID alone — which is all this parser did until 1.2.1 —
+	 * turned every one of those into a plain paragraph, in a document whose
+	 * author had applied genuine Heading styles throughout.
+	 *
+	 * styles.xml has the two signals that are stable: the style's canonical
+	 * <w:name> ("heading 1", kept in English by every Word locale) and its
+	 * <w:outlineLvl> (0–5), plus a <w:basedOn> chain through which a custom
+	 * style inherits both. See build_heading_style_map().
+	 *
+	 * @var array<string, int>
+	 */
+	private array $heading_styles = [];
+
+	/** Which heading supplied the title: "h1", "h2", or "" for the filename. */
+	private string $title_tag = '';
+
+	/**
 	 * numId → 'ol'|'ul', built from word/numbering.xml.
 	 *
 	 * Word gives bulleted and numbered lists the same paragraph style
@@ -72,7 +96,7 @@ class DTPost_Parser {
 
 			$html    = $this->clean_html( $html );
 			$title   = $this->extract_title( $html, $file_path, $original_name );
-			$content = $this->remove_first_h1( $html );
+			$content = $this->remove_title_heading( $html );
 
 			// Process and upload any base64-encoded images from Mammoth output.
 			$content = $this->reattach_images( $content, $file_path );
@@ -101,6 +125,7 @@ class DTPost_Parser {
 		$document_xml  = $zip->getFromName( 'word/document.xml' );
 		$doc_rels_xml  = $zip->getFromName( 'word/_rels/document.xml.rels' );
 		$numbering_xml = $zip->getFromName( 'word/numbering.xml' );
+		$styles_xml    = $zip->getFromName( 'word/styles.xml' );
 		$zip->close();
 
 		if ( false === $document_xml ) {
@@ -108,8 +133,9 @@ class DTPost_Parser {
 		}
 
 		// Build maps from rels file.
-		$link_map          = $this->build_link_map( $doc_rels_xml ?: '' );
-		$this->image_rids  = $this->build_image_rid_map( $doc_rels_xml ?: '' );
+		$link_map             = $this->build_link_map( $doc_rels_xml ?: '' );
+		$this->image_rids     = $this->build_image_rid_map( $doc_rels_xml ?: '' );
+		$this->heading_styles = $this->build_heading_style_map( $styles_xml ?: '' );
 		$this->num_formats = $this->build_num_format_map( $numbering_xml ?: '' );
 
 		$html = $this->xml_to_html( $document_xml, $link_map );
@@ -120,7 +146,7 @@ class DTPost_Parser {
 
 		$html    = $this->clean_html( $html );
 		$title   = $this->extract_title( $html, $file_path, $original_name );
-		$content = $this->remove_first_h1( $html );
+		$content = $this->remove_title_heading( $html );
 
 		// Upload all embedded images from the DOCX to the WP Media Library.
 		$content = $this->reattach_images( $content, $file_path );
@@ -353,8 +379,9 @@ class DTPost_Parser {
 			$attr = ' data-dtpost-align="' . esc_attr( $align ) . '"';
 		}
 
-		if ( preg_match( '/^heading[\s_\-]?([1-6])$/i', $style, $m ) ) {
-			return [ 'h' . $m[1], $inner, $attr ];
+		$level = $this->heading_level( $p );
+		if ( $level > 0 ) {
+			return [ 'h' . $level, $inner, $attr ];
 		}
 
 		// Word's Quote and Intense Quote styles, plus the block-indent style
@@ -796,6 +823,153 @@ class DTPost_Parser {
 		return (string) $val;
 	}
 
+	/**
+	 * The heading level of a paragraph, 1–6, or 0 for body text.
+	 *
+	 * Three signals, strongest first:
+	 *   1. the paragraph's style resolved through styles.xml (name, outline
+	 *      level, basedOn chain) — see build_heading_style_map()
+	 *   2. the style ID itself looking like "Heading3", which is what the
+	 *      parser matched before 1.2.1 and still covers a document with no
+	 *      styles part at all
+	 *   3. an outline level set directly on the paragraph, which is how Word
+	 *      records "this is a heading" when someone sets it from Paragraph →
+	 *      Outline level without applying a style
+	 */
+	private function heading_level( DOMElement $p ): int {
+		$style = $this->get_paragraph_style( $p );
+
+		if ( '' !== $style && isset( $this->heading_styles[ $style ] ) ) {
+			return $this->heading_styles[ $style ];
+		}
+
+		if ( preg_match( '/^heading[\s_\-]?([1-6])$/i', $style, $m ) ) {
+			return (int) $m[1];
+		}
+
+		$pPr = $p->getElementsByTagNameNS( self::W_NS, 'pPr' );
+		if ( $pPr->length > 0 ) {
+			$lvl = $pPr->item( 0 )->getElementsByTagNameNS( self::W_NS, 'outlineLvl' );
+			if ( $lvl->length > 0 ) {
+				return $this->level_from_outline( $this->w_attr( $lvl->item( 0 ), 'val' ) );
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Builds styleId → heading level from word/styles.xml.
+	 *
+	 * For every paragraph style, the level comes from the first of:
+	 *   - its canonical name, "heading N" — the name Word keeps in English
+	 *     whatever the UI language, and the reason "berschrift1" is still
+	 *     recognisable as Heading 1
+	 *   - its own outline level, 0–5 (9 means "body text" and is honoured as
+	 *     an explicit opt-out: the built-in "TOC Heading" style is based on
+	 *     Heading 1 and sets 9 precisely so it is not treated as one)
+	 *   - its ID looking like "HeadingN"
+	 *   - the style it is based on, resolved the same way, so a custom
+	 *     "Chapter title" based on Heading 1 imports as an <h1>
+	 *
+	 * @return array<string, int>
+	 */
+	private function build_heading_style_map( string $styles_xml ): array {
+		if ( '' === trim( $styles_xml ) ) {
+			return [];
+		}
+
+		libxml_use_internal_errors( true );
+		$dom          = new DOMDocument();
+		$dom->recover = true;
+		$loaded       = $dom->loadXML( $styles_xml, LIBXML_NOERROR | LIBXML_NOWARNING );
+		libxml_clear_errors();
+		if ( ! $loaded ) {
+			return [];
+		}
+
+		$levels   = [];   // styleId → 1–6, or 0 when the style opts out
+		$based_on = [];   // styleId → parent styleId, for the inheritance pass
+
+		foreach ( $dom->getElementsByTagNameNS( self::W_NS, 'style' ) as $style ) {
+			if ( 'paragraph' !== $this->w_attr( $style, 'type' ) ) {
+				continue;
+			}
+			$id = $this->w_attr( $style, 'styleId' );
+			if ( '' === $id ) {
+				continue;
+			}
+
+			$name = '';
+			$n    = $style->getElementsByTagNameNS( self::W_NS, 'name' );
+			if ( $n->length > 0 ) {
+				$name = $this->w_attr( $n->item( 0 ), 'val' );
+			}
+
+			$outline = null;
+			$pPr     = $style->getElementsByTagNameNS( self::W_NS, 'pPr' );
+			if ( $pPr->length > 0 ) {
+				$lvl = $pPr->item( 0 )->getElementsByTagNameNS( self::W_NS, 'outlineLvl' );
+				if ( $lvl->length > 0 ) {
+					$outline = $this->w_attr( $lvl->item( 0 ), 'val' );
+				}
+			}
+
+			$b = $style->getElementsByTagNameNS( self::W_NS, 'basedOn' );
+			if ( $b->length > 0 ) {
+				$based_on[ $id ] = $this->w_attr( $b->item( 0 ), 'val' );
+			}
+
+			if ( preg_match( '/^heading\s*([1-6])$/i', trim( $name ), $m ) ) {
+				$levels[ $id ] = (int) $m[1];
+			} elseif ( null !== $outline && '' !== $outline ) {
+				// Explicit on the style, including an explicit 9 = "not a
+				// heading", which must win over anything inherited.
+				$levels[ $id ] = $this->level_from_outline( $outline );
+			} elseif ( preg_match( '/^heading[\s_\-]?([1-6])$/i', $id, $m ) ) {
+				$levels[ $id ] = (int) $m[1];
+			}
+		}
+
+		// Inherit through basedOn. Chains are short; six passes covers any
+		// sane document and a cycle cannot loop forever.
+		for ( $pass = 0; $pass < 6; $pass++ ) {
+			$changed = false;
+			foreach ( $based_on as $id => $parent ) {
+				if ( isset( $levels[ $id ] ) || ! isset( $levels[ $parent ] ) ) {
+					continue;
+				}
+				$levels[ $id ] = $levels[ $parent ];
+				$changed       = true;
+			}
+			if ( ! $changed ) {
+				break;
+			}
+		}
+
+		// Only real heading levels leave this method. A 0 (explicit opt-out)
+		// is dropped so heading_level() falls through to its later checks.
+		return array_filter( $levels, static fn( int $l ): bool => $l >= 1 && $l <= 6 );
+	}
+
+	/** Word outline level (0–5 = Heading 1–6, 9 = body text) → heading level or 0. */
+	private function level_from_outline( string $val ): int {
+		if ( '' === $val || ! is_numeric( $val ) ) {
+			return 0;
+		}
+		$n = (int) $val;
+		return ( $n >= 0 && $n <= 5 ) ? $n + 1 : 0;
+	}
+
+	/** Reads a w:-namespaced attribute, tolerating a non-namespaced fallback. */
+	private function w_attr( DOMElement $el, string $name ): string {
+		$val = $el->getAttributeNS( self::W_NS, $name );
+		if ( '' === $val ) {
+			$val = $el->getAttribute( 'w:' . $name );
+		}
+		return (string) $val;
+	}
+
 	private function detect_list_type( DOMElement $p ): string {
 		return preg_match( '/number|num|ordered/i', $this->get_paragraph_style( $p ) ) ? 'ol' : 'ul';
 	}
@@ -887,28 +1061,57 @@ class DTPost_Parser {
 		return trim( $html );
 	}
 
+	/**
+	 * The post title, and a note of where it came from.
+	 *
+	 * Sets $title_tag to the heading the title was taken from, so
+	 * remove_title_heading() can take that exact heading out of the body.
+	 * Before 1.2.1 the title could come from an <h2> while only an <h1> was
+	 * ever removed, so a document whose top heading was Heading 2 — common,
+	 * since plenty of people reserve Heading 1 for the page title — had its
+	 * heading repeated as the first line of the post.
+	 */
 	private function extract_title( string $html, string $file_path, string $original_name ): string {
 		foreach ( [ 'h1', 'h2' ] as $tag ) {
 			if ( preg_match( '/<' . $tag . '[^>]*>(.*?)<\/' . $tag . '>/is', $html, $m ) ) {
 				$t = trim( wp_strip_all_tags( $m[1] ) );
-				if ( '' !== $t ) { return $t; }
+				if ( '' !== $t ) {
+					$this->title_tag = $tag;
+					return $t;
+				}
 			}
 		}
-		if ( '' !== $original_name ) {
-			$base = pathinfo( $original_name, PATHINFO_FILENAME );
-			if ( '' !== $base ) {
-				return ucwords( str_replace( [ '-', '_', '.' ], ' ', $base ) );
-			}
+
+		$this->title_tag = '';
+
+		// Capitalisation is DTPost_Title's business — see Settings → Content
+		// Format. A document that has a heading keeps that heading exactly as
+		// it was written; only a filename-derived title is ever restyled.
+		$title = DTPost_Title::from_filename( $original_name );
+		if ( '' !== $title ) {
+			return $title;
 		}
+
 		$basename = pathinfo( $file_path, PATHINFO_FILENAME );
 		if ( preg_match( '/^[0-9a-f\-]{32,36}$/i', $basename ) ) {
 			return __( 'Untitled Document', 'docxtowp' );
 		}
-		return ucwords( str_replace( [ '-', '_', '.' ], ' ', $basename ) );
+
+		$title = DTPost_Title::from_filename( $basename );
+		return '' !== $title ? $title : __( 'Untitled Document', 'docxtowp' );
 	}
 
-	private function remove_first_h1( string $html ): string {
-		return preg_replace( '/<h1[^>]*>.*?<\/h1>\s*/is', '', $html, 1 );
+	/**
+	 * Removes the heading the title was taken from, so it is not repeated as
+	 * the first line of the post. No-op when the title came from the filename.
+	 */
+	private function remove_title_heading( string $html ): string {
+		$tag = $this->title_tag;
+		if ( '' === $tag ) {
+			return $html;
+		}
+
+		return (string) preg_replace( '/<' . $tag . '[^>]*>.*?<\/' . $tag . '>\s*/is', '', $html, 1 );
 	}
 }
 

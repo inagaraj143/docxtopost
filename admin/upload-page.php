@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin page: Upload .docx + featured image.
+ * Admin page: Upload .docx or Markdown + featured image.
  *
  * @package DocxToPost
  */
@@ -15,7 +15,7 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 
 	<div class="dtpost-page-title">
 		<h1><?php esc_html_e( 'DocxToPost', 'docxtowp' ); ?></h1>
-		<p><?php esc_html_e( 'Convert DOCX to a post, page or custom post type — no copy-paste', 'docxtowp' ); ?></p>
+		<p><?php esc_html_e( 'Convert DOCX or Markdown to a post, page or custom post type — no copy-paste', 'docxtowp' ); ?></p>
 	</div>
 
 	<?php if ( $has_session ) : ?>
@@ -33,15 +33,20 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 				<?php wp_nonce_field( 'dtpost_nonce', 'nonce' ); ?>
 
 				<div class="dtpost-upload-panel">
-					<p class="dtpost-section-title"><?php esc_html_e( 'Word Document (.docx)', 'docxtowp' ); ?></p>
+					<p class="dtpost-section-title"><?php esc_html_e( 'Document (.docx or .md)', 'docxtowp' ); ?></p>
 
 					<div class="dtpost-dropzone" id="dtpost-docx-dropzone">
 						<div class="dtpost-dropzone__icon">
 							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
 						</div>
-						<p class="dtpost-dropzone__label"><?php esc_html_e( 'Drop your .docx file here', 'docxtowp' ); ?></p>
+						<p class="dtpost-dropzone__label"><?php esc_html_e( 'Drop your .docx or .md file here', 'docxtowp' ); ?></p>
 						<p class="dtpost-dropzone__sub"><?php printf( esc_html__( 'or click to browse — max %s MB', 'docxtowp' ), esc_html( $max_mb ) ); ?></p>
-						<input type="file" name="docx_file" id="docx_file" accept=".docx" class="dtpost-dropzone__input">
+						<?php
+						// The field keeps its "docx" name: admin-v2.js and the AJAX
+						// handler both refer to it, and a browser holding the old
+						// script would otherwise post a field the server ignores.
+						?>
+						<input type="file" name="docx_file" id="docx_file" accept=".docx,.md,.markdown" class="dtpost-dropzone__input">
 						<p class="dtpost-dropzone__filename" id="dtpost-docx-name"></p>
 					</div>
 
@@ -88,8 +93,8 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 			<div class="dtpost-how-it-works">
 				<h3><?php esc_html_e( 'How it works', 'docxtowp' ); ?></h3>
 				<ol>
-					<li><?php esc_html_e( 'Upload your .docx file and an optional featured image.', 'docxtowp' ); ?></li>
-					<li><?php esc_html_e( 'Review parsed content — headings, paragraphs, bold, lists and embedded images all preserved.', 'docxtowp' ); ?></li>
+					<li><?php esc_html_e( 'Upload your .docx or Markdown file and an optional featured image.', 'docxtowp' ); ?></li>
+					<li><?php esc_html_e( 'Review parsed content — headings, paragraphs, bold, lists, tables, code and images all preserved.', 'docxtowp' ); ?></li>
 					<li><?php esc_html_e( 'Choose your post type, category, tags and author, then publish or save as draft.', 'docxtowp' ); ?></li>
 				</ol>
 			</div>

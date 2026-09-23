@@ -223,6 +223,23 @@ $status_options = array(
 	</div>
 	<?php endif; ?>
 
+	<?php
+	// Anything the parser had to leave out. Advisory, like the duplicate
+	// notice above: the document still imports, this just says what is
+	// missing from it so nobody finds out from the published page.
+	$dtpost_warnings = array_filter( array_map( 'strval', (array) ( $session['warnings'] ?? array() ) ) );
+	if ( ! empty( $dtpost_warnings ) ) :
+		?>
+	<div class="notice notice-warning inline dtpost-parse-warning">
+		<p><strong><?php esc_html_e( 'Some of the document could not be imported.', 'docxtowp' ); ?></strong></p>
+		<ul>
+			<?php foreach ( $dtpost_warnings as $dtpost_warning ) : ?>
+			<li><?php echo esc_html( $dtpost_warning ); ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+	<?php endif; ?>
+
 	<!-- Global error notice -->
 	<div id="dtpost-notice" class="dtpost-notice dtpost-notice-error" style="display:none">
 		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>

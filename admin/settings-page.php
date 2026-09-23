@@ -24,6 +24,12 @@ if ( isset( $_POST['dtpost_settings_nonce'] ) && wp_verify_nonce( sanitize_key( 
 	$new_format      = sanitize_key( $_POST['dtpost_content_format'] ?? 'auto' );
 	update_option( 'dtpost_content_format', in_array( $new_format, $allowed_formats, true ) ? $new_format : 'auto' );
 
+	$new_title_case = sanitize_key( $_POST['dtpost_filename_title_case'] ?? DTPost_Title::SENTENCE );
+	update_option(
+		'dtpost_filename_title_case',
+		in_array( $new_title_case, DTPost_Title::modes(), true ) ? $new_title_case : DTPost_Title::SENTENCE
+	);
+
 	// Save default category.
 	update_option( 'dtpost_default_category', absint( $_POST['dtpost_default_category'] ?? 1 ) );
 
@@ -130,6 +136,26 @@ $status_options = array(
 				</select>
 				<p class="description">
 					<?php esc_html_e( 'Block editor output creates real paragraph, heading, list, image and table blocks you can edit individually. Classic HTML puts the whole document in one block. "Match the editor" picks whichever the post type already uses.', 'docxtowp' ); ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="dtpost_filename_title_case"><?php esc_html_e( 'Title From Filename', 'docxtowp' ); ?></label></th>
+			<td>
+				<?php $dtpost_title_case = DTPost_Title::mode(); ?>
+				<select id="dtpost_filename_title_case" name="dtpost_filename_title_case">
+					<option value="<?php echo esc_attr( DTPost_Title::SENTENCE ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::SENTENCE ); ?>>
+						<?php esc_html_e( 'Sentence case — Annual report for the board', 'docxtowp' ); ?>
+					</option>
+					<option value="<?php echo esc_attr( DTPost_Title::TITLE ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::TITLE ); ?>>
+						<?php esc_html_e( 'Title Case — Annual Report for the Board', 'docxtowp' ); ?>
+					</option>
+					<option value="<?php echo esc_attr( DTPost_Title::RAW ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::RAW ); ?>>
+						<?php esc_html_e( 'Leave as written — annual report for the board', 'docxtowp' ); ?>
+					</option>
+				</select>
+				<p class="description">
+					<?php esc_html_e( 'Only used when a document has no heading to take a title from. A document with a Heading 1 or 2 always keeps that heading exactly as you wrote it. Words you typed in capitals, such as NHS, are never lowercased.', 'docxtowp' ); ?>
 				</p>
 			</td>
 		</tr>

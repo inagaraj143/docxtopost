@@ -20,7 +20,7 @@ $count = dtpost_conversion_count();
 $capabilities = array(
 	array(
 		'title' => __( 'Up to 100 documents per job', 'docxtowp' ),
-		'body'  => __( 'Drag in a folder of .docx files. Drop images in alongside them and each one is matched to its document by filename — chapter-01.jpg becomes the featured image for chapter-01.docx.', 'docxtowp' ),
+		'body'  => __( 'Drag in a folder of .docx or .md files. Drop images in alongside them and each one is matched to its document by filename — chapter-01.jpg becomes the featured image for chapter-01.docx.', 'docxtowp' ),
 	),
 	array(
 		'title' => __( 'Built for shared hosting', 'docxtowp' ),

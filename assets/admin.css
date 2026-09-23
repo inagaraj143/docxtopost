@@ -1600,6 +1600,11 @@
 
 .dtpost-duplicate-warning { margin: 0 0 16px; }
 
+/* Parser warnings (Markdown images that could not be resolved, etc.) */
+.dtpost-parse-warning { margin: 0 0 16px; }
+.dtpost-parse-warning ul { list-style: disc; margin: 0 0 10px 22px; }
+.dtpost-parse-warning li { margin: 0 0 4px; }
+
 /* ── Pro feature banner ────────────────────────────────────────────────────
    Sits at the top of a page describing a feature the free plugin does not
    have, so nobody reads three paragraphs before working that out.        */

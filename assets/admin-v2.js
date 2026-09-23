@@ -65,7 +65,8 @@
 
 		function setDocx(file) {
 			if (errBox) errBox.style.display = 'none';
-			if (file.name.split('.').pop().toLowerCase() !== 'docx') { showUploadErr(DTPOST.strings.invalid_type); return; }
+			var ext = file.name.split('.').pop().toLowerCase();
+			if (ext !== 'docx' && ext !== 'md' && ext !== 'markdown') { showUploadErr(DTPOST.strings.invalid_type); return; }
 			if (DTPOST.max_mb && file.size > DTPOST.max_mb * 1024 * 1024) { showUploadErr(DTPOST.strings.file_too_large); return; }
 			try { var dt = new DataTransfer(); dt.items.add(file); docxInput.files = dt.files; } catch(e) {}
 			if (docxDrop)  docxDrop.classList.add('dtpost-has-file');

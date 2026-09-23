@@ -1,26 +1,29 @@
-=== DocxToPost – Convert DOCX Files to WP Posts, Pages & Custom Post Types ===
+=== DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types ===
 Contributors:      nagarajdev
-Tags:              docx, word, importer, document, converter
+Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
-Tested up to:      7.1
+Tested up to:      7.1.1
 Requires PHP:      8.0
-Stable tag:        1.1.1
+Stable tag:        1.2.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Import .docx files as WordPress Posts, Pages, or Custom Post Types in seconds. No copy-paste. No block editor fighting.
+Import .docx and Markdown files as WordPress Posts, Pages, or Custom Post Types in seconds. No copy-paste. No block editor fighting.
 
 == Description ==
 
-**DocxToPost** is the easiest way to turn Microsoft Word documents into clean WordPress posts, pages, or custom post types.
+**DocxToPost** is the easiest way to turn Microsoft Word documents — and Markdown files — into clean WordPress posts, pages, or custom post types.
 
 No more copy-pasting from Word and losing your formatting. Upload your .docx file and DocxToPost parses it into clean, semantic HTML that WordPress understands — including every embedded image, which is uploaded to your Media Library automatically.
+
+Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean set of blocks — headings, lists, tables, code blocks and all. Notes from Obsidian or Notion, a README, or the output of an AI assistant all import without reformatting.
 
 **Everything in the free version:**
 
 * **Real blocks, not one big lump:** Your document arrives as proper paragraph, heading, list, image, table and quote blocks you can move and edit individually — not a single Classic block you have to fight. Running the classic editor instead? It detects that and gives you plain HTML.
 * **Undo an import:** Changed your mind? One link on the confirmation screen moves the post to the trash.
-* **Simple upload:** Drag and drop your .docx file.
+* **Simple upload:** Drag and drop your .docx or .md file.
+* **Markdown too:** `.md` and `.markdown` files import with headings, emphasis, links, nested lists, blockquotes, tables and fenced code blocks intact. Code becomes a real Code block, not a paragraph in a monospace font.
 * **Formatting preserved:** Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, blockquotes and paragraph alignment all survive the trip.
 * **Real lists:** Bulleted and numbered lists come through as proper lists, nested sub-bullets included.
 * **Tables with headers:** Header rows become real table headers, so your tables stay readable and accessible.
@@ -35,9 +38,9 @@ No more copy-pasting from Word and losing your formatting. Upload your .docx fil
 
 = Why upgrade to Pro? =
 
-The free version is a complete, unrestricted DOCX importer for one document at a time. Pro is for people importing many documents, and it does three things free does not:
+The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for people importing many documents, and it does three things free does not:
 
-* **Bulk import** — drag in up to 100 .docx files at once. The queue survives a closed tab, isolates a broken document to its own row, and lets you pause, resume or retry just the failures.
+* **Bulk import** — drag in up to 100 .docx or .md files at once. The queue survives a closed tab, isolates a broken document to its own row, and lets you pause, resume or retry just the failures.
 * **Drip publishing** — schedule a whole batch instead of publishing it at once. "One post per weekday from Monday at 09:00" is two clicks, and weekends are excluded by default.
 * **SEO automation** — SEO title, meta description and focus keyphrase for Yoast SEO and Rank Math, filled from templates using `{title}`, `{sitename}`, `{excerpt}`, `{filename}`, `{category}` and `{date}`, with per-document overrides.
 
@@ -49,7 +52,7 @@ Learn more at [docxtowp.com](https://docxtowp.com)
 
 1. Install through the WordPress plugins screen, or upload the plugin files to `/wp-content/plugins/docxtowp`.
 2. Activate the plugin through the **Plugins** screen in WordPress.
-3. Go to **DocxToPost** in the admin menu and upload your first .docx file.
+3. Go to **DocxToPost** in the admin menu and upload your first .docx or .md file.
 
 == Frequently Asked Questions ==
 
@@ -58,6 +61,14 @@ All registered public post types on your site — Posts, Pages, and any Custom P
 
 = Does it preserve formatting from Word? =
 Yes. Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, bulleted and numbered lists (including nested levels), tables with header rows, blockquotes, paragraph alignment, and hyperlinks all carry over.
+
+= Can I import Markdown files? =
+Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables, horizontal rules and fenced code blocks are all supported — code blocks become real Code blocks in the editor. The first `# Heading` becomes the post title; if there is none, the filename is used.
+
+Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title; other keys such as slug, categories and dates are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones — upload them to the Media Library and add them in the editor.
+
+= Where does Markdown from ChatGPT, Notion or Obsidian fit? =
+Save or export it as a `.md` file and upload that. All three produce standard Markdown, which is what the importer reads. Notion's export puts images in a folder next to the file — see the previous answer for how those are handled.
 
 = I imported the wrong document. Can I undo it? =
 Yes. The confirmation screen has a "Move it to the trash" link, and the post stays recoverable from the Trash afterwards.
@@ -85,12 +96,27 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 
 == Screenshots ==
 
-1. Upload screen — drag and drop your .docx file and an optional featured image
+1. Upload screen — drag and drop your .docx or .md file and an optional featured image
 2. Preview and publish — the parsed document with post type, status, author, featured image, categories and tags
 3. Confirmation after the post is created
 4. Settings — file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.1 =
+* Fixed: **the document's heading appeared again as the first line of the post.** The title is taken from the first Heading 1 *or* Heading 2, but only a Heading 1 was ever removed from the body — so a document whose top heading was Heading 2 ended up with that heading repeated directly under the identical post title. Whichever heading supplies the title is now the one removed; later headings of the same level are untouched.
+* Added: **Settings → Title From Filename**, with three choices for how a filename becomes a title when a document has no heading to take one from: sentence case ("Annual report for the board", the new default), Title Case ("Annual Report for the Board"), or left as written. It used to be "Annual Report For The Board" always, capitalising every word including *for* and *the*, which matches no house style. Sentence case never lowercases anything — it capitalises the first word and leaves the rest as typed, so `meeting-with-John-Smith.docx` stays "Meeting with John Smith" and `report-NHS.docx` keeps NHS. A document that has a heading keeps that heading's capitalisation exactly as you wrote it; this setting only affects titles taken from a filename.
+* Fixed: **headings in some Word documents imported as ordinary paragraphs**, even though the author had applied genuine Heading styles throughout. The importer recognised a heading only when the style's internal ID was literally `Heading1`…`Heading6`, and that ID is not stable: Word in German writes `berschrift1`, in French `Titre1`, in Spanish `Ttulo1`; Word also mints `Heading11` when a heading style is pasted between documents; and a custom style based on a heading has whatever ID its author gave it. The importer now reads the document's style definitions and resolves headings the way Word's own navigation pane does — by the style's canonical name, its outline level, or the heading it is based on — so all of those import as real headings. An outline level set directly on a paragraph is honoured too, and the built-in "TOC Heading" style correctly stays a paragraph.
+* Note: Word import is otherwise unchanged, and Markdown import is unchanged. The same fix ships in DocxToWP Pro 1.2.6.
+
+= 1.2.0 =
+* Added: **Markdown import.** Upload a `.md` or `.markdown` file and it goes through the same preview-and-publish flow as a Word document. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables (with column alignment), horizontal rules and fenced code blocks are all preserved.
+* Added: a **Code block** in the block-editor output. Markdown code fences become real `core/code` blocks, with the content escaped so that a `[shortcode]` in a code sample is never executed.
+* Added: the first `# Heading` in a Markdown file becomes the post title, as the first Heading 1 does in Word. If there is none the filename is used. A `title:` in front matter takes precedence, and the front matter block itself is removed from the post.
+* Added: the preview screen now lists anything the parser had to leave out. Today that is Markdown images with a relative path, which cannot be resolved from a single uploaded file. Images with a full https:// URL are kept.
+* Changed: the Site Health check wording distinguishes Word documents, which need the ZipArchive extension, from Markdown files, which do not.
+* Security: Markdown permits raw HTML, so every converted document is passed through WordPress's post-content sanitiser before it reaches the preview screen or the post. Markdown files are parsed straight from the upload buffer and never written to disk.
+* Note: Markdown parsing uses Parsedown 1.7.4 (MIT licence), bundled under a plugin-specific class name so it cannot collide with another plugin's copy. Word import is unchanged.
 
 = 1.1.1 =
 * Added: a dismissible notice on the plugin's own upload screen, letting you know that lifetime access to the Pro version ends on 30 September 2026. It counts down from your own server clock, disappears by itself once the date passes, and never appears anywhere outside this plugin's pages. The free plugin is not affected by the change and stays free.
@@ -139,6 +165,12 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+Fixes Word headings importing as plain paragraphs, and a heading being repeated in the body. Adds a setting for how a filename becomes a title. Recommended for everyone.
+
+= 1.2.0 =
+Adds Markdown (.md) import alongside .docx, with real Code blocks in the editor output. Word import is unchanged. Recommended for everyone.
 
 = 1.1.1 =
 Wording change on the two Pro description pages. No functional changes. Safe to skip if you never open those pages.

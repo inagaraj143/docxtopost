@@ -20,7 +20,7 @@ class DTPost_Blocks {
 	/**
 	 * Wraps parsed HTML in block delimiters.
 	 *
-	 * @param string $html Semantic HTML from DTPost_Parser.
+	 * @param string $html Semantic HTML from DTPost_Parser or DTPost_Markdown.
 	 * @return string Block markup, or the original HTML if it cannot be parsed.
 	 */
 	public static function serialize( string $html ): string {
@@ -104,6 +104,9 @@ class DTPost_Blocks {
 
 			case 'hr' === $tag:
 				return self::block( 'separator', [], '<hr class="wp-block-separator has-alpha-channel-opacity"/>' );
+
+			case 'pre' === $tag:
+				return self::code( $node );
 
 			case 'figure' === $tag:
 				$img = $node->getElementsByTagName( 'img' );
@@ -220,6 +223,35 @@ class DTPost_Blocks {
 			[],
 			'<figure class="wp-block-table">' . self::outer( $node ) . '</figure>'
 		);
+	}
+
+	/**
+	 * A code block. Word has no such thing, so this only fires for Markdown.
+	 *
+	 * Core stores the block's content as escaped text inside
+	 * <pre class="wp-block-code"><code>…</code></pre>. The language class
+	 * Parsedown puts on <code> is dropped: core's own save() never emits one,
+	 * and an attribute it does not expect invalidates the block on first open.
+	 *
+	 * Escaping is htmlspecialchars() with double-encoding on, not esc_html(),
+	 * which leaves existing entities alone — wrong for code, where a literal
+	 * `&amp;` in the sample is meant to be seen as `&amp;`.
+	 */
+	private static function code( DOMElement $node ): string {
+		$inner  = $node->getElementsByTagName( 'code' );
+		$source = $inner->length > 0 ? $inner->item( 0 ) : $node;
+		$text   = rtrim( $source->textContent, "\n" );
+
+		if ( '' === trim( $text ) ) {
+			return '';
+		}
+
+		$escaped = htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', true );
+		// Core does the same, so a code sample containing [gallery] is never
+		// run as a shortcode.
+		$escaped = str_replace( '[', '&#91;', $escaped );
+
+		return self::block( 'code', [], '<pre class="wp-block-code"><code>' . $escaped . '</code></pre>' );
 	}
 
 	private static function image( DOMElement $node ): string {
