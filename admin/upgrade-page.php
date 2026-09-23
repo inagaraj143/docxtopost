@@ -18,12 +18,31 @@ $count = dtpost_conversion_count();
 $pillars = array(
 	array(
 		'title' => __( 'Bulk import', 'docxtowp' ),
-		'lead'  => __( 'Drag in up to 100 .docx files and walk away.', 'docxtowp' ),
+		'lead'  => __( 'Drag in up to 100 .docx and .md files and walk away.', 'docxtowp' ),
 		'points' => array(
 			__( 'One file per request, so shared hosting limits on upload count, post size and execution time never come into it.', 'docxtowp' ),
 			__( 'A corrupt document fails its own row and nothing else.', 'docxtowp' ),
 			__( 'Pause, resume, cancel, or retry only the failures.', 'docxtowp' ),
 			__( 'Close the tab and come back — the queue lives in the database, not the page.', 'docxtowp' ),
+		),
+	),
+	array(
+		'title' => __( 'A whole notebook, images and all', 'docxtowp' ),
+		'lead'  => __( 'Markdown files and the folder their images live in, together.', 'docxtowp' ),
+		'points' => array(
+			__( 'Drop the image folder in with the notes and every image referenced by a relative path is matched by its filename and placed in the post.', 'docxtowp' ),
+			__( 'A Joplin _resources folder, an Obsidian attachments folder or a Notion export all work the same way.', 'docxtowp' ),
+			__( 'The first image in a note becomes its featured image unless you pick another.', 'docxtowp' ),
+			__( 'Anything that cannot be matched is named on that row rather than dropped in silence.', 'docxtowp' ),
+		),
+	),
+	array(
+		'title' => __( 'Review before anything is created', 'docxtowp' ),
+		'lead'  => __( 'A table of every document, editable, before a single post exists.', 'docxtowp' ),
+		'points' => array(
+			__( 'Detected title, featured image and SEO fields for each file, all editable per row.', 'docxtowp' ),
+			__( 'Leave any document out of the run with one toggle.', 'docxtowp' ),
+			__( 'Nothing is written to your site until you start the import.', 'docxtowp' ),
 		),
 	),
 	array(
@@ -45,6 +64,26 @@ $pillars = array(
 			__( 'Override any single row where the template does not fit.', 'docxtowp' ),
 		),
 	),
+	/*
+	 * Not released yet, and labelled as such.
+	 *
+	 * This plugin ships frozen to WordPress.org and sits on people's sites
+	 * until they update, so a feature described in the present tense before
+	 * it is downloadable becomes a false claim the moment a date slips — and
+	 * one that cannot be corrected for weeks. The label is deliberately a
+	 * version rather than a date for the same reason: "1.3.0" stays true
+	 * whenever it lands.
+	 */
+	array(
+		'title' => __( 'Smart image optimization', 'docxtowp' ),
+		'lead'  => __( 'Coming in Pro 1.3.0: smaller images, without a second plugin.', 'docxtowp' ),
+		'points' => array(
+			__( 'JPEG and PNG images from your documents are converted to WebP as they are imported.', 'docxtowp' ),
+			__( 'Only when the WebP is genuinely smaller — photographs shrink a lot, while flat logos and diagrams keep their original format.', 'docxtowp' ),
+			__( 'Transparency is preserved, and your original images are never deleted or overwritten.', 'docxtowp' ),
+			__( 'Each import reports how many images were converted and how much it saved.', 'docxtowp' ),
+		),
+	),
 );
 
 $also = array(
@@ -52,10 +91,11 @@ $also = array(
 	__( 'Import history, with rollback from any past job', 'docxtowp' ),
 	__( 'Duplicate handling — skip, import anyway, or update the existing post', 'docxtowp' ),
 	__( 'Featured-image cascade that matches companion images to documents by filename', 'docxtowp' ),
-	__( 'Per-row title, featured image and SEO overrides before anything is published', 'docxtowp' ),
+	__( 'Any public post type, with the whole run going to the type you choose', 'docxtowp' ),
+	__( 'Job-wide author, categories and tags, set once for the batch', 'docxtowp' ),
 	__( 'Activity log with re-import', 'docxtowp' ),
 	__( 'Automatic updates, the same as a plugin from WordPress.org', 'docxtowp' ),
-	__( 'Priority email support from the developer', 'docxtowp' ),
+	__( 'Email support from the developer', 'docxtowp' ),
 );
 ?>
 <div class="wrap dtpost-upgrade-wrap">

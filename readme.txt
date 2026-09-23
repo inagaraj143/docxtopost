@@ -38,13 +38,16 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 
 = Why upgrade to Pro? =
 
-The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for people importing many documents, and it does three things free does not:
+The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them:
 
-* **Bulk import** — drag in up to 100 .docx or .md files at once. The queue survives a closed tab, isolates a broken document to its own row, and lets you pause, resume or retry just the failures.
-* **Drip publishing** — schedule a whole batch instead of publishing it at once. "One post per weekday from Monday at 09:00" is two clicks, and weekends are excluded by default.
+* **Bulk import, up to 100 files a run** — drag in .docx and .md files together. Each file uploads in its own request, so shared-hosting limits on upload count, post size and execution time never come into it. A corrupt document fails its own row and the rest carry on. Pause, resume, cancel, or retry only the failures — and close the tab if you like, because the queue lives in the database rather than the page.
+* **A whole notebook, images and all** — drop your `_resources`, `attachments` or exported image folder in with the Markdown files and every image referenced by a relative path is matched by filename and placed in its post. That is a Joplin notebook, an Obsidian vault or a Notion export moved across in one run, rather than image by image in the editor.
+* **Review everything before anything is created** — a table of every document with its detected title, featured image and SEO fields, each editable per row, and a toggle to leave any document out of the run. Nothing is written to your site until you say so.
+* **Drip publishing** — schedule a batch instead of publishing it all at once. "One post per weekday from Monday at 09:00" is two clicks, weekends are excluded by default, and you can override any single date by hand without disturbing the rest of the sequence.
 * **SEO automation** — SEO title, meta description and focus keyphrase for Yoast SEO and Rank Math, filled from templates using `{title}`, `{sitename}`, `{excerpt}`, `{filename}`, `{category}` and `{date}`, with per-document overrides.
+* **Smart image optimization** *(coming in Pro 1.3.0)* — JPEG and PNG images from your documents are converted to WebP as they are imported, but only when the WebP is genuinely smaller, so photographs shrink while flat logos and diagrams keep their original format. Transparency is preserved, your originals are never deleted, and each import reports how much it saved.
 
-Pro also adds one-click rollback of an entire import, import history, duplicate handling (skip, import anyway, or update the existing post), a featured-image cascade that matches companion image files to their documents by filename, an activity log, and automatic updates.
+Pro also adds one-click rollback of an entire import, import history with rollback from any past job, duplicate handling (skip, import anyway, or update the existing post), a featured-image cascade that matches companion images to their documents by filename, an activity log with re-import, automatic updates, and email support from the developer.
 
 Learn more at [docxtowp.com](https://docxtowp.com)
 

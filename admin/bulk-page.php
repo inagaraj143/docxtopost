@@ -23,6 +23,10 @@ $capabilities = array(
 		'body'  => __( 'Drag in a folder of .docx or .md files. Drop images in alongside them and each one is matched to its document by filename — chapter-01.jpg becomes the featured image for chapter-01.docx.', 'docxtowp' ),
 	),
 	array(
+		'title' => __( 'Markdown notebooks arrive with their images', 'docxtowp' ),
+		'body'  => __( 'Drop the image folder in with your .md files and every image referenced by a relative path is matched by its filename and placed in the post — a Joplin _resources folder, an Obsidian attachments folder or a Notion export, moved across in one run instead of image by image in the editor.', 'docxtowp' ),
+	),
+	array(
 		'title' => __( 'Built for shared hosting', 'docxtowp' ),
 		'body'  => __( 'Files upload one per request rather than in a single large POST. A 100-file POST dies on max_file_uploads, post_max_size, max_execution_time or memory on most hosts; one file per request hits none of them.', 'docxtowp' ),
 	),
