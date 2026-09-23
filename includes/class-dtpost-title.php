@@ -9,7 +9,7 @@
  *
  * ── Why this is a setting ─────────────────────────────────────────────────
  *
- * Until 1.2.1 this was `ucwords()`, which capitalises every word:
+ * Until 1.2.2 this was `ucwords()`, which capitalises every word:
  *
  *     annual-report-for-the-board.docx  ->  "Annual Report For The Board"
  *

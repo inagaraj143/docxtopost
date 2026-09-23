@@ -1066,7 +1066,7 @@ class DTPost_Parser {
 	 *
 	 * Sets $title_tag to the heading the title was taken from, so
 	 * remove_title_heading() can take that exact heading out of the body.
-	 * Before 1.2.1 the title could come from an <h2> while only an <h1> was
+	 * Before 1.2.2 the title could come from an <h2> while only an <h1> was
 	 * ever removed, so a document whose top heading was Heading 2 — common,
 	 * since plenty of people reserve Heading 1 for the page title — had its
 	 * heading repeated as the first line of the post.

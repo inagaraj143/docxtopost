@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish — no copy-paste needed.
- * Version:           1.2.1
+ * Version:           1.2.2
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -12,7 +12,7 @@
  * Domain Path:       /languages
  * Requires PHP:      8.0
  * Requires at least: 6.0
- * Tested up to:      7.1.1
+ * Tested up to:      7.1.2
  */
 
 if (!defined('ABSPATH')) {
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.1');
+define('DTPOST_VERSION', '1.2.2');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));

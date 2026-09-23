@@ -2,9 +2,9 @@
 Contributors:      nagarajdev
 Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
-Tested up to:      7.1.1
+Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.1
+Stable tag:        1.2.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,9 +106,12 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 
 == Changelog ==
 
-= 1.2.1 =
+= 1.2.2 =
 * Fixed: **the document's heading appeared again as the first line of the post.** The title is taken from the first Heading 1 *or* Heading 2, but only a Heading 1 was ever removed from the body — so a document whose top heading was Heading 2 ended up with that heading repeated directly under the identical post title. Whichever heading supplies the title is now the one removed; later headings of the same level are untouched.
 * Added: **Settings → Title From Filename**, with three choices for how a filename becomes a title when a document has no heading to take one from: sentence case ("Annual report for the board", the new default), Title Case ("Annual Report for the Board"), or left as written. It used to be "Annual Report For The Board" always, capitalising every word including *for* and *the*, which matches no house style. Sentence case never lowercases anything — it capitalises the first word and leaves the rest as typed, so `meeting-with-John-Smith.docx` stays "Meeting with John Smith" and `report-NHS.docx` keeps NHS. A document that has a heading keeps that heading's capitalisation exactly as you wrote it; this setting only affects titles taken from a filename.
+* Note: a document with a heading is unaffected by the new setting, and Markdown import is unchanged. The same two fixes ship in DocxToWP Pro 1.2.10.
+
+= 1.2.1 =
 * Fixed: **headings in some Word documents imported as ordinary paragraphs**, even though the author had applied genuine Heading styles throughout. The importer recognised a heading only when the style's internal ID was literally `Heading1`…`Heading6`, and that ID is not stable: Word in German writes `berschrift1`, in French `Titre1`, in Spanish `Ttulo1`; Word also mints `Heading11` when a heading style is pasted between documents; and a custom style based on a heading has whatever ID its author gave it. The importer now reads the document's style definitions and resolves headings the way Word's own navigation pane does — by the style's canonical name, its outline level, or the heading it is based on — so all of those import as real headings. An outline level set directly on a paragraph is honoured too, and the built-in "TOC Heading" style correctly stays a paragraph.
 * Note: Word import is otherwise unchanged, and Markdown import is unchanged. The same fix ships in DocxToWP Pro 1.2.6.
 
@@ -169,8 +172,11 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 
 == Upgrade Notice ==
 
+= 1.2.2 =
+Stops a document's heading being repeated as the first line of the post, and adds a setting for how a filename becomes a title. Recommended for everyone.
+
 = 1.2.1 =
-Fixes Word headings importing as plain paragraphs, and a heading being repeated in the body. Adds a setting for how a filename becomes a title. Recommended for everyone.
+Fixes Word headings importing as plain paragraphs in documents from non-English Word or with custom heading styles. Recommended for everyone.
 
 = 1.2.0 =
 Adds Markdown (.md) import alongside .docx, with real Code blocks in the editor output. Word import is unchanged. Recommended for everyone.

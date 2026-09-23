@@ -1,10 +1,70 @@
 # Releasing to WordPress.org
 
-Current release: **1.2.1**. Update the version references below when cutting a
-new one, or run `../build-svn-release.ps1`, which reads the version out of the
-plugin header and refuses to run when readme.txt disagrees.
+Current release: **1.2.2**, not yet published. **1.2.1 is already live** on
+WordPress.org (published 19 September 2026), so everything below 1.2.1 in
+this file is history — do not re-tag it.
 
-## What is in 1.2.1
+Update the version references below when cutting a new one, or run
+`../build-svn-release.ps1`, which reads the version out of the plugin header
+and refuses to run when readme.txt disagrees.
+
+> **Check wordpress.org before choosing a version number.** Today's work was
+> briefly labelled 1.2.1 when 1.2.1 had already shipped. The published
+> version is one request away:
+>
+> ```powershell
+> curl.exe "https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request%5Bslug%5D=docxtowp" | ConvertFrom-Json | Select-Object version, tested, last_updated
+> ```
+
+## What is in 1.2.2
+
+Two fixes, both from one Pro customer's email, plus the Pro descriptions.
+
+```
+includes/class-dtpost-parser.php   MOD  the heading the title came from is the
+                                        heading removed from the body; the
+                                        filename fallback goes through
+                                        DTPost_Title
+includes/class-dtpost-title.php    NEW  sentence case / Title Case / as-written
+admin/settings-page.php            MOD  Title From Filename select + sanitise
+docxtopost.php                     MOD  requires the new class; registers
+                                        dtpost_filename_title_case default
+tests/test-title.php               NEW  26 checks over the three modes
+tests/test-headings.php            MOD  5 checks for the duplication fix
+readme.txt / README.md             MOD  changelog, stable tag, tested up to
+                                        7.1.2, six Pro pillars
+admin/upgrade-page.php             MOD  3 pillars -> 6
+admin/bulk-page.php                MOD  Markdown notebooks + their images
+```
+
+A document whose top heading was Heading 2 had that heading repeated as the
+first line of the post: the title is taken from the first h1 *or* h2 but only
+an h1 was ever removed. And the filename fallback used `ucwords()`, giving
+"Annual Report For The Board" — no house style capitalises every word. Both
+ship in DocxToWP Pro 1.2.10; keep the two plugins in step.
+
+Before tagging:
+
+```powershell
+php tests/test-headings.php      # expect "16 passed, 0 failed."
+php tests/test-title.php         # expect "26 passed, 0 failed."
+php tests/test-markdown.php      # expect "54 passed, 0 failed."
+php -l includes/class-dtpost-parser.php; php -l includes/class-dtpost-title.php
+```
+
+On a real site: import a .docx whose top heading is **Heading 2** and confirm
+that heading is not repeated under the title. Then import one with no heading
+at all and check the title reads as a sentence, not As A Headline. Then:
+
+```powershell
+cd D:\DEV\htdocs\docxtowp
+.\build-svn-release.ps1 -SvnPath D:\DEV\svn-docxtowp -Tag 1.2.2
+cd D:\DEV\svn-docxtowp
+svn status                       # expect A for the two new files and tags/1.2.2
+svn commit -m "Release 1.2.2 - heading no longer duplicated, filename title case setting" --username nagarajdev
+```
+
+## What was in 1.2.1  (published 19 September 2026)
 
 One fix, from a Pro customer's report, and nothing else.
 
@@ -28,25 +88,6 @@ matched the style *ID*. It now reads `word/styles.xml`. Same fix as DocxToWP
 Pro 1.2.6 (`docxtowp/includes/class-dwp-parser.php`), where it has the extra
 `probe_title()` path; keep the two in step.
 
-Before tagging:
-
-```powershell
-php tests/test-headings.php      # expect "11 passed, 0 failed."
-php tests/test-markdown.php      # expect "54 passed, 0 failed."
-php -l includes/class-dtpost-parser.php
-```
-
-On a real site: import a .docx you know has headings and open it in the
-block editor — every heading is a Heading block. If you have a document from
-a non-English Word, that is the one to test. Then:
-
-```powershell
-cd D:\DEV\htdocs\docxtowp
-.\build-svn-release.ps1 -SvnPath D:\DEV\svn-docxtowp -Tag 1.2.1
-cd D:\DEV\svn-docxtowp
-svn status                       # expect A for tests/test-headings.php and tags/1.2.1
-svn commit -m "Release 1.2.1 - recognise headings by style name and outline level" --username nagarajdev
-```
 
 ## What is in 1.2.0
 
