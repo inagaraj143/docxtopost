@@ -65,18 +65,19 @@ $pillars = array(
 		),
 	),
 	/*
-	 * Not released yet, and labelled as such.
+	 * Shipped in Pro 1.3.0 on 25 September 2026, so this is written in the
+	 * present tense.
 	 *
-	 * This plugin ships frozen to WordPress.org and sits on people's sites
-	 * until they update, so a feature described in the present tense before
-	 * it is downloadable becomes a false claim the moment a date slips — and
-	 * one that cannot be corrected for weeks. The label is deliberately a
-	 * version rather than a date for the same reason: "1.3.0" stays true
-	 * whenever it lands.
+	 * It was labelled "coming in Pro 1.3.0" until then, and anything added
+	 * here before it is downloadable should be labelled the same way: this
+	 * plugin ships frozen to WordPress.org and sits on people's sites until
+	 * they update, so a premature claim cannot be corrected for weeks. Label
+	 * with a version rather than a date — a version stays true whenever it
+	 * lands.
 	 */
 	array(
 		'title' => __( 'Smart image optimization', 'docxtowp' ),
-		'lead'  => __( 'Coming in Pro 1.3.0: smaller images, without a second plugin.', 'docxtowp' ),
+		'lead'  => __( 'Smaller images, without a second plugin.', 'docxtowp' ),
 		'points' => array(
 			__( 'JPEG and PNG images from your documents are converted to WebP as they are imported.', 'docxtowp' ),
 			__( 'Only when the WebP is genuinely smaller — photographs shrink a lot, while flat logos and diagrams keep their original format.', 'docxtowp' ),
