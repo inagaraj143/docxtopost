@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.2
+Stable tag:        1.2.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,10 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 4. Settings — file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.3 =
+* Changed: the Pro description no longer says Smart image optimization is "coming in Pro 1.3.0". It shipped in DocxToWP Pro 1.3.0 on 25 September 2026, so the readme and the Upgrade page now describe it in the present tense.
+* Note: nothing functional changed. Importing, settings and Markdown import behave exactly as they did in 1.2.2.
 
 = 1.2.2 =
 * Fixed: **the document's heading appeared again as the first line of the post.** The title is taken from the first Heading 1 *or* Heading 2, but only a Heading 1 was ever removed from the body — so a document whose top heading was Heading 2 ended up with that heading repeated directly under the identical post title. Whichever heading supplies the title is now the one removed; later headings of the same level are untouched.

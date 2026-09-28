@@ -1,22 +1,61 @@
 # Releasing to WordPress.org
 
-Current release: **1.2.2**, not yet published. **1.2.1 is already live** on
-WordPress.org (published 19 September 2026), so everything below 1.2.1 in
+Current release: **1.2.3**, not yet published. **1.2.2 is already live** on
+WordPress.org (published 23 September 2026), so everything below 1.2.3 in
 this file is history — do not re-tag it.
 
 Update the version references below when cutting a new one, or run
 `../build-svn-release.ps1`, which reads the version out of the plugin header
 and refuses to run when readme.txt disagrees.
 
-> **Check wordpress.org before choosing a version number.** Today's work was
-> briefly labelled 1.2.1 when 1.2.1 had already shipped. The published
-> version is one request away:
+> **Check wordpress.org before choosing a version number, and do not trust
+> the line above.** It has been wrong twice. Work was once labelled 1.2.1
+> when 1.2.1 had already shipped; and this file still read "1.2.2, not yet
+> published" on 28 September, five days after 1.2.2 went live — because
+> publishing happens by hand in SVN and nothing makes it update this file.
+> The published version is one request away, and it is the only source that
+> cannot go stale:
 >
 > ```powershell
 > curl.exe "https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request%5Bslug%5D=docxtowp" | ConvertFrom-Json | Select-Object version, tested, last_updated
 > ```
+>
+> Note the slug is **`docxtowp`**, not `docxtopost`. The local folder was
+> renamed; a published WordPress.org slug cannot be.
 
-## What is in 1.2.2
+## What is in 1.2.3
+
+Description only. No code path changed, and no test needs re-running.
+
+```
+readme.txt / README.md             MOD  changelog, stable tag, and the Pro
+                                        pillar drops "(coming in Pro 1.3.0)"
+admin/upgrade-page.php             MOD  same label dropped from the pillar
+                                        lead; the comment above it now states
+                                        the rule for the next unreleased
+                                        feature rather than describing this one
+docxtopost.php                     MOD  version only
+```
+
+DocxToWP Pro 1.3.0 shipped on 25 September 2026, so Smart image optimization
+is no longer forthcoming and the free plugin should stop saying it is. This is
+the whole release: one commit, `a38ea73`, made two days after 1.2.2 went live.
+
+Worth shipping on its own rather than waiting for the next fix, for two
+reasons. The live readme currently advertises a Pro feature as "coming" when a
+customer who clicks through can already buy it. And the directory's search
+ranking notices `last_updated`, so a description correction that was going to
+happen anyway is better spent as its own bump than folded into a later one.
+
+No pre-flight beyond the lint — there is no behaviour to test:
+
+```powershell
+php -l docxtopost.php
+```
+
+Then stage and commit as in Step 2 onward, with `-Tag 1.2.3`.
+
+## What is in 1.2.2  (published 23 September 2026)
 
 Two fixes, both from one Pro customer's email, plus the Pro descriptions.
 
@@ -43,7 +82,10 @@ an h1 was ever removed. And the filename fallback used `ucwords()`, giving
 "Annual Report For The Board" — no house style capitalises every word. Both
 ship in DocxToWP Pro 1.2.10; keep the two plugins in step.
 
-Before tagging:
+Already published — **do not re-run the staging below for 1.2.2.** It is kept
+as the worked example, because the next release repeats it with a new tag.
+
+The checks that were run before tagging:
 
 ```powershell
 php tests/test-headings.php      # expect "16 passed, 0 failed."
@@ -54,7 +96,8 @@ php -l includes/class-dtpost-parser.php; php -l includes/class-dtpost-title.php
 
 On a real site: import a .docx whose top heading is **Heading 2** and confirm
 that heading is not repeated under the title. Then import one with no heading
-at all and check the title reads as a sentence, not As A Headline. Then:
+at all and check the title reads as a sentence, not As A Headline. Then the
+staging and commit, which for 1.2.2 was:
 
 ```powershell
 cd D:\DEV\htdocs\docxtowp
