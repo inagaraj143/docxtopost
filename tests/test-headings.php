@@ -37,6 +37,7 @@ function is_wp_error( mixed $t ): bool { return $t instanceof WP_Error; }
 class DTPost_Image { public function __call( string $n, array $a ): int { return 0; } }
 
 require dirname( __DIR__ ) . '/includes/class-dtpost-title.php';
+require dirname( __DIR__ ) . '/includes/class-dtpost-embeds.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-parser.php';
 
 // ── Fixture builder ─────────────────────────────────────────────────────────

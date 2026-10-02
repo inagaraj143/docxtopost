@@ -29,6 +29,7 @@ if ( isset( $_POST['dtpost_settings_nonce'] ) && wp_verify_nonce( sanitize_key( 
 		'dtpost_filename_title_case',
 		in_array( $new_title_case, DTPost_Title::modes(), true ) ? $new_title_case : DTPost_Title::SENTENCE
 	);
+	update_option( 'dtpost_convert_embeds', isset( $_POST['dtpost_convert_embeds'] ) ? 1 : 0 );
 
 	// Save default category.
 	update_option( 'dtpost_default_category', absint( $_POST['dtpost_default_category'] ?? 1 ) );
@@ -139,6 +140,23 @@ $status_options = array(
 				</p>
 			</td>
 		</tr>
+		<tr>
+			<th><?php esc_html_e( 'Video Embeds', 'docxtowp' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="dtpost_convert_embeds" value="1"
+						<?php checked( 1, get_option( 'dtpost_convert_embeds', 1 ) ); ?>>
+					<?php esc_html_e( 'Turn YouTube and Vimeo links into embedded players', 'docxtowp' ); ?>
+				</label>
+				<p class="description">
+					<?php esc_html_e( 'A YouTube or Vimeo link on a line of its own becomes a playable video. A link inside a sentence stays a link, because turning "watch the demo" into a video player mid-paragraph would break the sentence around it.', 'docxtowp' ); ?>
+				</p>
+				<p class="description">
+					<?php esc_html_e( 'Video frames copied out of YouTube or Vimeo are converted the same way. Frames from anywhere else are removed rather than trusted: WordPress strips them before saving in any case, and a document should not be able to put arbitrary third-party code on your site.', 'docxtowp' ); ?>
+				</p>
+			</td>
+		</tr>
+
 		<tr>
 			<th><label for="dtpost_filename_title_case"><?php esc_html_e( 'Title From Filename', 'docxtowp' ); ?></label></th>
 			<td>

@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish — no copy-paste needed.
- * Version:           1.2.3
+ * Version:           1.2.4
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.3');
+define('DTPOST_VERSION', '1.2.4');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -66,6 +66,7 @@ if (file_exists(DTPOST_PLUGIN_DIR . 'vendor/autoload.php')) {
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-permissions.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-image.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-title.php';
+require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-embeds.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-parser.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/lib/Parsedown.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-markdown.php';
@@ -99,6 +100,9 @@ function dtpost_activate(): void
 		'dtpost_content_format' => 'auto',
 		// Only used when a document has no heading to take a title from.
 		'dtpost_filename_title_case' => DTPost_Title::SENTENCE,
+		// On by default: a pasted video URL that stays a link is the
+		// surprising outcome, not the embed.
+		'dtpost_convert_embeds'      => 1,
 	);
 
 	foreach ($defaults as $key => $value) {

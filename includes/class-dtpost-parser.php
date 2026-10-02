@@ -95,6 +95,12 @@ class DTPost_Parser {
 			}
 
 			$html    = $this->clean_html( $html );
+
+		// Video URLs and recognised iframes become embed blocks. After
+		// clean_html so it works on finished markup, and before the title
+		// is taken, so a document opening with a video does not have the
+		// block treated as its heading.
+		$html    = DTPost_Embeds::apply( $html );
 			$title   = $this->extract_title( $html, $file_path, $original_name );
 			$content = $this->remove_title_heading( $html );
 
@@ -145,6 +151,12 @@ class DTPost_Parser {
 		}
 
 		$html    = $this->clean_html( $html );
+
+		// Video URLs and recognised iframes become embed blocks. After
+		// clean_html so it works on finished markup, and before the title
+		// is taken, so a document opening with a video does not have the
+		// block treated as its heading.
+		$html    = DTPost_Embeds::apply( $html );
 		$title   = $this->extract_title( $html, $file_path, $original_name );
 		$content = $this->remove_title_heading( $html );
 

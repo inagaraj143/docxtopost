@@ -76,12 +76,43 @@ class DTPost_Blocks {
 			return '' === $text ? '' : self::block( 'paragraph', [], '<p>' . esc_html( $text ) . '</p>' );
 		}
 
+		/*
+		 * A comment node is passed through untouched, because the only
+		 * comments reaching here are block delimiters.
+		 *
+		 * DTPost_Embeds turns a video URL into a `<!-- wp:embed -->` block
+		 * before this runs, so that markup is already serialized and must not
+		 * be serialized again. Without this branch it fell into the catch-all
+		 * below and the entire embed was silently deleted — the video
+		 * disappeared from the post with nothing to show why.
+		 */
+		if ( XML_COMMENT_NODE === $node->nodeType ) {
+			$text = trim( (string) $node->textContent );
+			return str_starts_with( $text, 'wp:' ) || str_starts_with( $text, '/wp:' )
+				? '<!-- ' . $text . ' -->' . "\n"
+				: '';
+		}
+
 		if ( XML_ELEMENT_NODE !== $node->nodeType ) {
 			return '';
 		}
 
 		/** @var DOMElement $node */
 		$tag = strtolower( $node->nodeName );
+
+		/*
+		 * An embed's <figure> is passed through as-is.
+		 *
+		 * DTPost_Embeds has already wrapped it in `<!-- wp:embed -->`
+		 * delimiters, so sending it down the switch below would wrap it in a
+		 * `wp:html` block *inside* the embed block — two block types nested in
+		 * each other, which the editor reads as a broken embed. This is the
+		 * second half of the comment-node branch above: that keeps the
+		 * delimiters, this keeps what sits between them.
+		 */
+		if ( 'figure' === $tag && str_contains( (string) $node->getAttribute( 'class' ), 'wp-block-embed' ) ) {
+			return trim( self::outer( $node ) ) . "\n";
+		}
 
 		switch ( true ) {
 			case preg_match( '/^h[1-6]$/', $tag ) === 1:

@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.3
+Stable tag:        1.2.4
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,13 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 4. Settings — file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.4 =
+* Added: **a YouTube or Vimeo link on a line of its own becomes a playable video.** Paste a video URL into a document, import it, and the post has the video in it rather than a link to it. Works with youtube.com/watch, youtu.be, YouTube Shorts, the mobile m.youtube.com address and vimeo.com, including links Word has turned into hyperlinks for you.
+* Added: video frames copied out of YouTube or Vimeo are converted the same way, so a document built by pasting an embed code gets the same result as one built by pasting a link.
+* Added: **Settings -> Video Embeds**, on by default, to turn all of this off.
+* Note: a link inside a sentence stays a link. Only a paragraph containing nothing but the URL is converted, because replacing three words mid-sentence with a 16:9 player would wreck the paragraph around it.
+* Note: frames from anywhere else are removed rather than kept. WordPress does not allow the iframe tag in post content and deletes it when the post is saved, so converting the two providers we recognise and dropping the rest means a document can never put third-party code onto your site. The same feature ships in DocxToWP Pro 1.3.5.
 
 = 1.2.3 =
 * Changed: the Pro description no longer says Smart image optimization is "coming in Pro 1.3.0". It shipped in DocxToWP Pro 1.3.0 on 25 September 2026, so the readme and the Upgrade page now describe it in the present tense.
