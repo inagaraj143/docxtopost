@@ -58,7 +58,10 @@ $capabilities = array(
 ?>
 <div class="wrap dtpost-upgrade-wrap">
 
-	<h1><?php esc_html_e( 'Bulk Import', 'docxtowp' ); ?></h1>
+	<div class="dtpost-page-title">
+		<h1><?php esc_html_e( 'Bulk Import', 'docxtowp' ); ?></h1>
+		<?php dtpost_header_actions( 'header-bulk' ); ?>
+	</div>
 
 	<div class="dtpost-pro-banner">
 		<span class="dtpost-pro-card__badge"><?php esc_html_e( 'Pro', 'docxtowp' ); ?></span>
@@ -70,6 +73,30 @@ $capabilities = array(
 	<p class="dtpost-upgrade__standfirst">
 		<?php esc_html_e( 'The free importer is built around one document: upload, check it, publish. Bulk import is built around the case where checking each one individually is the actual work.', 'docxtowp' ); ?>
 	</p>
+
+	<?php
+	/*
+	 * The CTA, above the explanation rather than after it.
+	 *
+	 * Someone who opened a screen called "Bulk Import (Pro)" has already
+	 * decided they are interested. Making them read four sections and scroll
+	 * past two feature grids before being shown where to buy puts the answer
+	 * furthest from the person most ready to act on it. The detail is still
+	 * below for anyone who wants it.
+	 */
+	?>
+	<section class="dtpost-upgrade__cta dtpost-upgrade__cta--top">
+		<h2><?php esc_html_e( 'Scheduling is a Pro feature', 'docxtowp' ); ?></h2>
+		<p><?php esc_html_e( 'Pricing, the full feature list and the changelog are on the site.', 'docxtowp' ); ?></p>
+		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'bulk-teaser' ) ); ?>" target="_blank" rel="noopener noreferrer">
+			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
+		</a>
+		<p class="dtpost-upgrade__note">
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dtpost-upgrade' ) ); ?>">
+				<?php esc_html_e( 'Or see everything else Pro adds', 'docxtowp' ); ?>
+			</a>
+		</p>
+	</section>
 
 	<?php if ( $count >= 3 ) : ?>
 	<p class="dtpost-upgrade__context">
@@ -99,13 +126,22 @@ $capabilities = array(
 		</p>
 	</section>
 
+	<?php
+	/*
+	 * The same CTA repeated at the foot of the page.
+	 *
+	 * Not a duplicate by accident: the one at the top catches the person who
+	 * arrived already convinced, this one catches the person the page just
+	 * convinced, without making them scroll back up to act on it.
+	 */
+	?>
 	<section class="dtpost-upgrade__cta">
-		<h2><?php esc_html_e( 'Scheduling is a Pro feature', 'docxtowp' ); ?></h2>
+		<h2><?php esc_html_e( 'Ready to import a folder at a time?', 'docxtowp' ); ?></h2>
 		<p><?php esc_html_e( 'Pricing, the full feature list and the changelog are on the site.', 'docxtowp' ); ?></p>
-		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'bulk-teaser' ) ); ?>" target="_blank" rel="noopener noreferrer">
+		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'bulk-teaser-foot' ) ); ?>" target="_blank" rel="noopener noreferrer">
 			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
 		</a>
-		<p class="dtpost-upgrade__note" style="margin-top:16px;">
+		<p class="dtpost-upgrade__note">
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=dtpost-upgrade' ) ); ?>">
 				<?php esc_html_e( 'Or see everything else Pro adds', 'docxtowp' ); ?>
 			</a>

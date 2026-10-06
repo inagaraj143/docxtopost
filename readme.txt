@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.5
+Stable tag:        1.2.6
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,12 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.6 =
+* Added: **Upgrade and Leave a review buttons in the header** of the import, Bulk Import and Upgrade screens, where they are on screen the moment the page loads. Both already existed and both were easy to miss: Pro was a sidebar card that falls below the fold on a short window, and the review ask was a one-time dismissible notice, so anyone who swiped it away had nowhere to go back to it.
+* Changed: **the Pro call to action now appears at the top of the Bulk Import and Upgrade screens**, not only at the bottom. Someone who opens a screen called "Bulk Import (Pro)" has already decided they are interested, and making them scroll past every feature section to find where to buy puts the answer furthest from the person most ready to act on it. The detail is still below, and the Upgrade screen keeps the "Already bought Pro?" block above the sales pitch so a paying customer is helped before being sold to again.
+* Fixed: the "Or see everything else Pro adds" link rendered left of centre inside a centred panel. It carried a max-width with no automatic margins, so the text centred inside a box that sat hard left.
+* Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.5.
 
 = 1.2.5 =
 * Added: **"Already bought Pro? Start here"** on the Upgrade screen, above the feature list. Pro is a separate plugin rather than a key that unlocks this one, and nothing on that screen said so. People who had already paid came looking for a licence box, found a sales pitch, and had to write in.

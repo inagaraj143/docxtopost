@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.2.5
+ * Version:           1.2.6
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.5');
+define('DTPOST_VERSION', '1.2.6');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -163,6 +163,45 @@ function dtpost_use_block_format(string $post_type): bool
  *
  * @param string $placement Short slug for the spot the link sits in.
  */
+/**
+ * Upgrade and review links, for the header row of an admin screen.
+ *
+ * Shared rather than pasted into each page: there are three screens that want
+ * this row, and three copies is three places for the review URL to go stale.
+ *
+ * Both links already existed elsewhere and both were easy to miss. Pro was a
+ * sidebar card that falls below the fold on a short window, and the review ask
+ * was a one-time dismissible notice, so anyone who swiped it away had nowhere
+ * to go back to it. This row is on screen the moment the page loads.
+ *
+ * The review link is deliberately the quieter of the two. Asking for a review
+ * is a favour, and styling it as loudly as the thing that makes money reads
+ * badly.
+ *
+ * @param string $placement utm_medium for the Pro link, so the source screen
+ *                          is distinguishable in analytics.
+ */
+function dtpost_header_actions(string $placement): void
+{
+?>
+	<div class="dtpost-page-title__actions">
+		<a class="dtpost-header-link dtpost-header-link--pro"
+			href="<?php echo esc_url(dtpost_pro_url($placement)); ?>"
+			target="_blank" rel="noopener noreferrer">
+			<span class="dtpost-header-link__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
+			<?php esc_html_e('Upgrade', 'docxtowp'); ?>
+		</a>
+
+		<a class="dtpost-header-link"
+			href="https://wordpress.org/support/plugin/docxtowp/reviews/#new-post"
+			target="_blank" rel="noopener noreferrer">
+			<span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
+			<?php esc_html_e('Leave a review', 'docxtowp'); ?>
+		</a>
+	</div>
+<?php
+}
+
 function dtpost_pro_url(string $placement = 'plugin'): string
 {
 	return add_query_arg(

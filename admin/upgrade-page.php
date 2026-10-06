@@ -101,10 +101,15 @@ $also = array(
 ?>
 <div class="wrap dtpost-upgrade-wrap">
 
-	<h1><?php esc_html_e( 'DocxToPost Pro', 'docxtowp' ); ?></h1>
+	<div class="dtpost-page-title">
+		<h1><?php esc_html_e( 'DocxToPost Pro', 'docxtowp' ); ?></h1>
+		<?php dtpost_header_actions( 'header-upgrade' ); ?>
+	</div>
+
 	<p class="dtpost-upgrade__standfirst">
 		<?php esc_html_e( 'The free plugin is a complete importer for one document at a time. Pro is what you want once there is a folder of them.', 'docxtowp' ); ?>
 	</p>
+
 
 	<?php if ( $count >= 3 ) : ?>
 	<p class="dtpost-upgrade__context">
@@ -180,6 +185,26 @@ $also = array(
 			</a>
 		</p>
 	</div>
+
+	<?php
+	/*
+	 * The CTA above the pitch as well as below it.
+	 *
+	 * This screen is reached by clicking "Upgrade", so the visitor has already
+	 * asked the question this page answers. Burying the buy button under five
+	 * sections of feature list answers it last.
+	 *
+	 * It sits below the "already bought Pro?" block on purpose: someone who
+	 * has paid should not be sold to again before being helped.
+	 */
+	?>
+	<section class="dtpost-upgrade__cta dtpost-upgrade__cta--top">
+		<h2><?php esc_html_e( 'Everything here comes with Pro', 'docxtowp' ); ?></h2>
+		<p><?php esc_html_e( 'Pricing, a full feature comparison and the changelog are all on the site.', 'docxtowp' ); ?></p>
+		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page-top' ) ); ?>" target="_blank" rel="noopener noreferrer">
+			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
+		</a>
+	</section>
 
 	<div class="dtpost-upgrade__pillars">
 		<?php foreach ( $pillars as $pillar ) : ?>

@@ -16,6 +16,8 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 	<div class="dtpost-page-title">
 		<h1><?php esc_html_e( 'DocxToPost', 'docxtowp' ); ?></h1>
 		<p><?php esc_html_e( 'Convert DOCX or Markdown to a post, page or custom post type, no copy-paste', 'docxtowp' ); ?></p>
+
+		<?php dtpost_header_actions( 'header-upload' ); ?>
 	</div>
 
 	<?php if ( $has_session ) : ?>
