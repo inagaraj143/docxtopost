@@ -5,7 +5,7 @@
  *     php tests/test-title.php
  *
  * A customer reported the old ucwords() behaviour as wrong for UK
- * grammar — "Annual Report For The Board". He was right, and so would an
+ * grammar, "Annual Report For The Board". He was right, and so would an
  * American have been: no style guide capitalises every word. The fix is a
  * setting, and the point of these checks is that each mode does what its
  * label in Settings promises, and that none of them destroys capitalisation
@@ -33,7 +33,7 @@ $s = static fn( string $f ): string => DTPost_Title::from_filename( $f, DTPost_T
 $t = static fn( string $f ): string => DTPost_Title::from_filename( $f, DTPost_Title::TITLE );
 $r = static fn( string $f ): string => DTPost_Title::from_filename( $f, DTPost_Title::RAW );
 
-echo "  Sentence case — the default, and what the customer asked for\n";
+echo "  Sentence case: the default, and what the customer asked for\n";
 check( 'the reported case',                     'Annual report for the board' === $s( 'annual-report-for-the-board.docx' ), $s( 'annual-report-for-the-board.docx' ) );
 check( 'underscores and dots are separators',   'Q3 results final' === $s( 'q3_results.final.md' ), $s( 'q3_results.final.md' ) );
 check( 'NEVER lowercases a proper noun',        'Meeting with John Smith' === $s( 'meeting-with-John-Smith.docx' ), $s( 'meeting-with-John-Smith.docx' ) );
@@ -42,7 +42,7 @@ check( 'a leading acronym is left alone',       'NHS annual report' === $s( 'NHS
 check( 'a deliberately Title Cased filename survives', 'Annual Report For The Board' === $s( 'Annual-Report-For-The-Board.docx' ), $s( 'Annual-Report-For-The-Board.docx' ) );
 check( 'already sentence case: unchanged',      'Annual report' === $s( 'Annual-report.docx' ), $s( 'Annual-report.docx' ) );
 
-echo "\n  Title Case — for anyone who wants it\n";
+echo "\n  Title Case, for anyone who wants it\n";
 check( 'minor words stay lowercase',            'Annual Report for the Board' === $t( 'annual-report-for-the-board.docx' ), $t( 'annual-report-for-the-board.docx' ) );
 check( 'first word capitalised even if minor',  'The Board Meeting' === $t( 'the-board-meeting.docx' ), $t( 'the-board-meeting.docx' ) );
 check( 'last word capitalised even if minor',   'What We Are Working On' === $t( 'what-we-are-working-on.docx' ), $t( 'what-we-are-working-on.docx' ) );

@@ -66,7 +66,7 @@ check( 'vimeo.com/ID',
 check( 'player.vimeo.com/video/ID',
 	'https://vimeo.com/123456789' === embedded( '<p>https://player.vimeo.com/video/123456789</p>' ) );
 
-echo "\nIframes — converted, never kept\n";
+echo "\nIframes, converted, never kept\n";
 
 $iframe = '<p><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" width="560" height="315"></iframe></p>';
 check( 'YouTube iframe becomes an embed',

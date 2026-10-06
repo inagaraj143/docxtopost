@@ -106,7 +106,7 @@ function check( string $label, bool $ok, string $detail = '' ): void {
 
 $parser = new DTPost_Parser();
 
-// 1. English Word — the only case the old parser handled.
+// 1. English Word, the only case the old parser handled.
 $f = make_docx(
 	[ [ 'Heading1', 'Title' ], [ 'Heading2', 'Section' ], [ 'Normal', 'Body.' ] ],
 	[ [ 'id' => 'Heading1', 'name' => 'heading 1' ], [ 'id' => 'Heading2', 'name' => 'heading 2' ], [ 'id' => 'Normal', 'name' => 'Normal' ] ]
@@ -114,7 +114,7 @@ $f = make_docx(
 $r = $parser->parse( $f, 'en.docx' );
 check( 'English Word: Heading1/Heading2 → h1 title, h2, p',      'Title' === $r['title'] && 'h2 p' === tags( $r['content'] ), tags( $r['content'] ) );
 
-// 2. German Word — localised style IDs, canonical English names.
+// 2. German Word, localised style IDs, canonical English names.
 $f = make_docx(
 	[ [ 'berschrift1', 'Titel' ], [ 'berschrift2', 'Abschnitt' ], [ 'berschrift3', 'Unterabschnitt' ], [ 'Standard', 'Text.' ] ],
 	[ [ 'id' => 'berschrift1', 'name' => 'heading 1' ], [ 'id' => 'berschrift2', 'name' => 'heading 2' ], [ 'id' => 'berschrift3', 'name' => 'heading 3' ], [ 'id' => 'Standard', 'name' => 'Normal' ] ]
@@ -170,7 +170,7 @@ check( 'TOC Heading (basedOn Heading1, outlineLvl 9) stays a paragraph', 'Real t
 // 8. Outline level set directly on the paragraph, no style at all.
 //
 // A Heading 1 leads so the outline-level paragraph is not itself taken as
-// the title and removed — this fixture is about heading *detection*.
+// the title and removed. This fixture is about heading *detection*.
 $f = make_docx(
 	[ [ 'Heading1', 'Doc title' ], [ '', 'Direct level', '1' ], [ '', 'Body.' ] ],
 	[ [ 'id' => 'Heading1', 'name' => 'heading 1' ], [ 'id' => 'Normal', 'name' => 'Normal' ] ]
@@ -178,7 +178,7 @@ $f = make_docx(
 $r = $parser->parse( $f, 'direct.docx' );
 check( 'Paragraph-level outlineLvl 1 (no pStyle) → h2',            'h2 p' === tags( $r['content'] ), tags( $r['content'] ) );
 
-// 9. No styles.xml at all — the pre-1.3.2 behaviour must survive.
+// 9. No styles.xml at all, the pre-1.3.2 behaviour must survive.
 $f = make_docx( [ [ 'Heading3', 'Old way' ], [ 'Normal', 'Body.' ] ], null );
 $r = $parser->parse( $f, 'nostyles.docx' );
 check( 'No styles.xml: Heading3 ID still → h3',                     'h3 p' === tags( $r['content'] ), tags( $r['content'] ) );

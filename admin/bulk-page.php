@@ -2,7 +2,7 @@
 /**
  * Admin page: what bulk import does, and why it is not in the free plugin.
  *
- * Deliberately contains no bulk import interface — not even a disabled one.
+ * Deliberately contains no bulk import interface, not even a disabled one.
  * Guideline 5 prohibits shipping functionality that is present but locked
  * until payment; it explicitly permits describing a paid feature. A drop zone
  * that refused to accept files would be the former. This page is prose.
@@ -20,11 +20,11 @@ $count = dtpost_conversion_count();
 $capabilities = array(
 	array(
 		'title' => __( 'Up to 100 documents per job', 'docxtowp' ),
-		'body'  => __( 'Drag in a folder of .docx or .md files. Drop images in alongside them and each one is matched to its document by filename — chapter-01.jpg becomes the featured image for chapter-01.docx.', 'docxtowp' ),
+		'body'  => __( 'Drag in a folder of .docx or .md files. Drop images in alongside them and each one is matched to its document by filename, chapter-01.jpg becomes the featured image for chapter-01.docx.', 'docxtowp' ),
 	),
 	array(
 		'title' => __( 'Markdown notebooks arrive with their images', 'docxtowp' ),
-		'body'  => __( 'Drop the image folder in with your .md files and every image referenced by a relative path is matched by its filename and placed in the post — a Joplin _resources folder, an Obsidian attachments folder or a Notion export, moved across in one run instead of image by image in the editor.', 'docxtowp' ),
+		'body'  => __( 'Drop the image folder in with your .md files and every image referenced by a relative path is matched by its filename and placed in the post: a Joplin _resources folder, an Obsidian attachments folder or a Notion export, moved across in one run instead of image by image in the editor.', 'docxtowp' ),
 	),
 	array(
 		'title' => __( 'Built for shared hosting', 'docxtowp' ),
@@ -44,7 +44,7 @@ $capabilities = array(
 	),
 	array(
 		'title' => __( 'Undo the whole thing', 'docxtowp' ),
-		'body'  => __( 'One click trashes exactly the posts that job created — tracked by ID, not guessed from titles or dates. Every past job stays in the import history with the same rollback available.', 'docxtowp' ),
+		'body'  => __( 'One click trashes exactly the posts that job created: tracked by ID, not guessed from titles or dates. Every past job stays in the import history with the same rollback available.', 'docxtowp' ),
 	),
 	array(
 		'title' => __( 'Decide what happens to duplicates', 'docxtowp' ),
@@ -63,7 +63,7 @@ $capabilities = array(
 	<div class="dtpost-pro-banner">
 		<span class="dtpost-pro-card__badge"><?php esc_html_e( 'Pro', 'docxtowp' ); ?></span>
 		<p>
-			<?php esc_html_e( 'Bulk import is part of DocxToPost Pro. This page describes what it does — the free plugin converts one document at a time, which it will keep doing whether or not you upgrade.', 'docxtowp' ); ?>
+			<?php esc_html_e( 'Bulk import is part of DocxToPost Pro. This page describes what it does: the free plugin converts one document at a time, which it will keep doing whether or not you upgrade.', 'docxtowp' ); ?>
 		</p>
 	</div>
 
@@ -95,7 +95,7 @@ $capabilities = array(
 	<section class="dtpost-upgrade__also">
 		<h2><?php esc_html_e( 'Publishing 100 posts at once is usually not what you want', 'docxtowp' ); ?></h2>
 		<p style="margin:0 0 12px;color:#50575e;font-size:13px;line-height:1.6;">
-			<?php esc_html_e( 'So Pro can schedule a batch instead of publishing it. Set a start time and a spacing — every few hours, days, weeks or months — pick which weekdays are allowed, and every document gets its own publish slot. Weekends are excluded by default, and any single date can be overridden by hand without disturbing the rest of the sequence.', 'docxtowp' ); ?>
+			<?php esc_html_e( 'So Pro can schedule a batch instead of publishing it. Set a start time and a spacing (every few hours, days, weeks or months) pick which weekdays are allowed, and every document gets its own publish slot. Weekends are excluded by default, and any single date can be overridden by hand without disturbing the rest of the sequence.', 'docxtowp' ); ?>
 		</p>
 	</section>
 

@@ -28,12 +28,12 @@ class DTPost_Publisher {
 	 */
 	public function publish( array $data ): int|WP_Error {
 
-		// Resolve post type — allow any registered public post type.
+		// Resolve post type, allow any registered public post type.
 		$requested_type   = sanitize_key( $data['post_type'] ?? 'post' );
 		$public_types     = array_keys( get_post_types( array( 'public' => true ) ) );
 		$post_type        = in_array( $requested_type, $public_types, true ) ? $requested_type : 'post';
 
-		// Resolve post status — allow publish, draft, private, pending.
+		// Resolve post status: allow publish, draft, private, pending.
 		$requested_status = sanitize_key( $data['status'] ?? 'draft' );
 		$status           = in_array( $requested_status, $this->allowed_statuses, true )
 			? $requested_status

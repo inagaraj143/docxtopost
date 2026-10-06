@@ -122,7 +122,7 @@ class DTPost_Image {
 	private function load_wp_upload_functions(): void {
 		// WordPress permits requiring wp-admin includes from within functions,
 		// provided (a) require_once is used and (b) a function from that file
-		// is invoked immediately after loading it — per the plugin review guidelines.
+		// is invoked immediately after loading it, per the plugin review guidelines.
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			// Immediately use wp_check_filetype() (from file.php) to confirm the file

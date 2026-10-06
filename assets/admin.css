@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DocxToPost — Admin Styles
+   DocxToPost: Admin Styles
    Clean, modern, WP-native feel
    ========================================================================== */
 
@@ -711,7 +711,7 @@
 	background: rgba(0, 0, 0, .45);
 	z-index: 999999;
 	display: none;
-	/* hidden by default — JS adds .dtpost-modal-open */
+	/* hidden by default. JS adds .dtpost-modal-open */
 	align-items: center;
 	justify-content: center;
 	padding: 20px;
@@ -1271,7 +1271,7 @@
 	padding: 16px;
 }
 
-/* Status badge — used in log table rows */
+/* Status badge, used in log table rows */
 .dtpost-status-badge {
 	display: inline-block;
 	padding: 3px 10px;
@@ -1297,7 +1297,7 @@
 	color: #646970;
 }
 
-/* Status pill — legacy / alt usage */
+/* Status pill, legacy / alt usage */
 .dtpost-status-pill {
 	display: inline-block;
 	padding: 2px 8px;
@@ -1478,6 +1478,57 @@
 	border-left: 3px solid #2271b1;
 	font-size: 13px;
 	color: #1d2327;
+}
+
+/*
+ * The "already bought Pro" block.
+ *
+ * Deliberately the loudest thing on a page that is otherwise a sales pitch.
+ * Someone who has already paid and cannot find the licence box is the most
+ * frustrated person who will ever open this screen, and they should not have
+ * to read a feature list to be answered. Amber rather than the brand blue so
+ * it reads as "notice", not as another promotional panel.
+ */
+.dtpost-upgrade__bought {
+	margin: 26px 0 0;
+	padding: 18px 20px 20px;
+	background: #fcf9e8;
+	border: 1px solid #dba617;
+	border-left-width: 4px;
+	border-radius: 4px;
+}
+
+.dtpost-upgrade__bought h2 {
+	margin: 0 0 8px;
+	padding: 0;
+	font-size: 16px;
+	line-height: 1.3;
+	color: #1d2327;
+}
+
+.dtpost-upgrade__bought p {
+	font-size: 13px;
+	line-height: 1.6;
+	color: #3c434a;
+	max-width: 70em;
+}
+
+.dtpost-upgrade__steps {
+	margin: 12px 0 12px 20px;
+	padding: 0;
+	max-width: 70em;
+}
+
+.dtpost-upgrade__steps li {
+	margin: 0 0 7px;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #3c434a;
+}
+
+.dtpost-upgrade__bought-note {
+	font-style: italic;
+	color: #646970;
 }
 
 .dtpost-upgrade__pillars {
@@ -1710,7 +1761,7 @@
 	background: #fbfdff;
 }
 
-/* Destructive action — outlined rather than filled, because this sits one
+/* Destructive action, outlined rather than filled, because this sits one
    click from deleting the thing the user just made. */
 .dtpost-btn-danger {
 	background: #fff;

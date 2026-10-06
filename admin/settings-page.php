@@ -83,7 +83,7 @@ $status_options = array(
 );
 ?>
 <div class="wrap">
-<h1><?php esc_html_e( 'DocxToPost — Settings', 'docxtowp' ); ?></h1>
+<h1><?php esc_html_e( 'DocxToPost: Settings', 'docxtowp' ); ?></h1>
 
 <?php if ( $saved ) : ?>
 <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'docxtowp' ); ?></p></div>
@@ -163,13 +163,13 @@ $status_options = array(
 				<?php $dtpost_title_case = DTPost_Title::mode(); ?>
 				<select id="dtpost_filename_title_case" name="dtpost_filename_title_case">
 					<option value="<?php echo esc_attr( DTPost_Title::SENTENCE ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::SENTENCE ); ?>>
-						<?php esc_html_e( 'Sentence case — Annual report for the board', 'docxtowp' ); ?>
+						<?php esc_html_e( 'Sentence case. Annual report for the board', 'docxtowp' ); ?>
 					</option>
 					<option value="<?php echo esc_attr( DTPost_Title::TITLE ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::TITLE ); ?>>
-						<?php esc_html_e( 'Title Case — Annual Report for the Board', 'docxtowp' ); ?>
+						<?php esc_html_e( 'Title Case. Annual Report for the Board', 'docxtowp' ); ?>
 					</option>
 					<option value="<?php echo esc_attr( DTPost_Title::RAW ); ?>" <?php selected( $dtpost_title_case, DTPost_Title::RAW ); ?>>
-						<?php esc_html_e( 'Leave as written — annual report for the board', 'docxtowp' ); ?>
+						<?php esc_html_e( 'Leave as written, annual report for the board', 'docxtowp' ); ?>
 					</option>
 				</select>
 				<p class="description">

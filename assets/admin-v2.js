@@ -266,7 +266,7 @@
 			var cats = qsa('input[name="dtpost_category[]"]:checked').map(function(c) {
 				var lbl = c.closest('label');
 				return lbl ? (lbl.querySelector('.dtpost-cat-name') ? lbl.querySelector('.dtpost-cat-name').textContent.trim() : lbl.textContent.trim()) : '';
-			}).filter(Boolean).join(', ') || '—';
+			}).filter(Boolean).join(', ') || '-';
 			html += '<p><strong>Categories:</strong> ' + esc(cats) + '</p>';
 
 			if (modalBody)  modalBody.innerHTML  = html;
@@ -324,7 +324,7 @@
 					}
 				})
 				.catch(function(err) {
-					showNotice(DTPOST.strings.error + (err.message ? ' — ' + err.message : ''));
+					showNotice(DTPOST.strings.error + (err.message ? '-' + err.message : ''));
 					resetBtns();
 				});
 		}
@@ -426,7 +426,7 @@
 	}
 
 	/* =========================================================================
-	   SETTINGS PAGE — Clear Temp Files
+	   SETTINGS PAGE. Clear Temp Files
 	   ========================================================================= */
 	var clearTempBtn = qs('#dtpost-clear-temp');
 	if (clearTempBtn) {
@@ -477,7 +477,7 @@
 
 /* ── Undo an import ───────────────────────────────────────────────────────
    Trashes the post that was just created, so a first import feels
-   reversible. Trash, not delete — it is still recoverable afterwards.   */
+   reversible. Trash, not delete. It is still recoverable afterwards.   */
 (function () {
 	document.addEventListener('click', function (e) {
 		var btn = e.target.closest('[data-dtpost-trash]');

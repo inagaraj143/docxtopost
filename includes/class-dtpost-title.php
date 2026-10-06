@@ -2,7 +2,7 @@
 /**
  * Turns a filename into a post title.
  *
- * Used only when a document has no heading to take a title from — a .docx
+ * Used only when a document has no heading to take a title from, a .docx
  * with no Heading 1 or 2, a Markdown file with no `# Heading` and no front
  * matter title. A document that *has* a heading keeps that heading's
  * capitalisation exactly as the author wrote it; nothing here touches it.
@@ -15,14 +15,14 @@
  *
  * That is not any house style. US title case (AP, Chicago) lowercases short
  * prepositions and articles; UK usage generally prefers sentence case. A Pro
- * customer reported it as wrong for UK grammar, and he was right — but so
+ * customer reported it as wrong for UK grammar, and he was right, but so
  * would an American have been, for a different reason. Rather than pick a
  * nationality, the mode is a setting with a sensible default.
  *
  * ── Sentence case never lowercases anything ───────────────────────────────
  *
- * The obvious implementation — lowercase everything, then capitalise the
- * first letter — destroys information that was in the filename:
+ * The obvious implementation, lowercase everything, then capitalise the
+ * first letter, destroys information that was in the filename:
  *
  *     meeting-with-John-Smith.docx  ->  "Meeting with john smith"
  *     q3-results-NHS.docx           ->  "Q3 results nhs"
@@ -79,7 +79,7 @@ class DTPost_Title {
 	}
 
 	/**
-	 * Converts a filename — with or without its extension — to a title.
+	 * Converts a filename (with or without its extension) to a title.
 	 *
 	 * @param string      $filename `annual-report.docx` or `annual-report`.
 	 * @param string|null $mode     One of the class constants. Null reads the setting.

@@ -2,8 +2,8 @@
 /**
  * Parses Markdown files into clean HTML for DocxToPost.
  *
- * Produces the same shape as DTPost_Parser::parse() — a title and a body of
- * plain semantic HTML — so everything downstream (the preview editor,
+ * Produces the same shape as DTPost_Parser::parse(), a title and a body of
+ * plain semantic HTML, so everything downstream (the preview editor,
  * DTPost_Publisher, the SEO fields) is shared with the .docx path and needs
  * no idea where the content came from.
  *
@@ -14,7 +14,7 @@
  * uploaded with the job.
  *
  * The parsing itself is Parsedown (includes/lib/Parsedown.php): CommonMark
- * plus the GitHub extensions people actually use — tables, fenced code with
+ * plus the GitHub extensions people actually use, tables, fenced code with
  * a language hint, strikethrough, autolinked URLs.
  *
  * What this class adds on top:
@@ -22,7 +22,7 @@
  *   - YAML front matter is removed. A `title:` key becomes the post title
  *     and nothing else in it is read. Mapping slug, categories and dates
  *     from front matter is a separate feature, and half a mapping is worse
- *     than none — a silently ignored `categories:` line is a support ticket.
+ *     than none, a silently ignored `categories:` line is a support ticket.
  *   - The first <h1> becomes the title and is removed from the body, as it
  *     is for .docx. There is no <h2> fallback: Markdown files routinely open
  *     with a section heading rather than the document title, and the
@@ -122,7 +122,7 @@ class DTPost_Markdown {
 	 * The title alone. Unused in the free plugin; kept so the class matches Pro.
 	 *
 	 * Mirrors DTPost_Parser::probe_title(). For Markdown a full parse is a few
-	 * milliseconds, so this simply runs one and keeps the title — cheaper to
+	 * milliseconds, so this simply runs one and keeps the title, cheaper to
 	 * reason about than a second title-finding routine that could disagree
 	 * with the real one at import time.
 	 */
@@ -191,7 +191,7 @@ class DTPost_Markdown {
 	 * Drops the heading that became the title, so it is not repeated as the
 	 * first line of the post.
 	 *
-	 * With no front matter this is the first <h1>, wherever it is — the same
+	 * With no front matter this is the first <h1>, wherever it is, the same
 	 * rule as .docx. With front matter the <h1> is only removed when it says
 	 * the same thing as the title; a different <h1> is real content.
 	 */
@@ -216,7 +216,7 @@ class DTPost_Markdown {
 
 	/**
 	 * Keeps images with an absolute http(s) URL, offers every relative path
-	 * to the resolver, and removes — with a notice — whatever is left.
+	 * to the resolver, and removes (with a notice) whatever is left.
 	 *
 	 * A relative path cannot be resolved from a single uploaded file, which
 	 * is why the single-file screen passes no resolver and sees the notice.
@@ -247,11 +247,11 @@ class DTPost_Markdown {
 					return $m[0];
 				}
 
-				// Anything with a scheme that is not http(s) — data:, file:,
-				// ftp: — is not a relative path and is never resolvable.
+				// Anything with a scheme that is not http(s): data: file:,
+				// ftp: is not a relative path and is never resolvable.
 				if ( '' !== $src && $resolve && ! preg_match( '#^[a-z][a-z0-9+.\-]*:#i', $src ) ) {
 					// Parsedown has entity-encoded the attribute; the resolver
-					// wants the path as the author wrote it, decoded twice —
+					// wants the path as the author wrote it, decoded twice,
 					// once for HTML, once for the %20 a Notion export uses.
 					$path = rawurldecode( html_entity_decode( $src, ENT_QUOTES, 'UTF-8' ) );
 					$url  = (string) $resolve( $path );

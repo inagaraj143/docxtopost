@@ -7,7 +7,7 @@
  * The obvious implementation is to keep the author's `<iframe>`. It cannot
  * work: `<iframe>` is not in WordPress's allowed post tags, and
  * DTPost_Publisher runs every import through wp_kses_post(), so the whole
- * element is stripped before it reaches the database. Tested, not assumed —
+ * element is stripped before it reaches the database. Tested, not assumed,
  * an iframe comes out of wp_kses_post() as an empty string.
  *
  * A `core/embed` block comment survives that pass untouched, renders in both

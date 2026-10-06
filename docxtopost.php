@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
- * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish — no copy-paste needed.
- * Version:           1.2.4
+ * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
+ * Version:           1.2.5
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.4');
+define('DTPOST_VERSION', '1.2.5');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -178,14 +178,14 @@ function dtpost_pro_url(string $placement = 'plugin'): string
 /**
  * Renders the Pro feature card.
  *
- * This is an informational card on the plugin's own screens — it describes
+ * This is an informational card on the plugin's own screens, it describes
  * what Pro does and links out. It deliberately does not render a disabled
  * copy of any Pro feature: shipping locked functionality is what the Plugin
  * Directory's guideline 5 prohibits, whereas advertising is allowed.
  *
  * The card carries no dismiss control because it is part of the page rather
  * than a notice interrupting it. The guideline 11 requirement to be
- * dismissible applies to admin notices and dashboard widgets — see
+ * dismissible applies to admin notices and dashboard widgets, see
  * dtpost_admin_notices(), where it is honoured.
  *
  * @param string $placement Campaign slug for the CTA link.
@@ -324,7 +324,7 @@ function dtpost_render_pro_card(string $placement = 'upload-sidebar'): void
 		),
 		array(
 			'title' => __('Drip publishing', 'docxtowp'),
-			'desc' => __('Schedule a whole batch — one post per weekday from Monday 09:00.', 'docxtowp'),
+			'desc' => __('Schedule a whole batch, one post per weekday from Monday 09:00.', 'docxtowp'),
 		),
 		array(
 			'title' => __('SEO automation', 'docxtowp'),
@@ -486,7 +486,7 @@ function dtpost_site_health_check(): array
 	$problems = array();
 
 	if (!class_exists('ZipArchive')) {
-		$problems[] = __('The ZipArchive PHP extension is not installed. A .docx file is a zip archive, so Word documents cannot be read without it — ask your host to enable it. Markdown files are not affected.', 'docxtowp');
+		$problems[] = __('The ZipArchive PHP extension is not installed. A .docx file is a zip archive, so Word documents cannot be read without it, ask your host to enable it. Markdown files are not affected.', 'docxtowp');
 	}
 
 	if (!class_exists('DOMDocument')) {
@@ -508,7 +508,7 @@ function dtpost_site_health_check(): array
 	if ($server_bytes > 0 && $setting_mb * MB_IN_BYTES > $server_bytes) {
 		$problems[] = sprintf(
 			/* translators: 1: plugin setting in MB, 2: server limit, formatted */
-			__('Your file size limit is set to %1$dMB, but this server will not accept an upload larger than %2$s. The lower number is the one that applies — raising the setting alone will not help.', 'docxtowp'),
+			__('Your file size limit is set to %1$dMB, but this server will not accept an upload larger than %2$s. The lower number is the one that applies, raising the setting alone will not help.', 'docxtowp'),
 			$setting_mb,
 			size_format($server_bytes)
 		);
@@ -549,6 +549,24 @@ add_filter('plugin_action_links_' . plugin_basename(DTPOST_PLUGIN_FILE), 'dtpost
  */
 function dtpost_plugin_action_links(array $links): array
 {
+	$links[] = sprintf(
+		'<a href="%s">%s</a>',
+		esc_url(admin_url('admin.php?page=dtpost-settings')),
+		esc_html__('Settings', 'docxtowp')
+	);
+
+	// A permanent home for the review ask.
+	//
+	// The contextual notice at dtpost_notice_thresholds() is still the main
+	// one. It is earned, and it appears when someone has just had a good run.
+	// But it shows once and is dismissible, so anyone who wanted to come back
+	// to it later had nowhere to come back to. This row is that place.
+	$links[] = sprintf(
+		'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+		esc_url('https://wordpress.org/support/plugin/docxtowp/reviews/#new-post'),
+		esc_html__('Review', 'docxtowp')
+	);
+
 	$links[] = sprintf(
 		'<a href="%s" target="_blank" rel="noopener noreferrer" style="color:#2271b1;font-weight:600">%s</a>',
 		esc_url(dtpost_pro_url('plugins-row')),
@@ -677,7 +695,7 @@ function dtpost_render_notice(string $key, int $count): void
 		case 'drip':
 			$body = sprintf(
 				/* translators: %d: number of documents the user has converted */
-				esc_html__('That is %d documents, one at a time. Pro imports up to 100 in a single pass and can drip-publish them on a schedule — one post per weekday, for example.', 'docxtowp'),
+				esc_html__('That is %d documents, one at a time. Pro imports up to 100 in a single pass and can drip-publish them on a schedule, one post per weekday, for example.', 'docxtowp'),
 				$count
 			);
 			$cta = sprintf(
@@ -702,7 +720,7 @@ function dtpost_render_notice(string $key, int $count): void
 			break;
 	}
 	?>
-	<?php // Not .dtpost-notice — that class belongs to the inline error box on the preview screen. ?>
+	<?php // Not .dtpost-notice, that class belongs to the inline error box on the preview screen. ?>
 	<div class="notice notice-info is-dismissible dtpost-usage-notice" data-dtpost-notice="<?php echo esc_attr($key); ?>">
 		<p><?php echo wp_kses_post($body); ?></p>
 		<p><?php echo wp_kses_post($cta); ?></p>
@@ -710,7 +728,7 @@ function dtpost_render_notice(string $key, int $count): void
 	<?php
 }
 
-// Daily cron to clean temp dir. Scheduled in dtpost_activate(), not here —
+// Daily cron to clean temp dir. Scheduled in dtpost_activate(), not here,
 // a wp_next_scheduled() call at file scope runs on every request, front end
 // included, for something that needs to happen once.
 add_action('dtpost_cleanup_cron', 'dtpost_clean_temp_dir');
@@ -756,7 +774,7 @@ function dtpost_register_admin_menu(): void
 	// Named for the feature rather than filed under a generic "Upgrade",
 	// because "Bulk Import" is what someone with a folder of documents is
 	// actually looking for. The "(Pro)" suffix is what stops that being a
-	// promise the free plugin does not keep — see admin/bulk-page.php.
+	// promise the free plugin does not keep, see admin/bulk-page.php.
 	add_submenu_page(
 		'docxtowp',
 		__('Bulk Import', 'docxtowp'),
@@ -843,7 +861,7 @@ function dtpost_enqueue_admin_assets(string $hook): void
 	);
 }
 
-// Page render callbacks — delegate to admin include files.
+// Page render callbacks, delegate to admin include files.
 /**
  * Render the upload page.
  */
@@ -1049,7 +1067,7 @@ function dtpost_ajax_upload_docx(): void
 				wp_send_json_error(array('message' => __('Failed to verify uploaded file.', 'docxtowp')));
 			}
 
-			// Parse document — pass original name so title fallback is clean.
+			// Parse document, pass original name so title fallback is clean.
 			$parser = new DTPost_Parser();
 			$result = $parser->parse($temp_file, $original_name);
 
@@ -1059,7 +1077,7 @@ function dtpost_ajax_upload_docx(): void
 			}
 		}
 
-		// Handle featured image — sanitize each field before passing to the handler.
+		// Handle featured image, sanitize each field before passing to the handler.
 		$featured_image_id = 0;
 		if (
 			!empty($_FILES['featured_image'])
@@ -1128,7 +1146,7 @@ function dtpost_ajax_publish_post(): void
 			wp_send_json_error(array('message' => __('Session expired. Please re-upload your document.', 'docxtowp')));
 		}
 
-		// Validate post type — allow any registered public post type.
+		// Validate post type, allow any registered public post type.
 		$requested_type = sanitize_key($_POST['post_type'] ?? 'post'); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$public_types = array_keys(get_post_types(array('public' => true)));
 		$post_type = in_array($requested_type, $public_types, true) ? $requested_type : 'post';
@@ -1181,7 +1199,7 @@ function dtpost_ajax_publish_post(): void
 		delete_transient($session_key);
 
 		// Count the conversion. This drives the contextual notices, and is the
-		// only thing the plugin records about how you use it — it never leaves
+		// only thing the plugin records about how you use it. It never leaves
 		// the site.
 		$user_id = get_current_user_id();
 		update_user_meta($user_id, 'dtpost_conversion_count', dtpost_conversion_count() + 1);

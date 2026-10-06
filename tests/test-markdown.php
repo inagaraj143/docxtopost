@@ -8,7 +8,7 @@
  *     php tests/test-markdown.php
  *
  * wp_kses_post() is stubbed with a deliberately crude sanitiser. The point is
- * not to re-test kses — it is to prove the parser routes its output through
+ * not to re-test kses. It is to prove the parser routes its output through
  * it, and that the block serializer copes with what comes out.
  */
 
@@ -154,8 +154,8 @@ $r = $md->parse( "\xEF\xBB\xBF# BOM Title\r\n\r\nWindows line endings.\r\n", 'x.
 check( 'UTF-8 BOM stripped so the H1 is still a heading',  'BOM Title' === $r['title'], $r['title'] );
 check( 'CRLF normalised',                                  ! str_contains( $r['content'], "\r" ) && str_contains( $r['content'], 'Windows line endings.' ) );
 
-$r = $md->parse( "# Ünïcödé — ok\n\nTëxt", 'x.md' );
-check( 'non-ASCII UTF-8 passes through intact',            'Ünïcödé — ok' === $r['title'], $r['title'] );
+$r = $md->parse( "# Ünïcödé, ok\n\nTëxt", 'x.md' );
+check( 'non-ASCII UTF-8 passes through intact',            'Ünïcödé, ok' === $r['title'], $r['title'] );
 
 $r = $md->parse( "# Bad \xFF\xFE bytes", 'x.md' );
 check( 'invalid UTF-8 → WP_Error',                          is_wp_error( $r ) && 'dtpost_md_encoding' === $r->get_error_code() );

@@ -3,7 +3,7 @@
  * Parses .docx files into clean HTML for DocxToPost.
  *
  * Handles: headings, paragraphs, bold/italic/underline, lists, tables,
- * hyperlinks, and — critically — inline images (<w:drawing>/<w:pict>).
+ * hyperlinks, and (critically) inline images (<w:drawing>/<w:pict>).
  *
  * Image pipeline (ZipArchive path):
  *   1. parse_run()  detects <w:drawing> and emits  <img data-docx-img="image1.jpg" alt="">
@@ -37,7 +37,7 @@ class DTPost_Parser {
 	 * "berschrift1", French "Titre1", Spanish "Ttulo1"; Word also mints
 	 * "Heading11" when a heading style is copied between documents; and a
 	 * custom style based on a heading has whatever ID its author gave it.
-	 * Matching the ID alone — which is all this parser did until 1.2.1 —
+	 * Matching the ID alone, which is all this parser did until 1.2.1,
 	 * turned every one of those into a plain paragraph, in a document whose
 	 * author had applied genuine Heading styles throughout.
 	 *
@@ -176,7 +176,7 @@ class DTPost_Parser {
 		$dom = new DOMDocument();
 		if ( ! $dom->loadXML( $xml_str, LIBXML_NONET ) ) {
 			// Retry in recovery mode. Recovery is the DOMDocument::$recover
-			// property — there is no LIBXML_RECOVER constant, and referencing
+			// property. There is no LIBXML_RECOVER constant, and referencing
 			// one is a fatal Error on PHP 8.
 			$dom->recover = true;
 			$dom->loadXML( $xml_str, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET );
@@ -230,12 +230,12 @@ class DTPost_Parser {
 						}
 					}
 
-					// Left open — the next item, or close_lists(), ends it.
+					// Left open: the next item, or close_lists(), ends it.
 					$html .= '<li>' . $inner;
 				} else {
 					$html .= $this->close_lists( $stack );
 
-					// Images produce non-text inner — allow empty text inner for img-only paragraphs.
+					// Images produce non-text inner, allow empty text inner for img-only paragraphs.
 					if ( $tag && ( '' !== trim( wp_strip_all_tags( $inner ) ) || '' !== trim( $inner ) ) ) {
 						$html .= '<' . $tag . $attr . '>' . $inner . '</' . $tag . '>' . "\n";
 					}
@@ -295,7 +295,7 @@ class DTPost_Parser {
 			}
 		}
 
-		// No numbering.xml entry to go on — guess from the style name.
+		// No numbering.xml entry to go on, guess from the style name.
 		if ( '' === $tag ) {
 			$tag = $this->detect_list_type( $p );
 		}
@@ -411,7 +411,7 @@ class DTPost_Parser {
 			return [ 'li', $inner, '' ];
 		}
 
-		// Image-only paragraph — wrap in <p> so it renders properly.
+		// Image-only paragraph, wrap in <p> so it renders properly.
 		return [ 'p', $inner, $attr ];
 	}
 
@@ -484,7 +484,7 @@ class DTPost_Parser {
 					$v      = $this->w_val( $s->item(0) );
 					$strike = ( '' === $v || 'true' === $v || '1' === $v );
 				}
-				// Superscript and subscript — footnote markers, ™, chemical
+				// Superscript and subscript: footnote markers, ™, chemical
 				// and mathematical notation all depend on these.
 				$va = $child->getElementsByTagNameNS( self::W_NS, 'vertAlign' );
 				if ( $va->length > 0 ) {
@@ -655,7 +655,7 @@ class DTPost_Parser {
 	// =========================================================================
 
 	/**
-	 * Main image processing function — called after HTML generation.
+	 * Main image processing function, called after HTML generation.
 	 *
 	 * Steps:
 	 *   A. Find all  data-docx-img="filename"  placeholders emitted by parse_drawing/parse_pict.
@@ -731,7 +731,7 @@ class DTPost_Parser {
 					// Replace the placeholder attribute with a real src URL.
 					// The <img> tag already has all other attributes set by
 					// parse_drawing. The sizing style goes on here rather than
-					// there because clean_html() — which runs before this —
+					// there because clean_html(), which runs before this,
 					// strips every style attribute to get rid of Word's own.
 					$html = preg_replace(
 						'/data-docx-img="' . preg_quote( $filename, '/' ) . '"/i',
@@ -840,7 +840,7 @@ class DTPost_Parser {
 	 *
 	 * Three signals, strongest first:
 	 *   1. the paragraph's style resolved through styles.xml (name, outline
-	 *      level, basedOn chain) — see build_heading_style_map()
+	 *      level, basedOn chain), see build_heading_style_map()
 	 *   2. the style ID itself looking like "Heading3", which is what the
 	 *      parser matched before 1.2.1 and still covers a document with no
 	 *      styles part at all
@@ -874,7 +874,7 @@ class DTPost_Parser {
 	 * Builds styleId → heading level from word/styles.xml.
 	 *
 	 * For every paragraph style, the level comes from the first of:
-	 *   - its canonical name, "heading N" — the name Word keeps in English
+	 *   - its canonical name, "heading N", the name Word keeps in English
 	 *     whatever the UI language, and the reason "berschrift1" is still
 	 *     recognisable as Heading 1
 	 *   - its own outline level, 0–5 (9 means "body text" and is honoured as
@@ -989,8 +989,8 @@ class DTPost_Parser {
 	/**
 	 * Builds numId → [ level => 'ol'|'ul' ] from word/numbering.xml.
 	 *
-	 * Word gives bulleted and numbered lists the same paragraph style —
-	 * ListParagraph — so the style name cannot tell them apart. Only
+	 * Word gives bulleted and numbered lists the same paragraph style.
+	 * ListParagraph, so the style name cannot tell them apart. Only
 	 * numbering.xml can: numId → abstractNumId → the level's w:numFmt.
 	 *
 	 * @return array<string,array<int,string>>
@@ -1068,7 +1068,7 @@ class DTPost_Parser {
 	private function clean_html( string $html ): string {
 		$html = preg_replace( '/<\/?[a-z]+:[^>]*>/i', '', $html );
 		$html = preg_replace( '/\s+(style|class|lang|dir|xml:lang)="[^"]*"/i', '', $html );
-		// Don't collapse whitespace — it can eat spaces between inline elements.
+		// Don't collapse whitespace. It can eat spaces between inline elements.
 		$html = preg_replace( '/<(p|li|h[1-6])>\s*<\/\1>/i', '', $html );
 		return trim( $html );
 	}
@@ -1079,8 +1079,8 @@ class DTPost_Parser {
 	 * Sets $title_tag to the heading the title was taken from, so
 	 * remove_title_heading() can take that exact heading out of the body.
 	 * Before 1.2.2 the title could come from an <h2> while only an <h1> was
-	 * ever removed, so a document whose top heading was Heading 2 — common,
-	 * since plenty of people reserve Heading 1 for the page title — had its
+	 * ever removed, so a document whose top heading was Heading 2, common,
+	 * since plenty of people reserve Heading 1 for the page title, had its
 	 * heading repeated as the first line of the post.
 	 */
 	private function extract_title( string $html, string $file_path, string $original_name ): string {
@@ -1096,7 +1096,7 @@ class DTPost_Parser {
 
 		$this->title_tag = '';
 
-		// Capitalisation is DTPost_Title's business — see Settings → Content
+		// Capitalisation is DTPost_Title's business, see Settings → Content
 		// Format. A document that has a heading keeps that heading exactly as
 		// it was written; only a filename-derived title is ever restyled.
 		$title = DTPost_Title::from_filename( $original_name );

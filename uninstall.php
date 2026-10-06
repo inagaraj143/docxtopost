@@ -28,7 +28,7 @@ if ( function_exists( 'delete_metadata' ) ) {
 	delete_metadata( 'user', 0, 'dtpost_dismissed_notices', '', true );
 }
 
-// Remove temp directory — use wp_upload_dir() for dynamic path.
+// Remove temp directory, use wp_upload_dir() for dynamic path.
 $upload_dir = wp_upload_dir();
 $temp_dir   = trailingslashit( $upload_dir['basedir'] ) . 'dtpost-temp/';
 

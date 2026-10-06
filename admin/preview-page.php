@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin page: Preview + Publish — single step, WP post-editor style.
+ * Admin page: Preview + Publish, single step, WP post-editor style.
  * Supports all public post types and standard post statuses.
  *
  * @package DocxToPost
@@ -16,7 +16,7 @@ if ( isset( $_GET['dtpost_success'], $_GET['post_id'] ) ) {
 	$pt_obj   = $post ? get_post_type_object( $post->post_type ) : null;
 
 	// The heading has to match what actually happened. It said "Published
-	// successfully!" for every outcome, including a draft — directly above a
+	// successfully!" for every outcome, including a draft, directly above a
 	// chip reading "Draft".
 	$type_label = $pt_obj ? $pt_obj->labels->singular_name : __( 'Post', 'docxtowp' );
 	switch ( $post ? $post->post_status : '' ) {
@@ -192,10 +192,10 @@ $status_options = array(
 	</div>
 
 	<?php
-	// Warn about an existing post with this title. Advisory only — importing
+	// Warn about an existing post with this title. Advisory only, importing
 	// the same document twice is a legitimate thing to do, so this never
 	// blocks. Pro is what turns this into an actual skip/update policy.
-	// Not get_page_by_title() — deprecated in WordPress 6.2.
+	// Not get_page_by_title(), deprecated in WordPress 6.2.
 	$duplicate_query = new WP_Query(
 		array(
 			'post_type'              => $default_post_type,
@@ -218,7 +218,7 @@ $status_options = array(
 			<a href="<?php echo esc_url( (string) get_edit_post_link( $duplicate->ID ) ); ?>" target="_blank" rel="noopener noreferrer">
 				<?php esc_html_e( 'View the existing one', 'docxtowp' ); ?>
 			</a>
-			<?php esc_html_e( '— publishing here creates a second post rather than replacing it.', 'docxtowp' ); ?>
+			<?php esc_html_e( '- publishing here creates a second post rather than replacing it.', 'docxtowp' ); ?>
 		</p>
 	</div>
 	<?php endif; ?>
@@ -302,7 +302,7 @@ $status_options = array(
 			<div class="dtpost-panel">
 				<div class="dtpost-panel-header">
 					<span class="dtpost-panel-title-text"><?php esc_html_e( 'Excerpt', 'docxtowp' ); ?></span>
-					<span class="dtpost-panel-hint"><?php esc_html_e( 'Optional — shown in search results and archives', 'docxtowp' ); ?></span>
+					<span class="dtpost-panel-hint"><?php esc_html_e( 'Optional, shown in search results and archives', 'docxtowp' ); ?></span>
 				</div>
 				<textarea id="dtpost-excerpt" rows="3" class="dtpost-textarea"
 					placeholder="<?php esc_attr_e( 'Write a brief summary of this post…', 'docxtowp' ); ?>"></textarea>
@@ -321,7 +321,7 @@ $status_options = array(
 
 				<div class="dtpost-pub-body">
 
-					<!-- Post Type — dynamic dropdown of all public post types -->
+					<!-- Post Type, dynamic dropdown of all public post types -->
 					<div class="dtpost-meta-row">
 						<div class="dtpost-meta-icon">
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -336,7 +336,7 @@ $status_options = array(
 						</select>
 					</div>
 
-					<!-- Status — all standard statuses -->
+					<!-- Status, all standard statuses -->
 					<div class="dtpost-meta-row">
 						<div class="dtpost-meta-icon">
 							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>

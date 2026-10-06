@@ -4,7 +4,7 @@
  *
  * The parser produces plain semantic HTML, which is what the preview editor
  * edits and what the classic editor wants. Pasted into a block-editor post it
- * becomes one enormous Classic block that nobody can work with — which is a
+ * becomes one enormous Classic block that nobody can work with, which is a
  * poor result for a plugin whose pitch is "no block editor fighting".
  *
  * This runs at publish time, not parse time, so the preview screen keeps
@@ -83,7 +83,7 @@ class DTPost_Blocks {
 		 * DTPost_Embeds turns a video URL into a `<!-- wp:embed -->` block
 		 * before this runs, so that markup is already serialized and must not
 		 * be serialized again. Without this branch it fell into the catch-all
-		 * below and the entire embed was silently deleted — the video
+		 * below and the entire embed was silently deleted, the video
 		 * disappeared from the post with nothing to show why.
 		 */
 		if ( XML_COMMENT_NODE === $node->nodeType ) {
@@ -105,7 +105,7 @@ class DTPost_Blocks {
 		 *
 		 * DTPost_Embeds has already wrapped it in `<!-- wp:embed -->`
 		 * delimiters, so sending it down the switch below would wrap it in a
-		 * `wp:html` block *inside* the embed block — two block types nested in
+		 * `wp:html` block *inside* the embed block, two block types nested in
 		 * each other, which the editor reads as a broken embed. This is the
 		 * second half of the comment-node branch above: that keeps the
 		 * delimiters, this keeps what sits between them.
@@ -193,7 +193,7 @@ class DTPost_Blocks {
 	 * blocks.
 	 *
 	 * An <img> left inside a paragraph block fails block validation, and Word
-	 * puts most images in a paragraph of their own anyway — so the common case
+	 * puts most images in a paragraph of their own anyway, so the common case
 	 * here is a paragraph with no text at all, which becomes purely an image.
 	 */
 	private static function paragraph( DOMElement $node ): string {
@@ -229,7 +229,7 @@ class DTPost_Blocks {
 	/**
 	 * A whole list, nesting included, as one list block.
 	 *
-	 * This emits the pre-6.1 shape — plain <li> elements rather than inner
+	 * This emits the pre-6.1 shape, plain <li> elements rather than inner
 	 * list-item blocks. Core still registers that shape as a deprecation, so
 	 * it parses without a validation error on every version this plugin
 	 * supports, and upgrades itself the first time the list is edited.
@@ -265,7 +265,7 @@ class DTPost_Blocks {
 	 * and an attribute it does not expect invalidates the block on first open.
 	 *
 	 * Escaping is htmlspecialchars() with double-encoding on, not esc_html(),
-	 * which leaves existing entities alone — wrong for code, where a literal
+	 * which leaves existing entities alone, wrong for code, where a literal
 	 * `&amp;` in the sample is meant to be seen as `&amp;`.
 	 */
 	private static function code( DOMElement $node ): string {
