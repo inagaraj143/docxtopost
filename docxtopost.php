@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.2.6
+ * Version:           1.2.7
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.6');
+define('DTPOST_VERSION', '1.2.7');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -187,7 +187,7 @@ function dtpost_header_actions(string $placement): void
 	<div class="dtpost-page-title__actions">
 		<a class="dtpost-header-link dtpost-header-link--pro"
 			href="<?php echo esc_url(dtpost_pro_url($placement)); ?>"
-			target="_blank" rel="noopener noreferrer">
+			target="_blank" rel="noopener">
 			<span class="dtpost-header-link__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
 			<?php esc_html_e('Upgrade', 'docxtowp'); ?>
 		</a>
@@ -340,7 +340,7 @@ function dtpost_render_lifetime_notice(): void
 
         <p class="dtpost-deadline__foot">
             <a class="dtpost-deadline__link" href="<?php echo esc_url(dtpost_pro_url('deadline-notice')); ?>"
-                target="_blank" rel="noopener noreferrer">
+                target="_blank" rel="noopener">
                 <?php esc_html_e('See what Pro costs', 'docxtowp'); ?>
             </a>
             <span class="dtpost-deadline__note">
@@ -386,7 +386,7 @@ function dtpost_render_pro_card(string $placement = 'upload-sidebar'): void
 			<?php endforeach; ?>
 		</ul>
 
-		<a class="dtpost-pro-card__cta" href="<?php echo esc_url(dtpost_pro_url($placement)); ?>" target="_blank" rel="noopener noreferrer">
+		<a class="dtpost-pro-card__cta" href="<?php echo esc_url(dtpost_pro_url($placement)); ?>" target="_blank" rel="noopener">
 			<?php esc_html_e('See what Pro adds', 'docxtowp'); ?>
 		</a>
 	</div>
@@ -607,7 +607,7 @@ function dtpost_plugin_action_links(array $links): array
 	);
 
 	$links[] = sprintf(
-		'<a href="%s" target="_blank" rel="noopener noreferrer" style="color:#2271b1;font-weight:600">%s</a>',
+		'<a href="%s" target="_blank" rel="noopener" style="color:#2271b1;font-weight:600">%s</a>',
 		esc_url(dtpost_pro_url('plugins-row')),
 		esc_html__('Go Pro', 'docxtowp')
 	);
@@ -738,7 +738,7 @@ function dtpost_render_notice(string $key, int $count): void
 				$count
 			);
 			$cta = sprintf(
-				'<a href="%s" target="_blank" rel="noopener noreferrer" class="button button-primary">%s</a>',
+				'<a href="%s" target="_blank" rel="noopener" class="button button-primary">%s</a>',
 				esc_url(dtpost_pro_url('notice-drip')),
 				esc_html__('See how it works', 'docxtowp')
 			);
@@ -752,7 +752,7 @@ function dtpost_render_notice(string $key, int $count): void
 				$count
 			);
 			$cta = sprintf(
-				'<a href="%s" target="_blank" rel="noopener noreferrer" class="button">%s</a>',
+				'<a href="%s" target="_blank" rel="noopener" class="button">%s</a>',
 				esc_url(dtpost_pro_url('notice-bulk')),
 				esc_html__('See bulk import', 'docxtowp')
 			);

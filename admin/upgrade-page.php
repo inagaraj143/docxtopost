@@ -156,7 +156,7 @@ $also = array(
 				printf(
 					/* translators: %s: link to the download page */
 					esc_html__( 'Download the Pro .zip from the link in your purchase email, or from %s.', 'docxtowp' ),
-					'<a href="https://docxtowp.com/download" target="_blank" rel="noopener noreferrer">docxtowp.com/download</a>'
+					'<a href="https://docxtowp.com/download" target="_blank" rel="noopener">docxtowp.com/download</a>'
 				);
 				?>
 				<?php esc_html_e( 'It is a different file from the free plugin, even though the download page looks familiar.', 'docxtowp' ); ?>
@@ -177,7 +177,7 @@ $also = array(
 		</p>
 
 		<p>
-			<a class="button" href="https://docxtowp.com/docs/activate-pro" target="_blank" rel="noopener noreferrer">
+			<a class="button" href="https://docxtowp.com/docs/activate-pro" target="_blank" rel="noopener">
 				<?php esc_html_e( 'Full activation guide', 'docxtowp' ); ?>
 			</a>
 			<a class="button" href="mailto:support@docxtowp.com?subject=<?php echo rawurlencode( 'Activating DocxToWP Pro' ); ?>">
@@ -201,7 +201,7 @@ $also = array(
 	<section class="dtpost-upgrade__cta dtpost-upgrade__cta--top">
 		<h2><?php esc_html_e( 'Everything here comes with Pro', 'docxtowp' ); ?></h2>
 		<p><?php esc_html_e( 'Pricing, a full feature comparison and the changelog are all on the site.', 'docxtowp' ); ?></p>
-		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page-top' ) ); ?>" target="_blank" rel="noopener noreferrer">
+		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page-top' ) ); ?>" target="_blank" rel="noopener">
 			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
 		</a>
 	</section>
@@ -232,7 +232,7 @@ $also = array(
 	<section class="dtpost-upgrade__cta">
 		<h2><?php esc_html_e( 'Everything here comes with Pro', 'docxtowp' ); ?></h2>
 		<p><?php esc_html_e( 'Pricing, a full feature comparison and the changelog are all on the site.', 'docxtowp' ); ?></p>
-		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page' ) ); ?>" target="_blank" rel="noopener noreferrer">
+		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page' ) ); ?>" target="_blank" rel="noopener">
 			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
 		</a>
 	</section>

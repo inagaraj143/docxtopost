@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.6
+Stable tag:        1.2.7
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,7 +95,12 @@ No. By default the plugin looks at which editor your post type actually uses and
 Not any more. Each paragraph, heading, list, image, table and quote becomes its own block, so you can drag, duplicate and edit them the same as anything you wrote in the editor. Anything with no block equivalent is kept intact in an HTML block rather than being dropped.
 
 = Does the plugin send my documents anywhere? =
-No. Everything is parsed on your own server, and the plugin makes no outbound requests.
+No. Everything is parsed on your own server, and the plugin makes no outbound requests. Your documents, their contents and the posts they become never leave your site.
+
+= What happens when I click one of the links to docxtowp.com? =
+It opens our site in a new tab, and as with any link you click anywhere on the web, your browser tells that site which page you came from. WordPress sends only the address of your site, never the full admin URL. We use it to see which sites find the upgrade pages useful.
+
+If you would rather not send it, right-click the link and copy it instead of clicking, or use your browser's setting for referrers. Nothing in the plugin depends on it, and the plugin itself still makes no outbound requests of its own: it never contacts us unless you click a link.
 
 == Screenshots ==
 
@@ -105,6 +110,10 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.7 =
+* Changed: **links to docxtowp.com no longer suppress the referrer.** They carried rel="noreferrer", so clicking one told us nothing about where it was clicked from. They now behave like an ordinary web link: your browser passes the address of your site, and WordPress's own referrer policy means only the site address is sent, never the full admin URL. The security half of that attribute, rel="noopener", is unchanged on every link, and links to WordPress.org keep both. The plugin still makes no outbound requests of its own and never contacts us unless you click a link. See the new FAQ entry.
+* Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.6.
 
 = 1.2.6 =
 * Added: **Upgrade and Leave a review buttons in the header** of the import, Bulk Import and Upgrade screens, where they are on screen the moment the page loads. Both already existed and both were easy to miss: Pro was a sidebar card that falls below the fold on a short window, and the review ask was a one-time dismissible notice, so anyone who swiped it away had nowhere to go back to it.
