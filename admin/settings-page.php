@@ -226,6 +226,41 @@ $status_options = array(
 <?php submit_button( __( 'Save Settings', 'docxtowp' ) ); ?>
 </form>
 
+<?php
+/*
+ * Shown only when Yoast SEO or Rank Math is active: those are the two plugins
+ * Pro's SEO templates write to, so on any other site the feature would do
+ * nothing and is not mentioned. Informational, no disabled fields.
+ */
+$dtpost_seo = dtpost_active_seo_plugin();
+if ( '' !== $dtpost_seo ) :
+	?>
+<div class="dtpost-settings-section dtpost-seo-pro">
+	<h2>
+		<span class="dtpost-pro-card__badge"><?php esc_html_e( 'Pro', 'docxtowp' ); ?></span>
+		<?php
+		printf(
+			/* translators: %s: SEO plugin name, Yoast SEO or Rank Math */
+			esc_html__( 'Fill %s fields while you import', 'docxtowp' ),
+			esc_html( $dtpost_seo )
+		);
+		?>
+	</h2>
+	<p>
+		<?php
+		printf(
+			/* translators: %s: SEO plugin name, Yoast SEO or Rank Math */
+			esc_html__( 'This site runs %s. DocxToWP Pro fills the SEO title, meta description and focus keyphrase for every imported document from templates such as {title} | {sitename}, with a per-document override where the template does not fit.', 'docxtowp' ),
+			esc_html( $dtpost_seo )
+		);
+		?>
+	</p>
+	<p>
+		<a class="button" href="<?php echo esc_url( dtpost_pro_url( 'settings-seo' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'See SEO automation', 'docxtowp' ); ?></a>
+	</p>
+</div>
+<?php endif; ?>
+
 <div class="dtpost-settings-section dtpost-danger-section">
 	<h2><?php esc_html_e( 'Maintenance', 'docxtowp' ); ?></h2>
 	<p class="description"><?php esc_html_e( 'Remove all files in the temporary upload directory.', 'docxtowp' ); ?></p>

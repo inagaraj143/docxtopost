@@ -98,6 +98,28 @@ $also = array(
 	__( 'Automatic updates, the same as a plugin from WordPress.org', 'docxtowp' ),
 	__( 'Email support from the developer', 'docxtowp' ),
 );
+
+/*
+ * Free against Pro, row by row. true / false render as a tick or a dash; a
+ * string is shown as written, for rows where both have it but not equally.
+ * Every free row is something this plugin does today, and every Pro row is
+ * shipped, not planned: this page cannot be corrected once it is on a site.
+ */
+$compare = array(
+	array( __( 'Import .docx and Markdown with formatting, lists, tables and images', 'docxtowp' ), true, true ),
+	array( __( 'Real blocks, or classic HTML when the classic editor is in use', 'docxtowp' ), true, true ),
+	array( __( 'Posts, pages and any public custom post type', 'docxtowp' ), true, true ),
+	array( __( 'Live preview, categories, tags, author, slug and excerpt', 'docxtowp' ), true, true ),
+	array( __( 'Documents per run', 'docxtowp' ), __( 'One at a time', 'docxtowp' ), __( 'Up to 100', 'docxtowp' ) ),
+	array( __( 'Markdown notebooks with their image folder (Obsidian, Joplin, Notion)', 'docxtowp' ), false, true ),
+	array( __( 'Review table: edit every title, image and SEO field before import', 'docxtowp' ), false, true ),
+	array( __( 'Drip publishing on a schedule', 'docxtowp' ), false, true ),
+	array( __( 'Yoast SEO and Rank Math fields from templates', 'docxtowp' ), false, true ),
+	array( __( 'WebP conversion of imported images', 'docxtowp' ), false, true ),
+	array( __( 'Duplicate titles', 'docxtowp' ), __( 'Warning only', 'docxtowp' ), __( 'Skip, import or update', 'docxtowp' ) ),
+	array( __( 'Undo', 'docxtowp' ), __( 'Trash the post just created', 'docxtowp' ), __( 'Roll back a whole import, from history', 'docxtowp' ) ),
+	array( __( 'Email support from the developer', 'docxtowp' ), false, true ),
+);
 ?>
 <div class="wrap dtpost-upgrade-wrap">
 
@@ -204,6 +226,37 @@ $also = array(
 		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'upgrade-page-top' ) ); ?>" target="_blank" rel="noopener">
 			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
 		</a>
+	</section>
+
+	<section class="dtpost-compare" id="dtpost-compare">
+		<h2><?php esc_html_e( 'Free and Pro, side by side', 'docxtowp' ); ?></h2>
+		<table class="dtpost-compare__table">
+			<thead>
+				<tr>
+					<th scope="col"><span class="screen-reader-text"><?php esc_html_e( 'Feature', 'docxtowp' ); ?></span></th>
+					<th scope="col"><?php esc_html_e( 'Free', 'docxtowp' ); ?></th>
+					<th scope="col" class="dtpost-compare__pro"><?php esc_html_e( 'Pro', 'docxtowp' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $compare as $row ) : ?>
+				<tr>
+					<th scope="row"><?php echo esc_html( $row[0] ); ?></th>
+					<?php foreach ( array( 1, 2 ) as $col ) : ?>
+					<td class="<?php echo 2 === $col ? 'dtpost-compare__pro' : ''; ?>">
+						<?php if ( true === $row[ $col ] ) : ?>
+							<span class="dtpost-compare__yes" aria-hidden="true">&#10003;</span><span class="screen-reader-text"><?php esc_html_e( 'Included', 'docxtowp' ); ?></span>
+						<?php elseif ( false === $row[ $col ] ) : ?>
+							<span class="dtpost-compare__no" aria-hidden="true">&ndash;</span><span class="screen-reader-text"><?php esc_html_e( 'Not included', 'docxtowp' ); ?></span>
+						<?php else : ?>
+							<?php echo esc_html( $row[ $col ] ); ?>
+						<?php endif; ?>
+					</td>
+					<?php endforeach; ?>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
 	</section>
 
 	<div class="dtpost-upgrade__pillars">

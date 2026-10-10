@@ -101,7 +101,20 @@ if ( isset( $_GET['dtpost_success'], $_GET['post_id'] ) ) {
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
 				</span>
 				<div class="dtpost-followup__body">
+					<?php $dtpost_done = dtpost_conversion_count(); ?>
+					<?php if ( $dtpost_done >= 3 ) : ?>
+					<strong>
+						<?php
+						printf(
+							/* translators: %d: number of documents the user has converted */
+							esc_html__( 'That is %d documents, one at a time.', 'docxtowp' ),
+							(int) $dtpost_done
+						);
+						?>
+					</strong>
+					<?php else : ?>
 					<strong><?php esc_html_e( 'Got a folder of these?', 'docxtowp' ); ?></strong>
+					<?php endif; ?>
 					<span><?php esc_html_e( 'Pro imports up to 100 documents in one pass and can drip-publish them on a schedule.', 'docxtowp' ); ?></span>
 				</div>
 				<a class="dtpost-btn dtpost-btn-secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=dtpost-bulk' ) ); ?>">
@@ -219,6 +232,11 @@ $status_options = array(
 				<?php esc_html_e( 'View the existing one', 'docxtowp' ); ?>
 			</a>
 			<?php esc_html_e( '- publishing here creates a second post rather than replacing it.', 'docxtowp' ); ?>
+		</p>
+		<p class="dtpost-duplicate-warning__pro">
+			<span class="dtpost-pro-card__badge"><?php esc_html_e( 'Pro', 'docxtowp' ); ?></span>
+			<?php esc_html_e( 'DocxToWP Pro can skip documents whose title already exists, or update the existing post in place.', 'docxtowp' ); ?>
+			<a href="<?php echo esc_url( dtpost_pro_url( 'duplicate-warning' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'See duplicate handling', 'docxtowp' ); ?></a>
 		</p>
 	</div>
 	<?php endif; ?>

@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.7
+Stable tag:        1.2.8
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,7 +49,11 @@ The free version is a complete, unrestricted DOCX and Markdown importer for one 
 
 Pro also adds one-click rollback of an entire import, import history with rollback from any past job, duplicate handling (skip, import anyway, or update the existing post), a featured-image cascade that matches companion images to their documents by filename, an activity log with re-import, automatic updates, and email support from the developer.
 
-Learn more at [docxtowp.com](https://docxtowp.com)
+The Upgrade screen inside the plugin has a side-by-side comparison of Free and Pro. Learn more at [docxtowp.com](https://docxtowp.com)
+
+= More from the developer =
+
+[BackupScope](https://wordpress.org/plugins/backupscope/) is a free WordPress backup plugin that shows what is inside a backup before you need it, and [BackupScope Storage Insights](https://wordpress.org/plugins/backupscope-storage-insights/) shows what uses your disk space, read-only. Both are listed on the plugin's More Tools screen.
 
 == Installation ==
 
@@ -110,6 +114,18 @@ If you would rather not send it, right-click the link and copy it instead of cli
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.8 =
+* Added: **a Free and Pro comparison table** on the Upgrade screen, so the difference is one table rather than six sections of prose.
+* Added: **a More Tools screen** listing the developer's other plugins: DocxToWP Pro; BackupScope, a free backup plugin; BackupScope Pro; and BackupScope Storage Insights, a free plugin that shows what uses your disk space. Each shows whether it is installed or active on your site, and free plugins install through WordPress's own installer.
+* Added: dropping several files on the upload box now says why only the first was taken, instead of silently ignoring the rest.
+* Added: the duplicate-title warning on the preview screen mentions that Pro can skip duplicates or update the existing post.
+* Added: on sites running Yoast SEO or Rank Math, the Settings screen mentions that Pro can fill their SEO fields from templates. On other sites nothing is shown.
+* Added: a one-time notice after 25 imported documents about Pro's import history and rollback. Like the others it appears only on this plugin's screens, and stays gone once dismissed.
+* Changed: the confirmation screen quotes how many documents you have converted, once there are a few.
+* Fixed: the Bulk Import screen's top heading read "Scheduling is a Pro feature". It now says bulk import.
+* Removed: the lifetime-offer notice and its code. The offer ended on 30 September 2026 and the notice had already stopped showing; this removes what was left.
+* Note: importing is unchanged. Documents, Markdown, images, embeds and settings behave exactly as in 1.2.7.
 
 = 1.2.7 =
 * Changed: **links to docxtowp.com no longer suppress the referrer.** They carried rel="noreferrer", so clicking one told us nothing about where it was clicked from. They now behave like an ordinary web link: your browser passes the address of your site, and WordPress's own referrer policy means only the site address is sent, never the full admin URL. The security half of that attribute, rel="noopener", is unchanged on every link, and links to WordPress.org keep both. The plugin still makes no outbound requests of its own and never contacts us unless you click a link. See the new FAQ entry.
@@ -203,6 +219,9 @@ If you would rather not send it, right-click the link and copy it instead of cli
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.2.8 =
+Adds a Free and Pro comparison and a More Tools screen, and fixes a wrong heading on the Bulk Import screen. Importing is unchanged.
 
 = 1.2.2 =
 Stops a document's heading being repeated as the first line of the post, and adds a setting for how a filename becomes a title. Recommended for everyone.

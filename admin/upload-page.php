@@ -68,6 +68,7 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 
 					<!-- Error -->
 					<div id="dtpost-upload-error" class="dtpost-upload-error" style="display:none"></div>
+					<div id="dtpost-multi-files" class="dtpost-multi-files" role="status" style="display:none"></div>
 
 					<!-- Progress -->
 					<div class="dtpost-upload-progress" id="dtpost-progress" style="display:none">
@@ -84,11 +85,6 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 				</div>
 			</form>
 
-			<?php
-			// Below the upload card, not above it. Someone who came here to
-			// convert a document gets to do that first.
-			dtpost_render_lifetime_notice();
-			?>
 		</div>
 
 		<div class="dtpost-col-sidebar">

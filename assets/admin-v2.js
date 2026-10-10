@@ -57,14 +57,32 @@
 				docxDrop.addEventListener(e, function(ev) { ev.preventDefault(); docxDrop.classList.remove('dtpost-drag-over'); });
 			});
 			docxDrop.addEventListener('drop', function(ev) {
-				var f = ev.dataTransfer && ev.dataTransfer.files[0];
-				if (f) setDocx(f);
+				var files = ev.dataTransfer ? ev.dataTransfer.files : null;
+				if (!files || !files[0]) return;
+				setDocx(files[0]);
+				if (files.length > 1) showMultiFiles(files.length);
 			});
 		}
 		if (docxInput) docxInput.addEventListener('change', function() { if (this.files[0]) setDocx(this.files[0]); });
 
+		/* More than one file dropped: say why only the first was taken, and
+		   where importing them all at once lives. Shown after setDocx(), which
+		   hides the box, and only when the first file was accepted. */
+		function showMultiFiles(count) {
+			var box = qs('#dtpost-multi-files');
+			if (!box || !DTPOST.strings.multi_files || !docxInput.files || !docxInput.files[0]) return;
+			box.textContent = DTPOST.strings.multi_files.replace('%d', count) + ' ';
+			var a = document.createElement('a');
+			a.href = DTPOST.bulk_url;
+			a.textContent = DTPOST.strings.multi_files_link;
+			box.appendChild(a);
+			box.style.display = 'block';
+		}
+
 		function setDocx(file) {
 			if (errBox) errBox.style.display = 'none';
+			var multi = qs('#dtpost-multi-files');
+			if (multi) multi.style.display = 'none';
 			var ext = file.name.split('.').pop().toLowerCase();
 			if (ext !== 'docx' && ext !== 'md' && ext !== 'markdown') { showUploadErr(DTPOST.strings.invalid_type); return; }
 			if (DTPOST.max_mb && file.size > DTPOST.max_mb * 1024 * 1024) { showUploadErr(DTPOST.strings.file_too_large); return; }
@@ -454,16 +472,11 @@
    come back on the next page load.                                        */
 (function () {
 	document.addEventListener('click', function (e) {
-		// Two shapes: WordPress draws .notice-dismiss on its own notices, and
-		// the in-page deadline panel draws its own close button.
-		var btn = e.target.closest('.notice-dismiss, .dtpost-deadline__dismiss');
+		var btn = e.target.closest('.notice-dismiss');
 		if (!btn) { return; }
 
 		var notice = btn.closest('[data-dtpost-notice]');
 		if (!notice || typeof DTPOST === 'undefined') { return; }
-
-		// WordPress hides its own notices. This one is ours, so hide it here.
-		if (btn.classList.contains('dtpost-deadline__dismiss')) { notice.style.display = 'none'; }
 
 		var body = new FormData();
 		body.append('action', 'dtpost_dismiss_notice');

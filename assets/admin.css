@@ -1940,77 +1940,226 @@
 	}
 }
 
-/* ── Lifetime deadline notice ─────────────────────────────────────────────
-   Sits below the upload card, inside the plugin's own page, never as a
-   site-wide admin notice. Removes itself after 30 September 2026 without
-   anyone touching it: see dtpost_render_lifetime_notice(). */
-.dtpost-deadline {
-	position: relative;
-	margin-top: 20px;
-	padding: 16px 44px 16px 18px;
-	border: 1px solid #f0c36d;
-	border-left: 4px solid #f0a32a;
-	border-radius: 8px;
-	background: #fffaf0;
+/* ── Free and Pro comparison (Upgrade screen) ──────────────────────────── */
+
+.dtpost-compare {
+	margin: 26px 0 0;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 18px 20px 8px;
 }
 
-.dtpost-deadline__head {
-	margin: 0 0 6px;
-	font-size: 14px;
-	font-weight: 700;
-	color: #7a4d00;
+.dtpost-compare h2 {
+	margin: 0 0 12px;
+	font-size: 16px;
+	color: #1d2327;
 }
 
-.dtpost-deadline__body {
-	margin: 0 0 10px;
+.dtpost-compare__table {
+	width: 100%;
+	border-collapse: collapse;
 	font-size: 13px;
-	line-height: 1.6;
-	color: #50575e;
-	max-width: 68ch;
 }
 
-.dtpost-deadline__foot {
+.dtpost-compare__table th,
+.dtpost-compare__table td {
+	padding: 10px 12px;
+	border-top: 1px solid #f0f0f1;
+	text-align: center;
+	vertical-align: middle;
+	color: #1d2327;
+	line-height: 1.45;
+}
+
+.dtpost-compare__table thead th {
+	border-top: 0;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: #646970;
+}
+
+.dtpost-compare__table tbody th {
+	text-align: left;
+	font-weight: 400;
+	width: 52%;
+}
+
+.dtpost-compare__table th.dtpost-compare__pro,
+.dtpost-compare__table td.dtpost-compare__pro {
+	background: #f0f6fc;
+	font-weight: 600;
+}
+
+.dtpost-compare__table thead th.dtpost-compare__pro {
+	color: #2271b1;
+}
+
+.dtpost-compare__yes {
+	color: #00a32a;
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.dtpost-compare__no {
+	color: #a7aaad;
+	font-size: 16px;
+}
+
+@media (max-width: 600px) {
+	.dtpost-compare {
+		padding: 14px 10px 4px;
+	}
+
+	.dtpost-compare__table th,
+	.dtpost-compare__table td {
+		padding: 8px 6px;
+	}
+}
+
+/* ── Pro hints placed where the limit is felt ──────────────────────────── */
+
+.dtpost-multi-files {
+	margin-top: 12px;
+	padding: 10px 14px;
+	background: #f0f6fc;
+	border-left: 4px solid #2271b1;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #1d2327;
+}
+
+.dtpost-multi-files a {
+	font-weight: 600;
+}
+
+.dtpost-duplicate-warning__pro {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 12px;
-	margin: 0;
-}
-
-.dtpost-deadline__link {
-	font-size: 13px;
-	font-weight: 600;
-	text-decoration: none;
-}
-
-/* Deliberately quiet. It is reassurance, not a second call to action. */
-.dtpost-deadline__note {
-	font-size: 12px;
-	color: #787c82;
-}
-
-.dtpost-deadline__dismiss {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	width: 28px;
-	height: 28px;
-	padding: 0;
-	border: 0;
-	border-radius: 4px;
-	background: transparent;
-	color: #8a6d3b;
-	font-size: 20px;
-	line-height: 1;
-	cursor: pointer;
-}
-
-.dtpost-deadline__dismiss:hover {
-	background: rgba(0, 0, 0, .05);
+	gap: 6px;
 	color: #50575e;
 }
 
-.dtpost-deadline__dismiss:focus-visible {
-	outline: 2px solid #2271b1;
-	outline-offset: 1px;
+.dtpost-seo-pro {
+	border-left: 4px solid #2271b1;
+}
+
+.dtpost-seo-pro h2 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* ── More Tools ────────────────────────────────────────────────────────── */
+
+/* Four cards need the full width, not the 1000px reading width of the Upgrade screen. */
+.dtpost-upgrade-wrap.dtpost-more-tools-wrap {
+	max-width: none;
+}
+
+.dtpost-tools {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px;
+	margin-top: 20px;
+	align-items: stretch;
+}
+
+/* Four in a row on a wide screen; two, then one, as the screen narrows. */
+@media (max-width: 1280px) {
+	.dtpost-tools {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 600px) {
+	.dtpost-tools {
+		grid-template-columns: 1fr;
+	}
+}
+
+.dtpost-tool {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 18px 20px;
+}
+
+.dtpost-tool__head {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.dtpost-tool__head .dashicons {
+	flex: none;
+	width: 36px;
+	height: 36px;
+	font-size: 22px;
+	line-height: 36px;
+	text-align: center;
+	color: #2271b1;
+	background: #f0f6fc;
+	border-radius: 6px;
+}
+
+.dtpost-tool h2 {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 16px;
+	color: #1d2327;
+}
+
+.dtpost-tool__badge {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: #fff;
+	background: #2271b1;
+	padding: 2px 7px;
+	border-radius: 3px;
+}
+
+.dtpost-tool__badge--free {
+	color: #00701a;
+	background: #edfaef;
+	border: 1px solid #00a32a;
+}
+
+.dtpost-tool__lead {
+	margin: 4px 0 0;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.dtpost-tool__body {
+	flex: 1;
+	margin: 12px 0 16px;
+	color: #50575e;
+	line-height: 1.6;
+}
+
+.dtpost-tool__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.dtpost-tool__active {
+	font-weight: 600;
+	color: #00a32a;
+}
+
+.dtpost-tool__active--installed {
+	color: #50575e;
 }

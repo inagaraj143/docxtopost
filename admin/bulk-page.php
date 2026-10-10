@@ -86,7 +86,7 @@ $capabilities = array(
 	 */
 	?>
 	<section class="dtpost-upgrade__cta dtpost-upgrade__cta--top">
-		<h2><?php esc_html_e( 'Scheduling is a Pro feature', 'docxtowp' ); ?></h2>
+		<h2><?php esc_html_e( 'Bulk import is a Pro feature', 'docxtowp' ); ?></h2>
 		<p><?php esc_html_e( 'Pricing, the full feature list and the changelog are on the site.', 'docxtowp' ); ?></p>
 		<a class="button button-primary button-hero" href="<?php echo esc_url( dtpost_pro_url( 'bulk-teaser' ) ); ?>" target="_blank" rel="noopener">
 			<?php esc_html_e( 'See pricing and features', 'docxtowp' ); ?>
