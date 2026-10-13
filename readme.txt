@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.8
+Stable tag:        1.2.9
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,15 @@ If you would rather not send it, right-click the link and copy it instead of cli
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.9 =
+* Fixed: **documents whose text is inside Word text boxes imported as "Document appears to be empty".** Newsletters, brochures and most designed templates put every word in floating text boxes, and those live outside the document body where the importer was looking. Their text is now read, using the same paragraph, formatting, list and table handling as ordinary text.
+* Fixed: text boxes are no longer imported twice. Word stores the same shape in two forms, a modern one and a legacy fallback, and reading both duplicated the entire document. Only one is used now.
+* Added: text inside legacy VML text boxes, and inside a text box nested in another text box.
+* Fixed: **pictures used as a shape's background are now imported.** A photo placed as the fill of a shape, which is how most newsletter and brochure templates place their images, sits in a different part of the document from an ordinary inserted picture and was skipped. Shapes containing both a background picture and text now give you both.
+* Note: a shape's picture is stored twice in the file, once for each of the two formats Word writes, so only one copy is imported. Importing both would put a duplicate of every image in your Media Library.
+* Changed: when a document really does have no importable text, the message now says where the text probably is (a header, footer, footnote, comment or SmartArt graphic, all of which Word stores outside the document body) rather than calling the document empty.
+* Note: text boxes are positioned on the page rather than sequenced in the document, so there is no reading order to recover. They are imported in document order, which may not match how a multi-column layout reads on paper, and they are placed after the main body text.
 
 = 1.2.8 =
 * Added: **a Free and Pro comparison table** on the Upgrade screen, so the difference is one table rather than six sections of prose.

@@ -25,6 +25,8 @@ class DTPost_Parser {
 	const PIC_NS = 'http://schemas.openxmlformats.org/drawingml/2006/picture';
 	const BLIP_NS= 'http://schemas.openxmlformats.org/drawingml/2006/main';
 	const RELSNS = 'http://schemas.openxmlformats.org/package/2006/relationships';
+	/** Markup Compatibility: <mc:AlternateContent>, <mc:Choice>, <mc:Fallback>. */
+	const MC_NS  = 'http://schemas.openxmlformats.org/markup-compatibility/2006';
 
 	/** rId → filename map built from word/_rels/document.xml.rels */
 	private array $image_rids = [];
@@ -147,6 +149,28 @@ class DTPost_Parser {
 		$html = $this->xml_to_html( $document_xml, $link_map );
 
 		if ( empty( trim( $html ) ) ) {
+			/*
+			 * Only say "empty" when it is. Text boxes used to land here and
+			 * the message sent people to support, because they could plainly
+			 * see words in a document being called empty.
+			 *
+			 * Text boxes are read now, so anything still reaching this point
+			 * with <w:t> in the file is text we genuinely cannot place:
+			 * headers, footers, footnotes and comments all live in separate
+			 * parts that are not loaded, and SmartArt keeps its text in a
+			 * diagram part. Saying which it is would mean parsing those parts
+			 * to find out, so the message says what to do instead.
+			 */
+			$has_text = false !== strpos( $document_xml, '<w:t>' )
+				|| false !== strpos( $document_xml, '<w:t ' );
+
+			if ( $has_text ) {
+				return new WP_Error(
+					'dtpost_unsupported',
+					__( 'No importable text was found in the body of this document. Any text it contains is in a header, footer, footnote, comment or SmartArt graphic, which Word stores outside the document body. Copy the text into a blank document and import that.', 'docxtowp' )
+				);
+			}
+
 			return new WP_Error( 'dtpost_empty', __( 'Document appears to be empty or could not be parsed.', 'docxtowp' ) );
 		}
 
@@ -187,13 +211,35 @@ class DTPost_Parser {
 		if ( 0 === $body_list->length ) { return ''; }
 
 		$body = $body_list->item( 0 );
+
+		$html = $this->nodes_to_html( $body, $link_map );
+
+		// Text boxes after the main flow. See parse_text_boxes() for why they
+		// are not emitted in place.
+		$html .= $this->parse_text_boxes( $body, $link_map );
+
+		return $html;
+	}
+
+	/**
+	 * Converts a sequence of block-level nodes (<w:p>, <w:tbl>) to HTML.
+	 *
+	 * Lifted out of xml_to_html() unchanged so that text box contents, which
+	 * are ordinary <w:p> elements in a different part of the tree, go through
+	 * exactly the same paragraph, run, formatting, list and table handling
+	 * rather than a second implementation that drifts.
+	 *
+	 * @param DOMNode              $parent   Element whose children are blocks.
+	 * @param array<string,string> $link_map Relationship id to URL.
+	 */
+	private function nodes_to_html( DOMNode $parent, array $link_map ): string {
 		$html = '';
 
 		// Stack of currently open list tags, innermost last. Its depth is the
 		// nesting level, so a <w:ilvl> of 2 means a stack three deep.
 		$stack = [];
 
-		foreach ( $body->childNodes as $node ) {
+		foreach ( $parent->childNodes as $node ) {
 			if ( XML_ELEMENT_NODE !== $node->nodeType ) { continue; }
 			$local = $node->localName;
 
@@ -249,6 +295,137 @@ class DTPost_Parser {
 
 		$html .= $this->close_lists( $stack );
 		return $html;
+	}
+
+	/**
+	 * Images from a drawing wrapped in <mc:AlternateContent>.
+	 *
+	 * ── One branch only, as everywhere else ───────────────────────────────
+	 *
+	 * Word writes the shape twice: modern DrawingML in <mc:Choice> and legacy
+	 * VML in <mc:Fallback>. For pictures the two branches do not even share a
+	 * relationship: the newsletter that prompted this references rId5 and rId7
+	 * from <a:blip> in the Choice, and rId6 and rId8 from <v:fill> in the
+	 * Fallback, pointing at byte-identical duplicate copies of the same two
+	 * images. Reading both would put two extra attachments in the Media
+	 * Library for pictures the reader sees once.
+	 *
+	 * So the same rule as collect_text_boxes(): take Choice, ignore Fallback.
+	 *
+	 * Only the first drawing or picture in the branch is used, which is what
+	 * parse_drawing() does within a single drawing too. A shape holds one
+	 * fill.
+	 */
+	private function parse_alternate_content( DOMElement $alt ): string {
+		$branch = null;
+		foreach ( $alt->childNodes as $child ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) { continue; }
+			if ( self::MC_NS !== $child->namespaceURI ) { continue; }
+			if ( 'Choice' === $child->localName ) { $branch = $child; break; }
+			if ( 'Fallback' === $child->localName && null === $branch ) { $branch = $child; }
+		}
+
+		if ( null === $branch ) { return ''; }
+
+		$drawings = $branch->getElementsByTagNameNS( self::W_NS, 'drawing' );
+		if ( $drawings->length > 0 ) {
+			return $this->parse_drawing( $drawings->item( 0 ) );
+		}
+
+		$picts = $branch->getElementsByTagNameNS( self::W_NS, 'pict' );
+		if ( $picts->length > 0 ) {
+			return $this->parse_pict( $picts->item( 0 ) );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Text inside Word text boxes.
+	 *
+	 * ── Why this is needed at all ─────────────────────────────────────────
+	 *
+	 * A text box is not part of the document flow. Its paragraphs live inside
+	 * <w:txbxContent>, buried in a <w:drawing> or a legacy VML <w:pict>, and
+	 * the body walk never reaches them. Newsletters, brochures and most
+	 * designed templates put *everything* in text boxes, so for those files
+	 * the parser found no paragraphs at all and reported the document as
+	 * empty, which is how this was first noticed.
+	 *
+	 * ── mc:Choice only, never mc:Fallback ─────────────────────────────────
+	 *
+	 * Word writes the same shape twice inside <mc:AlternateContent>: a modern
+	 * DrawingML version in <mc:Choice> and a legacy VML one in <mc:Fallback>.
+	 * Both contain the same words. Collecting every <w:txbxContent> in the
+	 * document therefore imports the entire file twice, which is exactly what
+	 * the newsletter that prompted this does: 22 text boxes, 11 of them
+	 * duplicates. So AlternateContent is descended into one branch only.
+	 *
+	 * ── Order, and what it does not promise ───────────────────────────────
+	 *
+	 * Text boxes are positioned on the page, not sequenced in the document, so
+	 * there is no reading order to recover. These come out in document XML
+	 * order, which is deterministic but need not match how a human reads a
+	 * multi-column layout. Appended after the main flow rather than inline,
+	 * because a text box anchored to a list paragraph would otherwise emit
+	 * block content inside an open <li>.
+	 *
+	 * @param DOMNode              $body     Document body.
+	 * @param array<string,string> $link_map Relationship id to URL.
+	 */
+	private function parse_text_boxes( DOMNode $body, array $link_map ): string {
+		$boxes = [];
+		$this->collect_text_boxes( $body, $boxes );
+
+		$html = '';
+		foreach ( $boxes as $box ) {
+			$html .= $this->nodes_to_html( $box, $link_map );
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Walks the tree collecting <w:txbxContent>, taking one branch of any
+	 * <mc:AlternateContent> so the same content is never collected twice.
+	 *
+	 * @param array<int,DOMElement> $found Accumulator, passed by reference.
+	 */
+	private function collect_text_boxes( DOMNode $node, array &$found ): void {
+		foreach ( $node->childNodes as $child ) {
+			if ( XML_ELEMENT_NODE !== $child->nodeType ) { continue; }
+
+			if ( self::W_NS === $child->namespaceURI && 'txbxContent' === $child->localName ) {
+				$found[] = $child;
+				// Keep descending. A text box can contain another one, and
+				// rendering the outer box does NOT emit the inner box's text:
+				// that nested drawing goes through parse_run(), which pulls
+				// images out of a drawing and ignores everything else. So the
+				// inner box has to be collected in its own right or its words
+				// are dropped silently. It cannot duplicate, for the same
+				// reason.
+				$this->collect_text_boxes( $child, $found );
+				continue;
+			}
+
+			if ( self::MC_NS === $child->namespaceURI && 'AlternateContent' === $child->localName ) {
+				$branch = null;
+				foreach ( $child->childNodes as $alt ) {
+					if ( XML_ELEMENT_NODE !== $alt->nodeType ) { continue; }
+					if ( self::MC_NS !== $alt->namespaceURI ) { continue; }
+					// First Choice wins; Fallback is only used when Word wrote
+					// no Choice at all, which happens in older documents.
+					if ( 'Choice' === $alt->localName ) { $branch = $alt; break; }
+					if ( 'Fallback' === $alt->localName && null === $branch ) { $branch = $alt; }
+				}
+				if ( null !== $branch ) {
+					$this->collect_text_boxes( $branch, $found );
+				}
+				continue;
+			}
+
+			$this->collect_text_boxes( $child, $found );
+		}
 	}
 
 	/**
@@ -507,6 +684,20 @@ class DTPost_Parser {
 			} elseif ( 'pict' === $local ) {
 				// ── INLINE IMAGE (legacy VML) ─────────────────────────────────
 				$img_html .= $this->parse_pict( $child );
+			} elseif ( self::MC_NS === $child->namespaceURI && 'AlternateContent' === $child->localName ) {
+				// ── IMAGE INSIDE A SHAPE ──────────────────────────────────────
+				//
+				// A picture used as a shape's fill sits at
+				// wps:wsp > wps:spPr > a:blipFill > a:blip, and the whole
+				// drawing is wrapped in <mc:AlternateContent>. The branches
+				// above only match a <w:drawing> that is a direct child of the
+				// run, so the wrapper stopped the drawing being seen at all.
+				//
+				// parse_drawing() already searches the whole subtree for an
+				// a:blip and already validates the relationship, so this only
+				// has to get it to the right element. Nothing about image
+				// naming, type checking or storage changes.
+				$img_html .= $this->parse_alternate_content( $child );
 			}
 		}
 
