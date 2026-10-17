@@ -1699,6 +1699,54 @@
 	margin-top: 2px;
 }
 
+/* ── Import mode, as Pro has it ────────────────────────────────────────────
+   A description of the Pro control, drawn where the Pro control is, so that
+   what it does is obvious at a glance. It is inert: the input carries no
+   name, so there is nothing for a browser to submit and nothing in this
+   plugin that would read it. See dtpost_render_layout_promo().           */
+
+.dtpost-mode-option {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	padding: 12px 14px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.dtpost-mode-option--locked {
+	background: #fbfbfc;
+	cursor: default;
+}
+
+.dtpost-mode-option--locked input[type="checkbox"] {
+	margin-top: 2px;
+	/* Belt and braces over the disabled attribute: a pointer never reaches
+	   it, so there is nothing to click even if the attribute is removed. */
+	pointer-events: none;
+}
+
+.dtpost-mode-option__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.dtpost-mode-option__desc {
+	display: block;
+	margin-top: 3px;
+	color: #50575e;
+	font-size: 12px;
+	line-height: 1.6;
+}
+
+.dtpost-mode-option__desc a {
+	white-space: nowrap;
+}
+
 .dtpost-pro-banner p {
 	margin: 0;
 	font-size: 13px;

@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.2.9
+ * Version:           1.2.10
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.9');
+define('DTPOST_VERSION', '1.2.10');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -215,12 +215,83 @@ function dtpost_pro_url(string $placement = 'plugin'): string
 }
 
 /**
+ * Advertises layout-preserving import, which Pro has and this plugin does not.
+ *
+ * ── What this renders, and what it cannot do ──────────────────────────────
+ *
+ * A picture of a control, not a control. The checkbox has no `name`
+ * attribute, so no browser will submit it under any circumstances, enabled
+ * or not. Deleting the `disabled` attribute in an inspector therefore gets
+ * somebody a checkbox that ticks and sends nothing.
+ *
+ * Even if it did send something, there is nothing on the other end: this
+ * plugin has no layout importer, no layout classes and no code path that
+ * reads such a field. dtpost_ajax_upload_docx() parses the document one way
+ * and only one way. The guarantee is an absence of capability rather than a
+ * check that could be bypassed, which is the only kind worth making.
+ *
+ * ── Why this is not trialware ─────────────────────────────────────────────
+ *
+ * Guideline 5 of the Plugin Directory prohibits shipping functionality that
+ * is locked until payment. Nothing is locked here, because nothing is here:
+ * the feature's code lives in the Pro plugin, which is a separate download.
+ * What this renders is a description of what the paid version does, in the
+ * place where the paid version does it, which is advertising.
+ *
+ * @param string $context   'upload' for the import-mode block, 'preview' for a banner.
+ * @param string $placement Campaign slug for the CTA link.
+ */
+function dtpost_render_layout_promo(string $context = 'upload', string $placement = 'layout-upload'): void
+{
+	$url = dtpost_pro_url($placement);
+
+	if ('preview' === $context) {
+		?>
+		<div class="dtpost-pro-banner dtpost-pro-banner--layout">
+			<span class="dtpost-pro-card__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
+			<p>
+				<?php esc_html_e('This document was imported as plain formatted text, which is what the free plugin does with every file. If it is a newsletter, brochure or flyer built from text boxes, Pro can keep its columns, background panels and headings instead, as a responsive layout.', 'docxtowp'); ?>
+				<a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener"><?php esc_html_e('See what Pro adds', 'docxtowp'); ?></a>
+			</p>
+		</div>
+		<?php
+		return;
+	}
+	?>
+	<p class="dtpost-section-title" style="margin-top:20px"><?php esc_html_e('Import Mode', 'docxtowp'); ?></p>
+
+	<div class="dtpost-mode-option dtpost-mode-option--locked">
+		<?php
+		/*
+		 * No name attribute. This is the whole of the client-side story: a
+		 * form control without a name is not successful, in the HTML
+		 * specification's sense, and is never included in the submission.
+		 * Removing `disabled` in an inspector changes nothing about that.
+		 */
+		?>
+		<input type="checkbox" disabled aria-disabled="true" tabindex="-1" aria-describedby="dtpost-layout-promo">
+		<span>
+			<span class="dtpost-mode-option__title">
+				<?php esc_html_e('Preserve the page layout', 'docxtowp'); ?>
+				<span class="dtpost-pro-card__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
+			</span>
+			<span class="dtpost-mode-option__desc" id="dtpost-layout-promo">
+				<?php esc_html_e('For newsletters, brochures and flyers built from text boxes: keeps the columns, background panels and headings as a responsive layout instead of one column of text. The free plugin imports every document as plain formatted text, which it will keep doing whether or not you upgrade.', 'docxtowp'); ?>
+				<a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener"><?php esc_html_e('See what Pro adds', 'docxtowp'); ?></a>
+			</span>
+		</span>
+	</div>
+	<?php
+}
+
+/**
  * Renders the Pro feature card.
  *
  * This is an informational card on the plugin's own screens, it describes
- * what Pro does and links out. It deliberately does not render a disabled
- * copy of any Pro feature: shipping locked functionality is what the Plugin
- * Directory's guideline 5 prohibits, whereas advertising is allowed.
+ * what Pro does and links out. Like dtpost_render_layout_promo(), it ships
+ * no Pro code and locks nothing: guideline 5 prohibits functionality that is
+ * restricted until payment, and a description of a feature that lives in
+ * another download is not that.
  *
  * The card carries no dismiss control because it is part of the page rather
  * than a notice interrupting it. The guideline 11 requirement to be

@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.9
+Stable tag:        1.2.10
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,8 +38,9 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 
 = Why upgrade to Pro? =
 
-The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them:
+The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them, or a document whose design matters as much as its words:
 
+* **Layout-preserving import for newsletters, brochures and flyers.** A designed document is not one column of text: it is text boxes positioned on a page, in columns, over coloured panels and photographs. The free importer reads every word of one and gives you the words. Pro reads the geometry as well, works out which boxes are rows, which are columns and which are the panels behind them, and rebuilds that as a responsive layout that stacks properly on a phone. You get a preview and a plain-text version side by side, and can switch between them before publishing. It is a faithful web layout based on the document's design, not a pixel-for-pixel copy of a printed page.
 * **Bulk import, up to 100 files a run**, drag in .docx and .md files together. Each file uploads in its own request, so shared-hosting limits on upload count, post size and execution time never come into it. A corrupt document fails its own row and the rest carry on. Pause, resume, cancel, or retry only the failures, and close the tab if you like, because the queue lives in the database rather than the page.
 * **A whole notebook, images and all**: drop your `_resources`, `attachments` or exported image folder in with the Markdown files and every image referenced by a relative path is matched by filename and placed in its post. That is a Joplin notebook, an Obsidian vault or a Notion export moved across in one run, rather than image by image in the editor.
 * **Review everything before anything is created**: a table of every document with its detected title, featured image and SEO fields, each editable per row, and a toggle to leave any document out of the run. Nothing is written to your site until you say so.
@@ -68,6 +69,11 @@ All registered public post types on your site. Posts, Pages, and any Custom Post
 
 = Does it preserve formatting from Word? =
 Yes. Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, bulleted and numbered lists (including nested levels), tables with header rows, blockquotes, paragraph alignment, and hyperlinks all carry over.
+
+= Can it keep my newsletter's columns and background panels? =
+The free plugin reads every word in a document built from text boxes, which newsletters, brochures and flyers are, and gives you that text as ordinary formatted content in one column. It does not reproduce the page: the columns, the coloured panels behind them and the photographs they sit on are not rebuilt.
+
+Keeping those is what layout-preserving import in [DocxToWP Pro](https://docxtowp.com) does. It reads where each text box sits on the page, infers the rows, columns and background panels from the geometry, and rebuilds the design as a responsive layout that stacks on a phone. It aims at a faithful web layout, not a pixel-for-pixel copy of a printed page.
 
 = Can I import Markdown files? =
 Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables, horizontal rules and fenced code blocks are all supported, code blocks become real Code blocks in the editor. The first `# Heading` becomes the post title; if there is none, the filename is used.
@@ -114,6 +120,10 @@ If you would rather not send it, right-click the link and copy it instead of cli
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.2.10 =
+* Added: the upload and preview screens now describe **layout-preserving import**, a DocxToWP Pro feature that keeps a document's columns, background panels and headings as a responsive layout instead of one column of text. This plugin imports every document as plain formatted text, which it will keep doing; nothing here is locked or restricted, and no part of that feature's code ships in the free plugin.
+* Note: if your documents are newsletters, brochures or flyers built from text boxes, the free importer still reads every word in them, as of 1.2.9. What it does not do is keep them in columns.
 
 = 1.2.9 =
 * Fixed: **documents whose text is inside Word text boxes imported as "Document appears to be empty".** Newsletters, brochures and most designed templates put every word in floating text boxes, and those live outside the document body where the importer was looking. Their text is now read, using the same paragraph, formatting, list and table handling as ordinary text.

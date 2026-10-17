@@ -66,6 +66,16 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 						</div>
 					</div>
 
+					<?php
+					/*
+					 * Advertising, not a control. See the function: the
+					 * checkbox has no name, so nothing can submit it, and
+					 * there is no layout importer in this plugin for anything
+					 * to call if it did.
+					 */
+					dtpost_render_layout_promo( 'upload', 'layout-upload' );
+					?>
+
 					<!-- Error -->
 					<div id="dtpost-upload-error" class="dtpost-upload-error" style="display:none"></div>
 					<div id="dtpost-multi-files" class="dtpost-multi-files" role="status" style="display:none"></div>
