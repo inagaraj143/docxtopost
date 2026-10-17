@@ -2211,3 +2211,208 @@
 .dtpost-tool__active--installed {
 	color: #50575e;
 }
+
+/* ── Where the document and the featured image come from ───────────────────
+   Two tabs each: upload, or something already in the Media Library. Tabs
+   rather than stacked fields, because stacked fields invite filling in both.
+   Switching clears the one left behind; see admin-v2.js.                  */
+
+.dtpost-source-tabs {
+	display: flex;
+	gap: 2px;
+	margin: 0 0 18px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.dtpost-source-tab {
+	appearance: none;
+	background: none;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	margin: 0 0 -1px;
+	padding: 10px 14px;
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: #50575e;
+	cursor: pointer;
+	transition: color .15s, border-color .15s;
+}
+
+.dtpost-source-tab:hover { color: #1d2327; }
+
+.dtpost-source-tab.is-active {
+	color: #2271b1;
+	border-bottom-color: #2271b1;
+}
+
+.dtpost-source-tab:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
+	border-radius: 2px 2px 0 0;
+}
+
+.dtpost-source-tab svg { flex: none; }
+
+/* No layout shift: the panels share one grid cell and the hidden ones keep
+   their layout, so the cell is always as tall as the tallest panel at any
+   width. visibility:hidden also takes them out of the tab order. */
+.dtpost-source-stack {
+	display: grid;
+	margin-bottom: 20px;
+}
+
+.dtpost-source-stack > .dtpost-source-panel {
+	grid-area: 1 / 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.dtpost-source-stack > .dtpost-source-panel[hidden] {
+	display: flex;
+	visibility: hidden;
+}
+
+.dtpost-source-stack .dtpost-source-box {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	margin-bottom: 0;
+	padding: 28px 24px;
+}
+
+.dtpost-dropzone__filename { min-height: 1.6em; }
+
+.dtpost-media-panel {
+	border: 2px dashed #c3c4c7;
+	border-radius: 4px;
+	background: #fafafa;
+	text-align: center;
+}
+
+.dtpost-media-panel__icon {
+	width: 48px;
+	height: 48px;
+	margin: 0 auto 10px;
+	border-radius: 50%;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #2271b1;
+}
+
+.dtpost-media-panel__label {
+	margin: 0 0 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.dtpost-media-panel__hint {
+	margin: 12px auto 0;
+	max-width: 520px;
+	font-size: 12px;
+	line-height: 1.7;
+	color: #50575e;
+}
+
+.dtpost-media-chosen {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	margin: 14px auto 0;
+	padding: 7px 10px 7px 13px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	font-size: 13px;
+	max-width: 100%;
+}
+
+/* Keeps its space while nothing is chosen, so choosing does not grow the box. */
+.dtpost-media-chosen.is-empty { visibility: hidden; }
+
+.dtpost-media-chosen__name {
+	font-weight: 600;
+	color: #1d2327;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dtpost-media-chosen__clear {
+	appearance: none;
+	background: none;
+	border: 0;
+	padding: 2px 4px;
+	color: #2271b1;
+	font-size: 12px;
+	cursor: pointer;
+	text-decoration: underline;
+	flex: none;
+}
+
+.dtpost-media-chosen__clear:hover { color: #135e96; }
+
+/* Tabs that share a section heading's rule. */
+.dtpost-section-title--tabs {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+	padding-bottom: 0;
+}
+
+.dtpost-section-title__text { padding-bottom: 10px; }
+
+.dtpost-source-tabs--inline {
+	border-bottom: 0;
+	margin: 0 0 -1px;
+}
+
+.dtpost-source-tabs--inline .dtpost-source-tab {
+	padding: 4px 10px 9px;
+	font-size: 12px;
+}
+
+#dtpost-img-upload,
+#dtpost-img-media { padding-top: 14px; }
+
+.dtpost-img-thumb--pick {
+	appearance: none;
+	background: #fafafa;
+	padding: 0;
+	cursor: pointer;
+}
+
+.dtpost-img-thumb--pick:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.dtpost-img-thumb--pick img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.dtpost-img-media-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 6px;
+	font-size: 12px;
+	color: #50575e;
+	min-height: 20px;
+}

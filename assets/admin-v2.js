@@ -112,14 +112,168 @@
 			});
 		}
 
+		/* ── Tabs: document and featured image ─────────────────────────────
+		   Each pair is upload or Media Library. Switching clears the one left
+		   behind, and the submit drops whichever is hidden, so the server only
+		   ever receives one source of each. */
+		var activeSource = 'file';
+		var activeImage  = 'upload';
+
+		function switchTabs(tabs, attr, which) {
+			tabs.forEach(function(tab) {
+				var on = tab.dataset[attr] === which;
+				tab.classList.toggle('is-active', on);
+				tab.setAttribute('aria-selected', on ? 'true' : 'false');
+				var panel = qs('#' + tab.getAttribute('aria-controls'));
+				if (panel) panel.hidden = !on;
+			});
+			if (errBox) errBox.style.display = 'none';
+		}
+
+		function resetThumb(box) {
+			if (!box) return;
+			var old = qs('img', box);
+			if (old) old.remove();
+			var svg = qs('svg', box);
+			if (svg) svg.style.display = '';
+		}
+
+		function clearDocx() {
+			if (docxInput) docxInput.value = '';
+			if (docxDrop)  docxDrop.classList.remove('dtpost-has-file');
+			if (docxName)  docxName.textContent = '';
+		}
+
+		function clearDocMedia() {
+			var id = qs('#dtpost_media_id');
+			var chip = qs('#dtpost-media-chosen');
+			if (id)   id.value = '';
+			if (chip) chip.classList.add('is-empty');
+		}
+
+		var imgMediaThumb = qs('#dtpost-img-media-thumb');
+		var imgMediaName  = qs('#dtpost-img-media-name');
+		var imgMediaClear = qs('#dtpost-img-media-clear');
+		var imgMediaField = qs('#dtpost_featured_media_id');
+		var imgMediaBlank = imgMediaName ? imgMediaName.textContent : '';
+
+		function clearImgUpload() {
+			if (imgInput) imgInput.value = '';
+			resetThumb(imgThumb);
+		}
+
+		function clearImgMedia() {
+			if (imgMediaField) imgMediaField.value = '';
+			resetThumb(imgMediaThumb);
+			if (imgMediaName)  imgMediaName.textContent = imgMediaBlank;
+			if (imgMediaClear) imgMediaClear.hidden = true;
+		}
+
+		var docTabs = qsa('#dtpost-doc-tabs .dtpost-source-tab');
+		docTabs.forEach(function(tab) {
+			tab.addEventListener('click', function() {
+				activeSource = tab.dataset.source;
+				switchTabs(docTabs, 'source', activeSource);
+				if (activeSource !== 'file')  clearDocx();
+				if (activeSource !== 'media') clearDocMedia();
+			});
+		});
+
+		var imgTabs = qsa('#dtpost-img-tabs .dtpost-source-tab');
+		imgTabs.forEach(function(tab) {
+			tab.addEventListener('click', function() {
+				activeImage = tab.dataset.imageSource;
+				switchTabs(imgTabs, 'imageSource', activeImage);
+				if (activeImage !== 'upload') clearImgUpload();
+				if (activeImage !== 'media')  clearImgMedia();
+			});
+		});
+
+		/* WordPress's own picker. If wp.media is somehow missing, say so
+		   rather than throwing on click. */
+		function picker(opts, onPick) {
+			var frame = null;
+			return function() {
+				if (typeof wp === 'undefined' || !wp.media) {
+					showUploadErr(DTPOST.strings.no_media || DTPOST.strings.error);
+					return;
+				}
+				if (!frame) {
+					frame = wp.media(opts);
+					frame.on('select', function() {
+						var item = frame.state().get('selection').first();
+						if (item) onPick(item.toJSON());
+					});
+				}
+				frame.open();
+			};
+		}
+
+		var openDocPicker = picker({
+			title: DTPOST.strings.media_title || 'Choose a document',
+			button: { text: DTPOST.strings.media_button || 'Use this document' },
+			library: { type: DTPOST.docx_mime },
+			multiple: false
+		}, function(att) {
+			qs('#dtpost_media_id').value = att.id;
+			qs('#dtpost-media-chosen-name').textContent = att.filename || att.title || '';
+			qs('#dtpost-media-chosen').classList.remove('is-empty');
+			if (errBox) errBox.style.display = 'none';
+		});
+
+		var openImgPicker = picker({
+			title: DTPOST.strings.img_media_title || 'Choose a featured image',
+			button: { text: DTPOST.strings.img_media_button || 'Use this image' },
+			library: { type: 'image' },
+			multiple: false
+		}, function(att) {
+			var src = (att.sizes && (att.sizes.thumbnail || att.sizes.medium) || att).url;
+			imgMediaField.value = att.id;
+			resetThumb(imgMediaThumb);
+			var svg = qs('svg', imgMediaThumb);
+			if (svg) svg.style.display = 'none';
+			var img = document.createElement('img');
+			img.src = src;
+			img.alt = '';
+			imgMediaThumb.appendChild(img);
+			if (imgMediaName)  imgMediaName.textContent = att.filename || att.title || '';
+			if (imgMediaClear) imgMediaClear.hidden = false;
+		});
+
+		var docPickBtn = qs('#dtpost-media-pick');
+		if (docPickBtn) docPickBtn.addEventListener('click', openDocPicker);
+		var docClear = qs('#dtpost-media-clear');
+		if (docClear) docClear.addEventListener('click', clearDocMedia);
+
+		var imgPickBtn = qs('#dtpost-img-media-pick');
+		if (imgPickBtn)    imgPickBtn.addEventListener('click', openImgPicker);
+		if (imgMediaThumb) imgMediaThumb.addEventListener('click', openImgPicker);
+		if (imgMediaClear) imgMediaClear.addEventListener('click', clearImgMedia);
+
 		uploadForm.addEventListener('submit', function(e) {
 			e.preventDefault();
 			if (errBox) errBox.style.display = 'none';
-			if (!docxInput || !docxInput.files || !docxInput.files[0]) { showUploadErr(DTPOST.strings.invalid_type); return; }
+
+			var mediaField = qs('#dtpost_media_id');
+			var hasFile  = activeSource === 'file' && docxInput && docxInput.files && docxInput.files[0];
+			var hasMedia = activeSource === 'media' && mediaField && mediaField.value;
+
+			if (!hasFile && !hasMedia) {
+				showUploadErr(activeSource === 'media'
+					? (DTPOST.strings.need_media || DTPOST.strings.invalid_type)
+					: DTPOST.strings.invalid_type);
+				return;
+			}
 
 			var fd = new FormData(uploadForm);
 			fd.set('action', 'dtpost_upload_docx');
 			fd.set('nonce',  DTPOST.nonce);
+
+			/* Only the visible source of each is sent. */
+			if (activeSource !== 'file')  fd.delete('docx_file');
+			if (activeSource !== 'media') fd.delete('dtpost_media_id');
+			if (activeImage !== 'upload') fd.delete('featured_image');
+			if (activeImage !== 'media')  fd.delete('dtpost_featured_media_id');
 
 			if (uploadBtn) uploadBtn.disabled = true;
 			if (progWrap) progWrap.style.display = 'block';

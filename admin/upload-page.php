@@ -35,34 +35,129 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 				<?php wp_nonce_field( 'dtpost_nonce', 'nonce' ); ?>
 
 				<div class="dtpost-upload-panel">
-					<p class="dtpost-section-title"><?php esc_html_e( 'Document (.docx or .md)', 'docxtowp' ); ?></p>
-
-					<div class="dtpost-dropzone" id="dtpost-docx-dropzone">
-						<div class="dtpost-dropzone__icon">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-						</div>
-						<p class="dtpost-dropzone__label"><?php esc_html_e( 'Drop your .docx or .md file here', 'docxtowp' ); ?></p>
-						<p class="dtpost-dropzone__sub"><?php printf( esc_html__( 'or click to browse: max %s MB', 'docxtowp' ), esc_html( $max_mb ) ); ?></p>
-						<?php
-						// The field keeps its "docx" name: admin-v2.js and the AJAX
-						// handler both refer to it, and a browser holding the old
-						// script would otherwise post a field the server ignores.
-						?>
-						<input type="file" name="docx_file" id="docx_file" accept=".docx,.md,.markdown" class="dtpost-dropzone__input">
-						<p class="dtpost-dropzone__filename" id="dtpost-docx-name"></p>
+					<?php
+					/*
+					 * Where the document comes from: an upload, or a .docx
+					 * already in the Media Library. Upload is first and
+					 * selected, because it is what almost every import is.
+					 * Switching clears the other, so only one is submitted.
+					 */
+					?>
+					<div class="dtpost-source-tabs" id="dtpost-doc-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Where the document comes from', 'docxtowp' ); ?>">
+						<button type="button" class="dtpost-source-tab is-active" id="dtpost-tab-file"
+							role="tab" aria-selected="true" aria-controls="dtpost-source-file" data-source="file">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+							<?php esc_html_e( 'Upload a file', 'docxtowp' ); ?>
+						</button>
+						<button type="button" class="dtpost-source-tab" id="dtpost-tab-media"
+							role="tab" aria-selected="false" aria-controls="dtpost-source-media" data-source="media">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+							<?php esc_html_e( 'Media Library', 'docxtowp' ); ?>
+						</button>
 					</div>
 
-					<p class="dtpost-section-title" style="margin-top:20px"><?php esc_html_e( 'Featured Image', 'docxtowp' ); ?> <span style="font-weight:400;color:#8c8f94;font-size:12px"><?php esc_html_e( 'optional', 'docxtowp' ); ?></span></p>
-
-					<div class="dtpost-img-upload-area">
-						<div class="dtpost-img-thumb" id="dtpost-img-thumb-inner">
-							<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-							<input type="file" name="featured_image" id="featured_image" accept="image/jpeg,image/png,image/gif,image/webp">
+					<?php
+					/*
+					 * Both panels share one grid cell and stay laid out; only
+					 * the active one is visible. The cell is always as tall as
+					 * the taller panel, so switching tabs moves nothing below.
+					 */
+					?>
+					<div class="dtpost-source-stack">
+						<div class="dtpost-source-panel" id="dtpost-source-file" role="tabpanel" aria-labelledby="dtpost-tab-file">
+							<div class="dtpost-dropzone dtpost-source-box" id="dtpost-docx-dropzone">
+								<div class="dtpost-dropzone__icon">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+								</div>
+								<p class="dtpost-dropzone__label"><?php esc_html_e( 'Drop your .docx or .md file here', 'docxtowp' ); ?></p>
+								<p class="dtpost-dropzone__sub"><?php printf( esc_html__( 'or click to browse: max %s MB', 'docxtowp' ), esc_html( $max_mb ) ); ?></p>
+								<?php
+								// The field keeps its "docx" name: admin-v2.js and the AJAX
+								// handler both refer to it, and a browser holding the old
+								// script would otherwise post a field the server ignores.
+								?>
+								<input type="file" name="docx_file" id="docx_file" accept=".docx,.md,.markdown" class="dtpost-dropzone__input">
+								<p class="dtpost-dropzone__filename" id="dtpost-docx-name"></p>
+							</div>
 						</div>
-						<div class="dtpost-img-info">
-							<strong><?php esc_html_e( 'Click to select', 'docxtowp' ); ?></strong>
-							<?php esc_html_e( 'JPEG, PNG, GIF or WebP', 'docxtowp' ); ?><br>
-							<?php esc_html_e( 'Will be set as the post\'s featured image.', 'docxtowp' ); ?>
+
+						<div class="dtpost-source-panel" id="dtpost-source-media" role="tabpanel" aria-labelledby="dtpost-tab-media" hidden>
+							<div class="dtpost-source-box dtpost-media-panel">
+								<div class="dtpost-media-panel__icon">
+									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+								</div>
+								<p class="dtpost-media-panel__label"><?php esc_html_e( 'Choose a document already on this site', 'docxtowp' ); ?></p>
+								<button type="button" class="dtpost-btn dtpost-btn-secondary" id="dtpost-media-pick">
+									<?php esc_html_e( 'Open Media Library', 'docxtowp' ); ?>
+								</button>
+								<input type="hidden" name="dtpost_media_id" id="dtpost_media_id" value="">
+								<p class="dtpost-media-chosen is-empty" id="dtpost-media-chosen">
+									<span class="dtpost-media-chosen__name" id="dtpost-media-chosen-name"></span>
+									<button type="button" class="dtpost-media-chosen__clear" id="dtpost-media-clear"><?php esc_html_e( 'Remove', 'docxtowp' ); ?></button>
+								</p>
+								<p class="dtpost-media-panel__hint">
+									<?php esc_html_e( 'Word documents (.docx) in your Media Library. Nothing is changed or removed: the file is copied for the import and the original stays where it is.', 'docxtowp' ); ?>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<?php
+					/*
+					 * Featured image: upload one, or use one already on the
+					 * site. The tabs share the heading's rule. A library image
+					 * is used as it is; nothing deletes a featured image.
+					 */
+					?>
+					<div class="dtpost-section-title dtpost-section-title--tabs" style="margin-top:20px">
+						<span class="dtpost-section-title__text">
+							<?php esc_html_e( 'Featured Image', 'docxtowp' ); ?>
+							<span style="font-weight:400;color:#8c8f94;font-size:12px"><?php esc_html_e( 'optional', 'docxtowp' ); ?></span>
+						</span>
+						<div class="dtpost-source-tabs dtpost-source-tabs--inline" id="dtpost-img-tabs" role="tablist" aria-label="<?php esc_attr_e( 'Where the featured image comes from', 'docxtowp' ); ?>">
+							<button type="button" class="dtpost-source-tab is-active" id="dtpost-imgtab-upload"
+								role="tab" aria-selected="true" aria-controls="dtpost-img-upload" data-image-source="upload">
+								<?php esc_html_e( 'Upload', 'docxtowp' ); ?>
+							</button>
+							<button type="button" class="dtpost-source-tab" id="dtpost-imgtab-media"
+								role="tab" aria-selected="false" aria-controls="dtpost-img-media" data-image-source="media">
+								<?php esc_html_e( 'Media Library', 'docxtowp' ); ?>
+							</button>
+						</div>
+					</div>
+
+					<div class="dtpost-source-stack">
+						<div class="dtpost-source-panel" id="dtpost-img-upload" role="tabpanel" aria-labelledby="dtpost-imgtab-upload">
+							<div class="dtpost-img-upload-area">
+								<div class="dtpost-img-thumb" id="dtpost-img-thumb-inner">
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+									<input type="file" name="featured_image" id="featured_image" accept="image/jpeg,image/png,image/gif,image/webp">
+								</div>
+								<div class="dtpost-img-info">
+									<strong><?php esc_html_e( 'Click to select', 'docxtowp' ); ?></strong>
+									<?php esc_html_e( 'JPEG, PNG, GIF or WebP', 'docxtowp' ); ?><br>
+									<?php esc_html_e( 'Will be set as the post\'s featured image.', 'docxtowp' ); ?>
+								</div>
+							</div>
+						</div>
+
+						<div class="dtpost-source-panel" id="dtpost-img-media" role="tabpanel" aria-labelledby="dtpost-imgtab-media" hidden>
+							<div class="dtpost-img-upload-area">
+								<button type="button" class="dtpost-img-thumb dtpost-img-thumb--pick" id="dtpost-img-media-thumb"
+									aria-label="<?php esc_attr_e( 'Choose a featured image from the Media Library', 'docxtowp' ); ?>">
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+								</button>
+								<div class="dtpost-img-info">
+									<button type="button" class="dtpost-btn dtpost-btn-secondary" id="dtpost-img-media-pick">
+										<?php esc_html_e( 'Choose from Media Library', 'docxtowp' ); ?>
+									</button>
+									<span class="dtpost-img-media-meta">
+										<span id="dtpost-img-media-name"><?php esc_html_e( 'An image already on this site.', 'docxtowp' ); ?></span>
+										<button type="button" class="dtpost-media-chosen__clear" id="dtpost-img-media-clear" hidden><?php esc_html_e( 'Remove', 'docxtowp' ); ?></button>
+									</span>
+								</div>
+							</div>
+							<input type="hidden" name="dtpost_featured_media_id" id="dtpost_featured_media_id" value="">
 						</div>
 					</div>
 

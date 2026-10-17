@@ -160,11 +160,26 @@ check( 'and names no layout class anywhere', array() === $referenced, implode( '
 // The upload handler converts one way, and the only branch in it is the one
 // that tells a Word file from a Markdown one.
 if ( preg_match( '/function dtpost_ajax_upload_docx.*?\n\}/s', $main, $handler ) ) {
-	check( 'the upload handler has one conversion path per format',
-		1 === preg_match_all( '/new DTPost_Parser\(\)/', $handler[0] )
-		&& 1 === preg_match_all( '/new DTPost_Markdown\(\)/', $handler[0] ),
-		preg_match_all( '/new DTPost_Parser\(\)/', $handler[0] ) . ' parser, '
-			. preg_match_all( '/new DTPost_Markdown\(\)/', $handler[0] ) . ' markdown' );
+	/*
+	 * A .docx can arrive two ways, uploaded or picked from the Media Library,
+	 * so the standard parser is constructed in two places. What matters is
+	 * that both are the standard parser and nothing else converts anything:
+	 * no layout importer, no second converter.
+	 */
+	$converters = array();
+	if ( preg_match_all( '/new\s+(DTPost_\w+|DWP_\w+)\(\)/', $handler[0], $made ) ) {
+		$converters = array_unique( array_filter(
+			$made[1],
+			static fn( $c ) => ! in_array( $c, array( 'DTPost_Permissions', 'DTPost_Image' ), true )
+		) );
+		sort( $converters );
+	}
+	check( 'the upload handler converts only with the standard importers',
+		array( 'DTPost_Markdown', 'DTPost_Parser' ) === $converters,
+		implode( ', ', $converters ) );
+	check( 'and every Word path calls the same parse()',
+		preg_match_all( '/new DTPost_Parser\(\)/', $handler[0] )
+			=== preg_match_all( '/\$parser->parse\(\$temp_file, \$original_name\)/', $handler[0] ) );
 	check( 'and no conditional around which one runs for a .docx',
 		! preg_match( '/preserve|layout_mode|import_mode/i', $handler[0] ) );
 }

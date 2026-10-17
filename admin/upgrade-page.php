@@ -120,6 +120,8 @@ $compare = array(
 	array( __( 'Real blocks, or classic HTML when the classic editor is in use', 'docxtowp' ), true, true ),
 	array( __( 'Posts, pages and any public custom post type', 'docxtowp' ), true, true ),
 	array( __( 'Live preview, categories, tags, author, slug and excerpt', 'docxtowp' ), true, true ),
+	array( __( 'Import a .docx already in the Media Library', 'docxtowp' ), true, true ),
+	array( __( 'Import straight from a Google Docs link', 'docxtowp' ), false, true ),
 	array( __( 'Newsletters and brochures built from text boxes', 'docxtowp' ), __( 'Every word, as one column', 'docxtowp' ), __( 'Columns, panels and headings kept', 'docxtowp' ) ),
 	array( __( 'Documents per run', 'docxtowp' ), __( 'One at a time', 'docxtowp' ), __( 'Up to 100', 'docxtowp' ) ),
 	array( __( 'Markdown notebooks with their image folder (Obsidian, Joplin, Notion)', 'docxtowp' ), false, true ),

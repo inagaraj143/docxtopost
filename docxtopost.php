@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Convert .docx and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.2.10
+ * Version:           1.3.0
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.2.10');
+define('DTPOST_VERSION', '1.3.0');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -65,6 +65,7 @@ if (file_exists(DTPOST_PLUGIN_DIR . 'vendor/autoload.php')) {
 // Core includes.
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-permissions.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-image.php';
+require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-media-source.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-title.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-embeds.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-parser.php';
@@ -831,6 +832,12 @@ function dtpost_enqueue_admin_assets(string $hook): void
 		add_thickbox();
 	}
 
+	// The upload screen's Media Library tabs open WordPress's own picker.
+	// Only there: it is a sizeable bundle and no other screen uses it.
+	if ('docxtowp' === $page) {
+		wp_enqueue_media();
+	}
+
 	wp_enqueue_style(
 		'dtpost-admin',
 		DTPOST_PLUGIN_URL . 'assets/admin.css',
@@ -860,6 +867,8 @@ function dtpost_enqueue_admin_assets(string $hook): void
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('dtpost_nonce'),
 			'max_mb' => (int) get_option('dtpost_max_upload_mb', 10),
+			// What the document picker filters to; the server checks the same.
+			'docx_mime' => DTPost_Media_Source::MIME,
 			'post_types' => $post_types,
 			'strings' => array(
 				'uploading' => __('Uploading…', 'docxtowp'),
@@ -868,7 +877,13 @@ function dtpost_enqueue_admin_assets(string $hook): void
 				'confirm_publish' => __('Are you sure you want to publish this post?', 'docxtowp'),
 				'confirm_trash' => __('Move this post to the trash? You can restore it from the Trash afterwards.', 'docxtowp'),
 				'file_too_large' => __('File exceeds maximum allowed size.', 'docxtowp'),
-				'invalid_type' => __('Only .docx, .md and .markdown files are allowed.', 'docxtowp'),
+				'invalid_type' => __('Choose a .docx or .md file to import.', 'docxtowp'),
+				'need_media' => __('Choose a document from the Media Library.', 'docxtowp'),
+				'media_title' => __('Choose a document to import', 'docxtowp'),
+				'media_button' => __('Use this document', 'docxtowp'),
+				'img_media_title' => __('Choose a featured image', 'docxtowp'),
+				'img_media_button' => __('Use this image', 'docxtowp'),
+				'no_media' => __('The Media Library could not be opened. Reload the page and try again.', 'docxtowp'),
 				'error' => __('An error occurred. Please try again.', 'docxtowp'),
 				'btn_publish' => __('Publish', 'docxtowp'),
 				'btn_draft' => __('Save as Draft', 'docxtowp'),
@@ -969,157 +984,202 @@ function dtpost_ajax_upload_docx(): void
 			wp_send_json_error(array('message' => __('Permission denied.', 'docxtowp')));
 		}
 
-		// Validate file was actually uploaded.
-		if (empty($_FILES['docx_file']) || !isset($_FILES['docx_file']['tmp_name'])) {
-			wp_send_json_error(array('message' => __('No file uploaded.', 'docxtowp')));
-		}
+		/*
+		 * Two places a document can come from: an upload, or a .docx already
+		 * in the Media Library, chosen with the picker. A Media Library pick
+		 * is copied into the temp directory and parsed from there; see
+		 * DTPost_Media_Source for why it is copied rather than used in place.
+		 */
+		$media_id = isset($_POST['dtpost_media_id']) ? absint($_POST['dtpost_media_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 
-		// Sanitize each $_FILES field individually before use.
-		$file = array(
-			'name'     => sanitize_file_name(wp_unslash($_FILES['docx_file']['name'])),
-			'type'     => sanitize_mime_type(wp_unslash($_FILES['docx_file']['type'])),
-			'tmp_name' => $_FILES['docx_file']['tmp_name'], // tmp_name is a server-generated path, not user input.
-			'error'    => absint($_FILES['docx_file']['error']),
-			'size'     => absint($_FILES['docx_file']['size']),
-		);
-
-		if (UPLOAD_ERR_OK !== $file['error']) {
-			wp_send_json_error(array('message' => __('File upload error.', 'docxtowp')));
-		}
-
-		$max_size = (int) get_option('dtpost_max_upload_mb', 10) * 1024 * 1024;
-
-		// Validate size.
-		if ($file['size'] > $max_size) {
-			wp_send_json_error(
-				array(
-					'message' => sprintf(
-						/* translators: %d: max file size in MB */
-						__('File exceeds maximum allowed size (%dMB).', 'docxtowp'),
-						$max_size / 1024 / 1024
-					),
-				)
-			);
-		}
-
-		// Validate that this is a real uploaded file (prevents path traversal).
-		if (!is_uploaded_file($file['tmp_name'])) {
-			wp_send_json_error(array('message' => __('Invalid file upload.', 'docxtowp')));
-		}
-
-		// Detect MIME type server-side; never trust the browser-supplied type.
-		$mime = '';
-		if (function_exists('finfo_open') && defined('FILEINFO_MIME_TYPE')) {
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			if ($finfo) {
-				$detected = finfo_file($finfo, $file['tmp_name']);
-				$mime     = $detected ? sanitize_mime_type($detected) : '';
-				finfo_close($finfo);
+		// A featured image chosen from the library. Checked before any parsing,
+		// so a bad pick fails in a second rather than after the slow part.
+		$featured_media_id = isset($_POST['dtpost_featured_media_id']) ? absint($_POST['dtpost_featured_media_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ($featured_media_id > 0) {
+			$checked = DTPost_Media_Source::featured_image($featured_media_id);
+			if (is_wp_error($checked)) {
+				wp_send_json_error(array('message' => $checked->get_error_message()));
 			}
 		}
-		if (empty($mime) && function_exists('mime_content_type')) {
-			$detected = mime_content_type($file['tmp_name']);
-			$mime     = $detected ? sanitize_mime_type($detected) : '';
-		}
-		if (empty($mime)) {
-			$mime = $file['type'];
-		}
 
-		$ext           = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-		$original_name = sanitize_file_name($file['name']);
-		$uid           = wp_generate_uuid4();
-		$temp_file     = '';
-		$source        = 'docx';
-
-		if (in_array($ext, array('md', 'markdown'), true)) {
-			// ── Markdown ─────────────────────────────────────────────────────
-			// fileinfo has no signature for Markdown. It reports text/plain,
-			// text/x-markdown on newer libmagic, or nothing when the client did
-			// not send a type for an extension it does not know. MIME is a weak
-			// check for a text format whichever way; the real gate is in
-			// DTPost_Markdown, which refuses anything that is not UTF-8 text.
-			$nonspecific = array('application/octet-stream', 'application/x-empty', 'inode/x-empty');
-			if ('' !== $mime && !in_array($mime, $nonspecific, true) && !str_starts_with($mime, 'text/')) {
-				wp_send_json_error(array('message' => __('Invalid file type. Only .docx, .md and .markdown files are allowed.', 'docxtowp')));
-			}
-
-			// Never written to disk. The file is parsed straight from PHP's
-			// upload buffer into the session, so there is nothing to clean up
-			// afterwards and nothing for the cron to miss.
-			$raw = file_get_contents($file['tmp_name']); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			if (false === $raw) {
-				wp_send_json_error(array('message' => __('Failed to read uploaded file.', 'docxtowp')));
-			}
-
-			$source = 'markdown';
-			$result = (new DTPost_Markdown())->parse($raw, $original_name);
-
-			if (is_wp_error($result)) {
-				wp_send_json_error(array('message' => $result->get_error_message()));
-			}
-		} else {
-			// ── Word ─────────────────────────────────────────────────────────
-			$allowed_mimes = array(
-				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-				'application/zip', // Some systems report .docx as zip.
-				'application/octet-stream', // Some servers misidentify docx as binary.
-			);
-
-			if ('docx' !== $ext || !in_array($mime, $allowed_mimes, true)) {
-				wp_send_json_error(array('message' => __('Invalid file type. Only .docx, .md and .markdown files are allowed.', 'docxtowp')));
-			}
-
-			// Save to temp dir using wp_handle_upload pattern.
-			$temp_dir = dtpost_get_temp_dir();
+		if ($media_id > 0) {
+			// ── Media Library ────────────────────────────────────────────────
+			$uid           = wp_generate_uuid4();
+			$source        = 'docx';
+			$temp_dir      = dtpost_get_temp_dir();
 			if (!file_exists($temp_dir)) {
 				wp_mkdir_p($temp_dir);
 			}
-
 			$temp_file = $temp_dir . $uid . '.docx';
 
-			if (!function_exists('wp_handle_upload')) {
-				require_once ABSPATH . 'wp-admin/includes/file.php';
+			$copied = DTPost_Media_Source::copy_to_temp($media_id, $temp_file);
+			if (is_wp_error($copied)) {
+				wp_send_json_error(array('message' => $copied->get_error_message()));
 			}
 
-			// Temporarily filter upload dir to point to our temp folder.
-			$custom_upload_filter = function ($arr) {
-				$arr['path'] = trailingslashit($arr['basedir']) . 'dtpost-temp';
-				$arr['url'] = trailingslashit($arr['baseurl']) . 'dtpost-temp';
-				$arr['subdir'] = '/dtpost-temp';
-				return $arr;
-			};
-			add_filter('upload_dir', $custom_upload_filter);
+			$original_name = $copied['name'];
 
-			$upload_overrides = array(
-				'test_form' => false,
-				'mimes' => array('docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
-				'unique_filename_callback' => function ($dir, $name, $ext) use ($uid) {
-					return $uid . '.docx';
-				},
-			);
-
-			$movefile = wp_handle_upload($file, $upload_overrides);
-
-			remove_filter('upload_dir', $custom_upload_filter);
-
-			if ($movefile && !isset($movefile['error'])) {
-				$temp_file = $movefile['file'];
-			} else {
-				wp_send_json_error(array('message' => $movefile['error'] ?? __('Failed to handle uploaded file.', 'docxtowp')));
-			}
-
-			// Verify the file was written and is readable.
-			if (!file_exists($temp_file) || !is_readable($temp_file)) {
-				wp_send_json_error(array('message' => __('Failed to verify uploaded file.', 'docxtowp')));
-			}
-
-			// Parse document, pass original name so title fallback is clean.
 			$parser = new DTPost_Parser();
 			$result = $parser->parse($temp_file, $original_name);
 
 			if (is_wp_error($result)) {
+				// The copy, never the attachment.
 				wp_delete_file($temp_file);
 				wp_send_json_error(array('message' => $result->get_error_message()));
+			}
+		} else {
+			// Validate file was actually uploaded.
+			if (empty($_FILES['docx_file']) || !isset($_FILES['docx_file']['tmp_name'])) {
+				wp_send_json_error(array('message' => __('No file uploaded.', 'docxtowp')));
+			}
+
+			// Sanitize each $_FILES field individually before use.
+			$file = array(
+				'name'     => sanitize_file_name(wp_unslash($_FILES['docx_file']['name'])),
+				'type'     => sanitize_mime_type(wp_unslash($_FILES['docx_file']['type'])),
+				'tmp_name' => $_FILES['docx_file']['tmp_name'], // tmp_name is a server-generated path, not user input.
+				'error'    => absint($_FILES['docx_file']['error']),
+				'size'     => absint($_FILES['docx_file']['size']),
+			);
+
+			if (UPLOAD_ERR_OK !== $file['error']) {
+				wp_send_json_error(array('message' => __('File upload error.', 'docxtowp')));
+			}
+
+			$max_size = (int) get_option('dtpost_max_upload_mb', 10) * 1024 * 1024;
+
+			// Validate size.
+			if ($file['size'] > $max_size) {
+				wp_send_json_error(
+					array(
+						'message' => sprintf(
+							/* translators: %d: max file size in MB */
+							__('File exceeds maximum allowed size (%dMB).', 'docxtowp'),
+							$max_size / 1024 / 1024
+						),
+					)
+				);
+			}
+
+			// Validate that this is a real uploaded file (prevents path traversal).
+			if (!is_uploaded_file($file['tmp_name'])) {
+				wp_send_json_error(array('message' => __('Invalid file upload.', 'docxtowp')));
+			}
+
+			// Detect MIME type server-side; never trust the browser-supplied type.
+			$mime = '';
+			if (function_exists('finfo_open') && defined('FILEINFO_MIME_TYPE')) {
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				if ($finfo) {
+					$detected = finfo_file($finfo, $file['tmp_name']);
+					$mime     = $detected ? sanitize_mime_type($detected) : '';
+					finfo_close($finfo);
+				}
+			}
+			if (empty($mime) && function_exists('mime_content_type')) {
+				$detected = mime_content_type($file['tmp_name']);
+				$mime     = $detected ? sanitize_mime_type($detected) : '';
+			}
+			if (empty($mime)) {
+				$mime = $file['type'];
+			}
+
+			$ext           = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+			$original_name = sanitize_file_name($file['name']);
+			$uid           = wp_generate_uuid4();
+			$temp_file     = '';
+			$source        = 'docx';
+
+			if (in_array($ext, array('md', 'markdown'), true)) {
+				// ── Markdown ─────────────────────────────────────────────────────
+				// fileinfo has no signature for Markdown. It reports text/plain,
+				// text/x-markdown on newer libmagic, or nothing when the client did
+				// not send a type for an extension it does not know. MIME is a weak
+				// check for a text format whichever way; the real gate is in
+				// DTPost_Markdown, which refuses anything that is not UTF-8 text.
+				$nonspecific = array('application/octet-stream', 'application/x-empty', 'inode/x-empty');
+				if ('' !== $mime && !in_array($mime, $nonspecific, true) && !str_starts_with($mime, 'text/')) {
+					wp_send_json_error(array('message' => __('Invalid file type. Only .docx, .md and .markdown files are allowed.', 'docxtowp')));
+				}
+
+				// Never written to disk. The file is parsed straight from PHP's
+				// upload buffer into the session, so there is nothing to clean up
+				// afterwards and nothing for the cron to miss.
+				$raw = file_get_contents($file['tmp_name']); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+				if (false === $raw) {
+					wp_send_json_error(array('message' => __('Failed to read uploaded file.', 'docxtowp')));
+				}
+
+				$source = 'markdown';
+				$result = (new DTPost_Markdown())->parse($raw, $original_name);
+
+				if (is_wp_error($result)) {
+					wp_send_json_error(array('message' => $result->get_error_message()));
+				}
+			} else {
+				// ── Word ─────────────────────────────────────────────────────────
+				$allowed_mimes = array(
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					'application/zip', // Some systems report .docx as zip.
+					'application/octet-stream', // Some servers misidentify docx as binary.
+				);
+
+				if ('docx' !== $ext || !in_array($mime, $allowed_mimes, true)) {
+					wp_send_json_error(array('message' => __('Invalid file type. Only .docx, .md and .markdown files are allowed.', 'docxtowp')));
+				}
+
+				// Save to temp dir using wp_handle_upload pattern.
+				$temp_dir = dtpost_get_temp_dir();
+				if (!file_exists($temp_dir)) {
+					wp_mkdir_p($temp_dir);
+				}
+
+				$temp_file = $temp_dir . $uid . '.docx';
+
+				if (!function_exists('wp_handle_upload')) {
+					require_once ABSPATH . 'wp-admin/includes/file.php';
+				}
+
+				// Temporarily filter upload dir to point to our temp folder.
+				$custom_upload_filter = function ($arr) {
+					$arr['path'] = trailingslashit($arr['basedir']) . 'dtpost-temp';
+					$arr['url'] = trailingslashit($arr['baseurl']) . 'dtpost-temp';
+					$arr['subdir'] = '/dtpost-temp';
+					return $arr;
+				};
+				add_filter('upload_dir', $custom_upload_filter);
+
+				$upload_overrides = array(
+					'test_form' => false,
+					'mimes' => array('docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+					'unique_filename_callback' => function ($dir, $name, $ext) use ($uid) {
+						return $uid . '.docx';
+					},
+				);
+
+				$movefile = wp_handle_upload($file, $upload_overrides);
+
+				remove_filter('upload_dir', $custom_upload_filter);
+
+				if ($movefile && !isset($movefile['error'])) {
+					$temp_file = $movefile['file'];
+				} else {
+					wp_send_json_error(array('message' => $movefile['error'] ?? __('Failed to handle uploaded file.', 'docxtowp')));
+				}
+
+				// Verify the file was written and is readable.
+				if (!file_exists($temp_file) || !is_readable($temp_file)) {
+					wp_send_json_error(array('message' => __('Failed to verify uploaded file.', 'docxtowp')));
+				}
+
+				// Parse document, pass original name so title fallback is clean.
+				$parser = new DTPost_Parser();
+				$result = $parser->parse($temp_file, $original_name);
+
+				if (is_wp_error($result)) {
+					wp_delete_file($temp_file);
+					wp_send_json_error(array('message' => $result->get_error_message()));
+				}
 			}
 		}
 
@@ -1140,6 +1200,9 @@ function dtpost_ajax_upload_docx(): void
 			);
 			$image_handler     = new DTPost_Image();
 			$featured_image_id = $image_handler->upload_featured_image($featured_image_file);
+		} elseif ($featured_media_id > 0) {
+			// Chosen from the Media Library and checked above. Used as it is.
+			$featured_image_id = $featured_media_id;
 		}
 
 		// Store session data.

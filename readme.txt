@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.10
+Stable tag:        1.3.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 * **Real blocks, not one big lump:** Your document arrives as proper paragraph, heading, list, image, table and quote blocks you can move and edit individually, not a single Classic block you have to fight. Running the classic editor instead? It detects that and gives you plain HTML.
 * **Undo an import:** Changed your mind? One link on the confirmation screen moves the post to the trash.
 * **Simple upload:** Drag and drop your .docx or .md file.
+* **Import from your Media Library:** Already have Word documents on your site? Pick a .docx from the Media Library and import it. The original is copied for the import and never changed or removed.
 * **Markdown too:** `.md` and `.markdown` files import with headings, emphasis, links, nested lists, blockquotes, tables and fenced code blocks intact. Code becomes a real Code block, not a paragraph in a monospace font.
 * **Formatting preserved:** Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, blockquotes and paragraph alignment all survive the trip.
 * **Real lists:** Bulleted and numbered lists come through as proper lists, nested sub-bullets included.
@@ -31,7 +32,7 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 * **All public post types:** Publish to Posts, Pages, or any Custom Post Type registered on your site.
 * **Full status options:** Publish immediately, save as Draft, submit for Pending Review, or mark Private.
 * **Live preview:** See exactly how the post will look before you publish.
-* **Featured images:** Upload a featured image alongside your document.
+* **Featured images:** Upload a featured image alongside your document, or choose one already in your Media Library.
 * **Categories and tags:** Assign both while you import.
 * **Post meta:** Edit the slug, excerpt and author.
 * **Role-based access:** Choose which user roles can use the plugin.
@@ -40,6 +41,7 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 
 The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them, or a document whose design matters as much as its words:
 
+* **Import straight from Google Docs.** Paste a Google Docs link and the document imports with the same formatting, images and layout handling as a .docx, no downloading and re-uploading. Importing the same document again updates the post it made last time instead of creating a second one.
 * **Layout-preserving import for newsletters, brochures and flyers.** A designed document is not one column of text: it is text boxes positioned on a page, in columns, over coloured panels and photographs. The free importer reads every word of one and gives you the words. Pro reads the geometry as well, works out which boxes are rows, which are columns and which are the panels behind them, and rebuilds that as a responsive layout that stacks properly on a phone. You get a preview and a plain-text version side by side, and can switch between them before publishing. It is a faithful web layout based on the document's design, not a pixel-for-pixel copy of a printed page.
 * **Bulk import, up to 100 files a run**, drag in .docx and .md files together. Each file uploads in its own request, so shared-hosting limits on upload count, post size and execution time never come into it. A corrupt document fails its own row and the rest carry on. Pause, resume, cancel, or retry only the failures, and close the tab if you like, because the queue lives in the database rather than the page.
 * **A whole notebook, images and all**: drop your `_resources`, `attachments` or exported image folder in with the Markdown files and every image referenced by a relative path is matched by filename and placed in its post. That is a Joplin notebook, an Obsidian vault or a Notion export moved across in one run, rather than image by image in the editor.
@@ -120,6 +122,11 @@ If you would rather not send it, right-click the link and copy it instead of cli
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.3.0 =
+* Added: **import a Word document that is already in your Media Library.** WordPress accepts .docx uploads, so many sites already have documents sitting there. Choose one with the Media Library tab on the upload screen and it imports like an upload. The original is copied for the import and never changed or removed.
+* Added: **choose the featured image from your Media Library**, as well as uploading one.
+* Changed: the upload screen has tabs for where the document comes from, Upload a file or Media Library, and the same for the featured image. Upload is selected by default, switching clears the one you left, and the screen does not jump in height as you switch.
 
 = 1.2.10 =
 * Added: the upload and preview screens now describe **layout-preserving import**, a DocxToWP Pro feature that keeps a document's columns, background panels and headings as a responsive layout instead of one column of text. This plugin imports every document as plain formatted text, which it will keep doing; nothing here is locked or restricted, and no part of that feature's code ships in the free plugin.
