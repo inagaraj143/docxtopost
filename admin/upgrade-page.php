@@ -17,6 +17,16 @@ $count = dtpost_conversion_count();
 
 $pillars = array(
 	array(
+		'title' => __( 'Keep the page layout', 'docxtowp' ),
+		'lead'  => __( 'Newsletters and brochures arrive as a layout, not one column of text.', 'docxtowp' ),
+		'points' => array(
+			__( 'A designed document is text boxes positioned on a page, over coloured panels and photographs. Pro reads where each one sits and rebuilds the columns, panels and headings as a responsive layout.', 'docxtowp' ),
+			__( 'Columns hold their proportions on a desktop, drop to two across on a tablet and stack in reading order on a phone.', 'docxtowp' ),
+			__( 'The option is only offered for documents it suits, and the preview screen shows you both versions before you choose.', 'docxtowp' ),
+			__( 'A faithful web layout based on the document design, not a pixel-for-pixel copy of a printed page. Anything it could not reproduce is listed before you publish.', 'docxtowp' ),
+		),
+	),
+	array(
 		'title' => __( 'Bulk import', 'docxtowp' ),
 		'lead'  => __( 'Drag in up to 100 .docx and .md files and walk away.', 'docxtowp' ),
 		'points' => array(
@@ -110,6 +120,7 @@ $compare = array(
 	array( __( 'Real blocks, or classic HTML when the classic editor is in use', 'docxtowp' ), true, true ),
 	array( __( 'Posts, pages and any public custom post type', 'docxtowp' ), true, true ),
 	array( __( 'Live preview, categories, tags, author, slug and excerpt', 'docxtowp' ), true, true ),
+	array( __( 'Newsletters and brochures built from text boxes', 'docxtowp' ), __( 'Every word, as one column', 'docxtowp' ), __( 'Columns, panels and headings kept', 'docxtowp' ) ),
 	array( __( 'Documents per run', 'docxtowp' ), __( 'One at a time', 'docxtowp' ), __( 'Up to 100', 'docxtowp' ) ),
 	array( __( 'Markdown notebooks with their image folder (Obsidian, Joplin, Notion)', 'docxtowp' ), false, true ),
 	array( __( 'Review table: edit every title, image and SEO field before import', 'docxtowp' ), false, true ),
