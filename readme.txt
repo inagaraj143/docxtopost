@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.3.0
+Stable tag:        1.3.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,6 +122,9 @@ If you would rather not send it, right-click the link and copy it instead of cli
 4. Settings: file size limit, post defaults and which roles may use the plugin
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixed: **1.3.0 could not be activated.** A file the new Media Library import needs was missing from the release, so WordPress stopped the plugin with a fatal error and paused it in recovery mode. Nothing on your site was changed. Update to 1.3.1 and resume or reactivate the plugin.
 
 = 1.3.0 =
 * Added: **import a Word document that is already in your Media Library.** WordPress accepts .docx uploads, so many sites already have documents sitting there. Choose one with the Media Library tab on the upload screen and it imports like an upload. The original is copied for the import and never changed or removed.
