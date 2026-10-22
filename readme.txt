@@ -1,22 +1,22 @@
-=== DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types ===
+=== DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types ===
 Contributors:      nagarajdev
 Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.3.1
+Stable tag:        1.3.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Import .docx and Markdown files as WordPress Posts, Pages, or Custom Post Types in seconds. No copy-paste. No block editor fighting.
+Import Word (.docx) and Markdown files as WordPress posts, pages or custom post types. Images, headings and tables kept. No copy-paste.
 
 == Description ==
 
-**DocxToPost** is the easiest way to turn Microsoft Word documents (and Markdown files) into clean WordPress posts, pages, or custom post types.
+Copy a Word document into WordPress and it falls apart. Images go missing. Lists flatten. Tables lose their headers. You spend longer fixing the post than writing it.
 
-No more copy-pasting from Word and losing your formatting. Upload your .docx file and DocxToPost parses it into clean, semantic HTML that WordPress understands, including every embedded image, which is uploaded to your Media Library automatically.
+**DocxToPost** reads the .docx file itself, not the clipboard. Every heading, list, table and image comes through as real blocks, and every image lands in your Media Library with its alt text.
 
-Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean set of blocks: headings, lists, tables, code blocks and all. Notes from Obsidian or Notion, a README, or the output of an AI assistant all import without reformatting.
+Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or an answer from ChatGPT or Claude all import without reformatting.
 
 **Everything in the free version:**
 
@@ -39,20 +39,23 @@ Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean 
 
 = Why upgrade to Pro? =
 
-The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them, or a document whose design matters as much as its words:
+The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them.
 
-* **Import straight from Google Docs.** Paste a Google Docs link and the document imports with the same formatting, images and layout handling as a .docx, no downloading and re-uploading. Importing the same document again updates the post it made last time instead of creating a second one.
-* **Layout-preserving import for newsletters, brochures and flyers.** A designed document is not one column of text: it is text boxes positioned on a page, in columns, over coloured panels and photographs. The free importer reads every word of one and gives you the words. Pro reads the geometry as well, works out which boxes are rows, which are columns and which are the panels behind them, and rebuilds that as a responsive layout that stacks properly on a phone. You get a preview and a plain-text version side by side, and can switch between them before publishing. It is a faithful web layout based on the document's design, not a pixel-for-pixel copy of a printed page.
-* **Bulk import, up to 100 files a run**, drag in .docx and .md files together. Each file uploads in its own request, so shared-hosting limits on upload count, post size and execution time never come into it. A corrupt document fails its own row and the rest carry on. Pause, resume, cancel, or retry only the failures, and close the tab if you like, because the queue lives in the database rather than the page.
-* **A whole notebook, images and all**: drop your `_resources`, `attachments` or exported image folder in with the Markdown files and every image referenced by a relative path is matched by filename and placed in its post. That is a Joplin notebook, an Obsidian vault or a Notion export moved across in one run, rather than image by image in the editor.
-* **Review everything before anything is created**: a table of every document with its detected title, featured image and SEO fields, each editable per row, and a toggle to leave any document out of the run. Nothing is written to your site until you say so.
-* **Drip publishing**, schedule a batch instead of publishing it all at once. "One post per weekday from Monday at 09:00" is two clicks, weekends are excluded by default, and you can override any single date by hand without disturbing the rest of the sequence.
-* **SEO automation**. SEO title, meta description and focus keyphrase for Yoast SEO and Rank Math, filled from templates using `{title}`, `{sitename}`, `{excerpt}`, `{filename}`, `{category}` and `{date}`, with per-document overrides.
-* **Smart image optimization**. JPEG and PNG images from your documents are converted to WebP as they are imported, but only when the WebP is genuinely smaller, so photographs shrink while flat logos and diagrams keep their original format. Transparency is preserved, your originals are never deleted, and each import reports how much it saved.
+* **Bulk import, up to 100 files in one run.** Drop in .docx and .md files together. Review every title, featured image and SEO field before anything is created. A bad file fails on its own row and the rest keep going.
+* **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
+* **Yoast SEO and Rank Math fields** filled from templates, with per-document overrides.
+* **One-click undo of a whole batch**, plus full import history.
+* **Import from a Google Docs link.** No downloading and re-uploading, and importing it again updates the same post.
+* **Keep newsletter and brochure layouts** as responsive columns instead of one long column.
+* **WebP image optimization**, only when it actually makes the file smaller.
 
-Pro also adds one-click rollback of an entire import, import history with rollback from any past job, duplicate handling (skip, import anyway, or update the existing post), a featured-image cascade that matches companion images to their documents by filename, an activity log with re-import, automatic updates, and email support from the developer.
+Watch the bulk import, start to finish:
 
-The Upgrade screen inside the plugin has a side-by-side comparison of Free and Pro. Learn more at [docxtowp.com](https://docxtowp.com)
+https://youtu.be/egCNjhdjiqY
+
+Pro starts at $49/year for one site. Pro is a separate plugin, not a licence key for this one: install Pro, then deactivate this plugin, because both use the same admin menu. Your imported posts are not affected.
+
+The Upgrade screen inside the plugin compares Free and Pro side by side. [See Pro plans](https://docxtowp.com/pricing?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
 
 = More from the developer =
 
@@ -81,6 +84,15 @@ Keeping those is what layout-preserving import in [DocxToWP Pro](https://docxtow
 Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables, horizontal rules and fenced code blocks are all supported, code blocks become real Code blocks in the editor. The first `# Heading` becomes the post title; if there is none, the filename is used.
 
 Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title; other keys such as slug, categories and dates are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones, upload them to the Media Library and add them in the editor.
+
+= Can I import from Google Docs? =
+Yes. In the free plugin, open your Google Doc, choose File > Download > Microsoft Word (.docx), then upload that file. In DocxToWP Pro you can paste the Google Docs link instead, and importing it again updates the same post.
+
+= Can I import many Word documents at once? =
+The free plugin imports one file at a time, with no limit on how many. DocxToWP Pro imports up to 100 .docx and .md files in one run, with a review step before anything is created and one-click undo of the whole batch.
+
+= How much is Pro, and how do I install it? =
+Pro starts at $49/year for one site, with plans for more sites at [docxtowp.com/pricing](https://docxtowp.com/pricing?utm_source=wporg&utm_medium=readme&utm_campaign=faq-pricing). It is a separate plugin: buy it, install the Pro .zip, deactivate this plugin, then enter your licence key under DocxToWP Pro → Licence. Your imported posts are ordinary WordPress posts and are not affected.
 
 = Where does Markdown from ChatGPT, Notion or Obsidian fit? =
 Save or export it as a `.md` file and upload that. All three produce standard Markdown, which is what the importer reads. Notion's export puts images in a folder next to the file, see the previous answer for how those are handled.
@@ -120,8 +132,17 @@ If you would rather not send it, right-click the link and copy it instead of cli
 2. Preview and publish: the parsed document with post type, status, author, featured image, categories and tags
 3. Confirmation after the post is created
 4. Settings: file size limit, post defaults and which roles may use the plugin
+5. DocxToWP Pro bulk import, step 1: drop up to 100 .docx files at once, with images named after their documents to become featured images
+6. DocxToWP Pro bulk import, step 2: review every title and matched featured image, untick any document to leave it out, and set post type, status, author and tags for the whole batch
+7. DocxToWP Pro SEO details for one document: SEO title, focus keyphrase and meta description for Yoast SEO and Rank Math, with the batch template shown in grey
+8. DocxToWP Pro bulk import, step 3: live progress, edit and view links for each new post, and one-click undo of the whole batch
+9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.3.2 =
+* Changed: the plugin is now called **DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types**, which says what it does in the words people use. Nothing else about it changes, and your settings and imported posts are untouched.
+* Changed: clearer plugin description, and new answers on importing from Google Docs, importing many documents at once, and how Pro is priced and installed.
 
 = 1.3.1 =
 * Fixed: **1.3.0 could not be activated.** A file the new Media Library import needs was missing from the release, so WordPress stopped the plugin with a fatal error and paused it in recovery mode. Nothing on your site was changed. Update to 1.3.1 and resume or reactivate the plugin.
@@ -162,7 +183,7 @@ If you would rather not send it, right-click the link and copy it instead of cli
 
 = 1.2.6 =
 * Added: **Upgrade and Leave a review buttons in the header** of the import, Bulk Import and Upgrade screens, where they are on screen the moment the page loads. Both already existed and both were easy to miss: Pro was a sidebar card that falls below the fold on a short window, and the review ask was a one-time dismissible notice, so anyone who swiped it away had nowhere to go back to it.
-* Changed: **the Pro call to action now appears at the top of the Bulk Import and Upgrade screens**, not only at the bottom. Someone who opens a screen called "Bulk Import (Pro)" has already decided they are interested, and making them scroll past every feature section to find where to buy puts the answer furthest from the person most ready to act on it. The detail is still below, and the Upgrade screen keeps the "Already bought Pro?" block above the sales pitch so a paying customer is helped before being sold to again.
+* Changed: **the Pro call to action now appears at the top of the Bulk Import and Upgrade screens**, not only at the bottom. The detail is still below, and the Upgrade screen keeps the "Already bought Pro?" block at the top.
 * Fixed: the "Or see everything else Pro adds" link rendered left of centre inside a centred panel. It carried a max-width with no automatic margins, so the text centred inside a box that sat hard left.
 * Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.5.
 
@@ -248,6 +269,9 @@ If you would rather not send it, right-click the link and copy it instead of cli
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+A clearer plugin name and description. Importing is unchanged.
 
 = 1.2.8 =
 Adds a Free and Pro comparison and a More Tools screen, and fixes a wrong heading on the Bulk Import screen. Importing is unchanged.
