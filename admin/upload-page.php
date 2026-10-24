@@ -49,6 +49,11 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
 							<?php esc_html_e( 'Upload a file', 'docxtowp' ); ?>
 						</button>
+						<button type="button" class="dtpost-source-tab" id="dtpost-tab-google"
+							role="tab" aria-selected="false" aria-controls="dtpost-source-google" data-source="google">
+							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+							<?php esc_html_e( 'Google Docs link', 'docxtowp' ); ?>
+						</button>
 						<button type="button" class="dtpost-source-tab" id="dtpost-tab-media"
 							role="tab" aria-selected="false" aria-controls="dtpost-source-media" data-source="media">
 							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -78,6 +83,45 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 								?>
 								<input type="file" name="docx_file" id="docx_file" accept=".docx,.md,.markdown" class="dtpost-dropzone__input">
 								<p class="dtpost-dropzone__filename" id="dtpost-docx-name"></p>
+							</div>
+						</div>
+
+						<?php
+						/*
+						 * A shared Google Doc, by its link (1.4.0). The plugin
+						 * downloads it as .docx from docs.google.com and imports
+						 * it like an upload; that download is the only request
+						 * this plugin ever makes, and only when this is used.
+						 */
+						?>
+						<div class="dtpost-source-panel" id="dtpost-source-google" role="tabpanel" aria-labelledby="dtpost-tab-google" hidden>
+							<div class="dtpost-source-box dtpost-media-panel dtpost-google-panel">
+								<div class="dtpost-media-panel__icon">
+									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+								</div>
+								<label class="dtpost-media-panel__label" for="dtpost_google_link"><?php esc_html_e( 'Paste a Google Docs link', 'docxtowp' ); ?></label>
+								<input type="url" name="dtpost_google_link" id="dtpost_google_link" class="dtpost-google-input"
+									placeholder="https://docs.google.com/document/d/…" autocomplete="off" spellcheck="false">
+								<p class="dtpost-media-panel__hint">
+									<?php
+									printf(
+										/* translators: 1: Share, 2: General access, 3: Anyone with the link, all Google Docs menu labels */
+										esc_html__( 'The document has to be shared: %1$s → %2$s → %3$s. View access is enough, and you can restrict it again after importing.', 'docxtowp' ),
+										'<strong>' . esc_html__( 'Share', 'docxtowp' ) . '</strong>',
+										'<strong>' . esc_html__( 'General access', 'docxtowp' ) . '</strong>',
+										'<strong>' . esc_html__( 'Anyone with the link', 'docxtowp' ) . '</strong>'
+									);
+									?>
+								</p>
+								<p class="dtpost-media-panel__hint">
+									<?php
+									printf(
+										/* translators: %s: link to DocxToWP Pro */
+										esc_html__( 'Private documents straight from Google Drive, no sharing needed, and many at once: %s', 'docxtowp' ),
+										'<a href="' . esc_url( dtpost_pro_url( 'google-tab' ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'DocxToWP Pro', 'docxtowp' ) . '</a>'
+									);
+									?>
+								</p>
 							</div>
 						</div>
 

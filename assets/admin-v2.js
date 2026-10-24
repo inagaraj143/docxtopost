@@ -176,6 +176,8 @@
 				switchTabs(docTabs, 'source', activeSource);
 				if (activeSource !== 'file')  clearDocx();
 				if (activeSource !== 'media') clearDocMedia();
+				if (activeSource !== 'google') { var gl = qs('#dtpost_google_link'); if (gl) gl.value = ''; }
+				if (activeSource === 'google') { var gf = qs('#dtpost_google_link'); if (gf) gf.focus(); }
 			});
 		});
 
@@ -257,9 +259,13 @@
 			var mediaField = qs('#dtpost_media_id');
 			var hasFile  = activeSource === 'file' && docxInput && docxInput.files && docxInput.files[0];
 			var hasMedia = activeSource === 'media' && mediaField && mediaField.value;
+			var gField   = qs('#dtpost_google_link');
+			var hasLink  = activeSource === 'google' && gField && gField.value.trim();
 
-			if (!hasFile && !hasMedia) {
-				showUploadErr(activeSource === 'media'
+			if (!hasFile && !hasMedia && !hasLink) {
+				showUploadErr(activeSource === 'google'
+					? (DTPOST.strings.need_link || DTPOST.strings.invalid_type)
+					: activeSource === 'media'
 					? (DTPOST.strings.need_media || DTPOST.strings.invalid_type)
 					: DTPOST.strings.invalid_type);
 				return;
@@ -272,6 +278,7 @@
 			/* Only the visible source of each is sent. */
 			if (activeSource !== 'file')  fd.delete('docx_file');
 			if (activeSource !== 'media') fd.delete('dtpost_media_id');
+			if (activeSource !== 'google') fd.delete('dtpost_google_link');
 			if (activeImage !== 'upload') fd.delete('featured_image');
 			if (activeImage !== 'media')  fd.delete('dtpost_featured_media_id');
 

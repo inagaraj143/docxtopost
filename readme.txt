@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.3.2
+Stable tag:        1.4.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or
 * **Undo an import:** Changed your mind? One link on the confirmation screen moves the post to the trash.
 * **Simple upload:** Drag and drop your .docx or .md file.
 * **Import from your Media Library:** Already have Word documents on your site? Pick a .docx from the Media Library and import it. The original is copied for the import and never changed or removed.
+* **Import from a Google Docs link:** Paste the link to a shared Google Doc and it imports with its headings, lists, tables and images, no downloading and re-uploading.
 * **Markdown too:** `.md` and `.markdown` files import with headings, emphasis, links, nested lists, blockquotes, tables and fenced code blocks intact. Code becomes a real Code block, not a paragraph in a monospace font.
 * **Formatting preserved:** Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, blockquotes and paragraph alignment all survive the trip.
 * **Real lists:** Bulleted and numbered lists come through as proper lists, nested sub-bullets included.
@@ -45,7 +46,7 @@ The free plugin imports one document at a time, with no limit. Pro is for the da
 * **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
 * **Yoast SEO and Rank Math fields** filled from templates, with per-document overrides.
 * **One-click undo of a whole batch**, plus full import history.
-* **Import from a Google Docs link.** No downloading and re-uploading, and importing it again updates the same post.
+* **Choose from Google Drive.** Pick private Google Docs straight from your Drive, several at once, with no sharing needed. Importing one again updates the same post.
 * **Keep newsletter and brochure layouts** as responsive columns instead of one long column.
 * **WebP image optimization**, only when it actually makes the file smaller.
 
@@ -86,7 +87,7 @@ Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings
 Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title; other keys such as slug, categories and dates are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones, upload them to the Media Library and add them in the editor.
 
 = Can I import from Google Docs? =
-Yes. In the free plugin, open your Google Doc, choose File > Download > Microsoft Word (.docx), then upload that file. In DocxToWP Pro you can paste the Google Docs link instead, and importing it again updates the same post.
+Yes. Open the Google Docs link tab on the upload screen and paste the link to the document. It has to be shared as "Anyone with the link" (view access is enough), because the plugin downloads it the way a browser with the link would. In DocxToWP Pro you can also choose private documents straight from Google Drive, several at once, with no sharing needed.
 
 = Can I import many Word documents at once? =
 The free plugin imports one file at a time, with no limit on how many. DocxToWP Pro imports up to 100 .docx and .md files in one run, with a review step before anything is created and one-click undo of the whole batch.
@@ -119,12 +120,20 @@ No. By default the plugin looks at which editor your post type actually uses and
 Not any more. Each paragraph, heading, list, image, table and quote becomes its own block, so you can drag, duplicate and edit them the same as anything you wrote in the editor. Anything with no block equivalent is kept intact in an HTML block rather than being dropped.
 
 = Does the plugin send my documents anywhere? =
-No. Everything is parsed on your own server, and the plugin makes no outbound requests. Your documents, their contents and the posts they become never leave your site.
+No. Everything is parsed on your own server, and your documents, their contents and the posts they become never leave your site. The plugin makes one kind of outbound request, and only when you ask for it: importing from a Google Docs link downloads that document from docs.google.com. See External services below.
 
 = What happens when I click one of the links to docxtowp.com? =
 It opens our site in a new tab, and as with any link you click anywhere on the web, your browser tells that site which page you came from. WordPress sends only the address of your site, never the full admin URL. We use it to see which sites find the upgrade pages useful.
 
-If you would rather not send it, right-click the link and copy it instead of clicking, or use your browser's setting for referrers. Nothing in the plugin depends on it, and the plugin itself still makes no outbound requests of its own: it never contacts us unless you click a link.
+If you would rather not send it, right-click the link and copy it instead of clicking, or use your browser's setting for referrers. Nothing in the plugin depends on it, and the plugin never contacts us unless you click a link. Its only request of its own is downloading a Google Doc you ask it to import.
+
+== External services ==
+
+This plugin connects to one external service, and only when you use the feature that needs it.
+
+**Google Docs (docs.google.com)**, to import a document from a Google Docs link. When you paste a link on the Google Docs link tab and click Convert & Preview, your site requests that one document from Google as a Word (.docx) file: `https://docs.google.com/document/d/{document id}/export?format=docx`. The request contains only the document's id, taken from the link you pasted, plus what any web request carries, such as your server's IP address. No account details, no site data and none of your other content are sent. Nothing is sent to Google if you do not use this feature.
+
+The service is provided by Google: [Terms of Service](https://policies.google.com/terms), [Privacy Policy](https://policies.google.com/privacy).
 
 == Screenshots ==
 
@@ -139,6 +148,11 @@ If you would rather not send it, right-click the link and copy it instead of cli
 9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.4.0 =
+* Added: **import from a Google Docs link.** A new Google Docs link tab on the upload screen: paste the link to a shared Google Doc and it is downloaded as a Word file and imported the same way as an upload, with its headings, lists, tables and images, and a preview before anything is published. The document has to be shared as "Anyone with the link"; view access is enough.
+* Added: clear messages for the links that will not work: a Google Sheet, a Slides deck, a Drive file, a document that is not shared, and a host that blocks outgoing connections.
+* Changed: the plugin now makes one kind of outbound request, only when you import from a Google Docs link, to docs.google.com, for that document. It is described under External services and in the FAQ.
 
 = 1.3.2 =
 * Changed: the plugin is now called **DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types**, which says what it does in the words people use. Nothing else about it changes, and your settings and imported posts are untouched.
@@ -269,6 +283,9 @@ If you would rather not send it, right-click the link and copy it instead of cli
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Adds importing from a Google Docs link. Uploads and the Media Library work as before.
 
 = 1.3.2 =
 A clearer plugin name and description. Importing is unchanged.

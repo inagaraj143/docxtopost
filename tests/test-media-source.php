@@ -202,7 +202,18 @@ check( 'the plugin loads the class', str_contains( $main, 'includes/class-dtpost
 check( 'the document has Upload and Media Library tabs',
 	str_contains( $upload, 'data-source="file"' ) && str_contains( $upload, 'data-source="media"' ) );
 check( 'upload is the default', (bool) preg_match( '/id="dtpost-source-media"[^>]*hidden/', $upload ) );
-check( 'there is no Google Docs tab in the free plugin', ! str_contains( $upload, 'google' ) );
+// 1.4.0: a shared Google Doc by link is free. Choosing private documents from
+// Google Drive needs a Google sign-in and stays in Pro, so no picker here.
+$gdocs = (string) file_get_contents( __DIR__ . '/../includes/class-dtpost-google-docs.php' );
+check( 'there is a Google Docs link tab', str_contains( $upload, 'data-source="google"' ) && str_contains( $upload, 'name="dtpost_google_link"' ) );
+check( 'but no Google Drive picker or Google sign-in in the free plugin',
+	! str_contains( $upload . $main, 'gdrive' ) && ! str_contains( $gdocs, 'Authorization' ) );
+check( 'the link is only ever turned into an id; the URL fetched is a constant',
+	str_contains( $main, 'DTPost_Google_Docs::file_id($google_link)' )
+	&& str_contains( $gdocs, "sprintf( self::EXPORT_URL, \$file_id )" )
+	&& 1 === substr_count( $gdocs, 'wp_safe_remote_get(' ) );
+check( 'an unshared document (200 with an HTML page) is not trusted', str_contains( $gdocs, "str_contains( \$type, 'text/html' )" ) && str_contains( $gdocs, "'PK' !== substr( \$body, 0, 2 )" ) );
+check( 'a failed download leaves no file behind', (bool) preg_match( '/is_wp_error\(\$valid\).*?wp_delete_file\(\$temp_file\)/s', $main ) );
 check( 'the featured image has the same two tabs',
 	str_contains( $upload, 'data-image-source="upload"' ) && str_contains( $upload, 'data-image-source="media"' ) );
 check( 'the handler copies a library document rather than reading it in place',

@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Import Word (.docx) and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.3.2
+ * Version:           1.4.0
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.3.2');
+define('DTPOST_VERSION', '1.4.0');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -66,6 +66,7 @@ if (file_exists(DTPOST_PLUGIN_DIR . 'vendor/autoload.php')) {
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-permissions.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-image.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-media-source.php';
+require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-google-docs.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-title.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-embeds.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-parser.php';
@@ -879,6 +880,7 @@ function dtpost_enqueue_admin_assets(string $hook): void
 				'file_too_large' => __('File exceeds maximum allowed size.', 'docxtowp'),
 				'invalid_type' => __('Choose a .docx or .md file to import.', 'docxtowp'),
 				'need_media' => __('Choose a document from the Media Library.', 'docxtowp'),
+				'need_link' => __('Paste the link to a Google Doc.', 'docxtowp'),
 				'media_title' => __('Choose a document to import', 'docxtowp'),
 				'media_button' => __('Use this document', 'docxtowp'),
 				'img_media_title' => __('Choose a featured image', 'docxtowp'),
@@ -992,6 +994,11 @@ function dtpost_ajax_upload_docx(): void
 		 */
 		$media_id = isset($_POST['dtpost_media_id']) ? absint($_POST['dtpost_media_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 
+		// A third place (1.4.0): a shared Google Doc, by its link. Downloaded
+		// as .docx into the temp directory and imported like an upload. The
+		// pasted string is only ever turned into an id; see DTPost_Google_Docs.
+		$google_link = isset($_POST['dtpost_google_link']) ? trim(sanitize_text_field(wp_unslash($_POST['dtpost_google_link']))) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+
 		// A featured image chosen from the library. Checked before any parsing,
 		// so a bad pick fails in a second rather than after the slow part.
 		$featured_media_id = isset($_POST['dtpost_featured_media_id']) ? absint($_POST['dtpost_featured_media_id']) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -1002,7 +1009,40 @@ function dtpost_ajax_upload_docx(): void
 			}
 		}
 
-		if ($media_id > 0) {
+		if ('' !== $google_link) {
+			// ── Google Docs link ─────────────────────────────────────────────
+			$file_id = DTPost_Google_Docs::file_id($google_link);
+			if (is_wp_error($file_id)) {
+				wp_send_json_error(array('message' => $file_id->get_error_message()));
+			}
+
+			$uid      = wp_generate_uuid4();
+			$source   = 'docx';
+			$temp_dir = dtpost_get_temp_dir();
+			if (!file_exists($temp_dir)) {
+				wp_mkdir_p($temp_dir);
+			}
+			$temp_file = $temp_dir . $uid . '.docx';
+
+			$fetched = DTPost_Google_Docs::fetch($file_id, $temp_file);
+			$valid   = is_wp_error($fetched) ? $fetched : DTPost_Google_Docs::validate_file($temp_file);
+			if (is_wp_error($valid)) {
+				if (file_exists($temp_file)) {
+					wp_delete_file($temp_file);
+				}
+				wp_send_json_error(array('message' => $valid->get_error_message()));
+			}
+
+			$original_name = $fetched['name'];
+
+			$parser = new DTPost_Parser();
+			$result = $parser->parse($temp_file, $original_name);
+
+			if (is_wp_error($result)) {
+				wp_delete_file($temp_file);
+				wp_send_json_error(array('message' => $result->get_error_message()));
+			}
+		} elseif ($media_id > 0) {
 			// ── Media Library ────────────────────────────────────────────────
 			$uid           = wp_generate_uuid4();
 			$source        = 'docx';
