@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.4.0
+Stable tag:        1.4.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -149,6 +149,9 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 
 == Changelog ==
 
+= 1.4.1 =
+* Added: a Black Friday notice, 20% off DocxToWP Pro with code BFDX2026. It appears only from 2 November to 1 December 2026, only on this plugin's own screens, and stays away for good once you dismiss it. Outside those dates nothing is shown, and the plugin still contacts no server to decide.
+
 = 1.4.0 =
 * Added: **import from a Google Docs link.** A new Google Docs link tab on the upload screen: paste the link to a shared Google Doc and it is downloaded as a Word file and imported the same way as an upload, with its headings, lists, tables and images, and a preview before anything is published. The document has to be shared as "Anyone with the link"; view access is enough.
 * Added: clear messages for the links that will not work: a Google Sheet, a Slides deck, a Drive file, a document that is not shared, and a host that blocks outgoing connections.
@@ -283,6 +286,9 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+A dismissible Black Friday notice on the plugin's own screens, 2 November to 1 December only. Importing is unchanged.
 
 = 1.4.0 =
 Adds importing from a Google Docs link. Uploads and the Media Library work as before.

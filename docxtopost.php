@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Import Word (.docx) and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.4.0
+ * Version:           1.4.1
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.4.0');
+define('DTPOST_VERSION', '1.4.1');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -617,7 +617,7 @@ function dtpost_ajax_dismiss_notice(): void
 	}
 
 	$key = sanitize_key($_POST['key'] ?? '');
-	if (!array_key_exists($key, dtpost_notice_thresholds())) {
+	if (!array_key_exists($key, dtpost_notice_thresholds()) && dtpost_bf_key() !== $key) {
 		wp_send_json_error(array('message' => __('Unknown notice.', 'docxtowp')));
 	}
 
@@ -647,6 +647,14 @@ function dtpost_admin_notices(): void
 
 	$permissions = new DTPost_Permissions();
 	if (!$permissions->current_user_can_use()) {
+		return;
+	}
+
+	// Black Friday week takes the one notice slot while it runs. Same rules as
+	// the others: these screens only, dismissible, and gone for good once
+	// dismissed. It switches itself off when the week ends.
+	if (dtpost_bf_active() && !dtpost_notice_dismissed(dtpost_bf_key())) {
+		dtpost_render_bf_notice();
 		return;
 	}
 
@@ -728,6 +736,68 @@ function dtpost_render_notice(string $key, int $count): void
 	<div class="notice notice-info is-dismissible dtpost-usage-notice" data-dtpost-notice="<?php echo esc_attr($key); ?>">
 		<p><?php echo wp_kses_post($body); ?></p>
 		<p><?php echo wp_kses_post($cta); ?></p>
+	</div>
+	<?php
+}
+
+/*
+ * ── Black Friday 2026 (1.4.1) ─────────────────────────────────────────────
+ *
+ * 20% off DocxToWP Pro with code BFDX2026, Monday 2 November to Tuesday
+ * 1 December, India time, the same window as the code in Dodo Payments.
+ *
+ * The dates are written in because this plugin never contacts our server to
+ * ask whether a sale is on, and is not going to start. Outside the window
+ * none of this renders; a later release removes it.
+ */
+function dtpost_bf_key(): string
+{
+	return 'bfdx2026';
+}
+
+/**
+ * Whether Black Friday week is running.
+ *
+ * @param int|null $now Unix time, for tests. Defaults to now.
+ */
+function dtpost_bf_active(?int $now = null): bool
+{
+	$now   = $now ?? time();
+	$start = (int) strtotime('2026-11-02T00:00:00+05:30');
+	$end   = (int) strtotime('2026-12-01T23:59:59+05:30');
+
+	return $now >= $start && $now <= $end;
+}
+
+/**
+ * The Black Friday notice. Dismissed through the same AJAX handler and user
+ * meta as the usage notices, by its .dtpost-usage-notice class.
+ */
+function dtpost_render_bf_notice(): void
+{
+	$url = add_query_arg(
+		array(
+			'utm_source'   => 'wporg-plugin',
+			'utm_medium'   => 'bf-notice',
+			'utm_campaign' => dtpost_bf_key(),
+		),
+		'https://docxtowp.com/pricing'
+	);
+	?>
+	<div class="notice notice-info is-dismissible dtpost-usage-notice dtpost-bf-notice" data-dtpost-notice="<?php echo esc_attr(dtpost_bf_key()); ?>">
+		<p>
+			<strong><?php esc_html_e('Black Friday: 20% off DocxToWP Pro until 1 December.', 'docxtowp'); ?></strong>
+			<?php
+			printf(
+				/* translators: %s: the discount code */
+				esc_html__('Use code %s at checkout. Pro adds bulk import of up to 100 documents, choosing Google Docs straight from your Drive, drip scheduling and SEO fields.', 'docxtowp'),
+				'<code>BFDX2026</code>'
+			);
+			?>
+		</p>
+		<p>
+			<a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e('See the Black Friday deal', 'docxtowp'); ?></a>
+		</p>
 	</div>
 	<?php
 }
