@@ -96,12 +96,53 @@ if ( isset( $_GET['dtpost_success'], $_GET['post_id'] ) ) {
 			</div>
 			<?php endif; ?>
 
+			<?php
+			/*
+			 * The review ask, once someone has had a few good imports.
+			 *
+			 * Same key as the notice in dtpost_notice_thresholds(), so there is
+			 * one ask and not two: "No thanks" here, or the × up there, ends both,
+			 * and so does following the link.
+			 */
+			$dtpost_done = dtpost_conversion_count();
+			if ( $dtpost_done >= 3 && ! dtpost_notice_dismissed( 'review' ) ) :
+				?>
+			<div class="dtpost-followup" data-dtpost-notice="review">
+				<span class="dtpost-followup__icon dtpost-followup__icon--pro" aria-hidden="true">
+					<span class="dashicons dashicons-star-filled"></span>
+				</span>
+				<div class="dtpost-followup__body">
+					<strong><?php esc_html_e( 'Did that import save you time?', 'docxtowp' ); ?></strong>
+					<span><?php esc_html_e( 'A short honest review on WordPress.org helps other people find this plugin.', 'docxtowp' ); ?></span>
+				</div>
+				<a class="dtpost-btn dtpost-btn-secondary" data-dtpost-dismiss href="https://wordpress.org/support/plugin/docxtowp/reviews/#new-post" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'Leave a review', 'docxtowp' ); ?>
+				</a>
+				<button type="button" class="dtpost-btn dtpost-btn-ghost" data-dtpost-dismiss>
+					<?php esc_html_e( 'No thanks', 'docxtowp' ); ?>
+				</button>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( dtpost_elementor_active() ) : ?>
 			<div class="dtpost-followup dtpost-followup--pro">
 				<span class="dtpost-followup__icon dtpost-followup__icon--pro" aria-hidden="true">
 					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
 				</span>
 				<div class="dtpost-followup__body">
-					<?php $dtpost_done = dtpost_conversion_count(); ?>
+					<strong><?php esc_html_e( 'Editing this in Elementor?', 'docxtowp' ); ?></strong>
+					<span><?php esc_html_e( 'It opens there as one Text Editor widget. Pro imports your document as separate containers, headings, text and images instead.', 'docxtowp' ); ?></span>
+				</div>
+				<a class="dtpost-btn dtpost-btn-secondary" href="<?php echo esc_url( dtpost_elementor_url( 'success-elementor' ) ); ?>" target="_blank" rel="noopener">
+					<?php esc_html_e( 'See how', 'docxtowp' ); ?>
+				</a>
+			</div>
+			<?php else : ?>
+			<div class="dtpost-followup dtpost-followup--pro">
+				<span class="dtpost-followup__icon dtpost-followup__icon--pro" aria-hidden="true">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+				</span>
+				<div class="dtpost-followup__body">
 					<?php if ( $dtpost_done >= 3 ) : ?>
 					<strong>
 						<?php
@@ -121,6 +162,7 @@ if ( isset( $_GET['dtpost_success'], $_GET['post_id'] ) ) {
 					<?php esc_html_e( 'See how', 'docxtowp' ); ?>
 				</a>
 			</div>
+			<?php endif; ?>
 
 		</div>
 	</div>
@@ -265,8 +307,13 @@ $status_options = array(
 	 * Only for Word documents: Markdown has no page to preserve, so offering
 	 * to preserve one would be advertising a feature that could not apply to
 	 * the file on screen.
+	 *
+	 * On a site running Elementor, that takes this slot for any file instead.
+	 * It is what that person hits next, and one banner is enough.
 	 */
-	if ( 'markdown' !== ( $session['source'] ?? 'docx' ) ) {
+	if ( dtpost_elementor_active() ) {
+		dtpost_render_elementor_promo( 'preview', 'elementor-preview' );
+	} elseif ( 'markdown' !== ( $session['source'] ?? 'docx' ) ) {
 		dtpost_render_layout_promo( 'preview', 'layout-preview' );
 	}
 	?>

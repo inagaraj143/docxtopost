@@ -213,6 +213,7 @@ $has_session = (bool) get_transient( 'dtpost_session_' . get_current_user_id() )
 					 * to call if it did.
 					 */
 					dtpost_render_layout_promo( 'upload', 'layout-upload' );
+					dtpost_render_elementor_promo( 'upload', 'elementor-upload' );
 					?>
 
 					<!-- Error -->

@@ -632,12 +632,8 @@
    not persist anything. This records the dismissal so the notice does not
    come back on the next page load.                                        */
 (function () {
-	document.addEventListener('click', function (e) {
-		var btn = e.target.closest('.notice-dismiss');
-		if (!btn) { return; }
-
-		var notice = btn.closest('[data-dtpost-notice]');
-		if (!notice || typeof DTPOST === 'undefined') { return; }
+	function remember(notice) {
+		if (typeof DTPOST === 'undefined') { return; }
 
 		var body = new FormData();
 		body.append('action', 'dtpost_dismiss_notice');
@@ -646,6 +642,27 @@
 
 		fetch(DTPOST.ajax_url, { method: 'POST', body: body, credentials: 'same-origin' })
 			.catch(function () { /* It is hidden for this page either way. */ });
+	}
+
+	document.addEventListener('click', function (e) {
+		var btn = e.target.closest('.notice-dismiss');
+		if (btn) {
+			var notice = btn.closest('[data-dtpost-notice]');
+			if (notice) { remember(notice); }
+			return;
+		}
+
+		/* The review card on the success screen. It is part of the page, so
+		   WordPress draws no × on it. "No thanks" and the review link itself
+		   both end the ask, and the link still opens normally. */
+		var action = e.target.closest('[data-dtpost-dismiss]');
+		if (action) {
+			var card = action.closest('[data-dtpost-notice]');
+			if (card) {
+				remember(card);
+				card.remove();
+			}
+		}
 	});
 })();
 

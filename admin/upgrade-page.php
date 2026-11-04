@@ -16,6 +16,20 @@ defined( 'ABSPATH' ) || exit;
 $count = dtpost_conversion_count();
 
 $pillars = array(
+	/*
+	 * Shipped in Pro 1.5.0 on 4 November 2026, so this is written in the present
+	 * tense. See the note on image optimization below.
+	 */
+	array(
+		'title' => __( 'Import straight into Elementor', 'docxtowp' ),
+		'lead'  => __( 'A Word document becomes a fully editable Elementor post. Free Elementor is enough.', 'docxtowp' ),
+		'points' => array(
+			__( 'Each Heading 2 starts a new container, with separate Heading, Text Editor, Image and Video widgets, instead of one Text Editor widget holding everything.', 'docxtowp' ),
+			__( 'Widgets follow your global fonts and colours, like the ones you add by hand.', 'docxtowp' ),
+			__( 'Each table is its own element, and shaded paragraphs such as prompts or callouts stay as boxes.', 'docxtowp' ),
+			__( 'A line with only [image] leaves space for a picture, and [image: file-name.webp] is filled in if that file is in your Media Library.', 'docxtowp' ),
+		),
+	),
 	array(
 		'title' => __( 'Keep the page layout', 'docxtowp' ),
 		'lead'  => __( 'Newsletters and brochures arrive as a layout, not one column of text.', 'docxtowp' ),
@@ -121,6 +135,7 @@ $compare = array(
 	array( __( 'Posts, pages and any public custom post type', 'docxtowp' ), true, true ),
 	array( __( 'Live preview, categories, tags, author, slug and excerpt', 'docxtowp' ), true, true ),
 	array( __( 'Import a .docx already in the Media Library', 'docxtowp' ), true, true ),
+	array( __( 'Opening an import in Elementor', 'docxtowp' ), __( 'One Text Editor widget', 'docxtowp' ), __( 'Containers and separate widgets', 'docxtowp' ) ),
 	array( __( 'Import from a shared Google Docs link', 'docxtowp' ), true, true ),
 	array( __( 'Choose private Google Docs from Google Drive, several at once', 'docxtowp' ), false, true ),
 	array( __( 'Newsletters and brochures built from text boxes', 'docxtowp' ), __( 'Every word, as one column', 'docxtowp' ), __( 'Columns, panels and headings kept', 'docxtowp' ) ),

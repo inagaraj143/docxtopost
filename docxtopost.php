@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Import Word (.docx) and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.4.1
+ * Version:           1.4.2
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.4.1');
+define('DTPOST_VERSION', '1.4.2');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -287,6 +287,85 @@ function dtpost_render_layout_promo(string $context = 'upload', string $placemen
 }
 
 /**
+ * Whether Elementor is active here, so the Elementor mentions below apply.
+ *
+ * Read from the constant Elementor defines for itself. Nothing is sent
+ * anywhere: this plugin makes no outbound request to find out.
+ */
+function dtpost_elementor_active(): bool
+{
+	return defined('ELEMENTOR_VERSION');
+}
+
+/**
+ * The guide to Pro's Elementor import, tagged with the screen that linked to it.
+ */
+function dtpost_elementor_url(string $placement): string
+{
+	return add_query_arg(
+		array(
+			'utm_source' => 'wporg-plugin',
+			'utm_medium' => sanitize_key($placement),
+			'utm_campaign' => 'free-to-pro',
+		),
+		'https://docxtowp.com/blog/how-to-import-word-document-into-elementor'
+	);
+}
+
+/**
+ * Advertises Pro's Elementor import, on sites that run Elementor.
+ *
+ * Elementor draws a post from its own layout data, so anything this plugin
+ * imports opens there as one Text Editor widget. Someone building with Elementor
+ * hits that on their first import, which makes this the most useful thing to tell
+ * them about Pro, and telling anyone else would be noise.
+ *
+ * The same rules as dtpost_render_layout_promo(). A picture of a control with no
+ * `name`, so nothing can be submitted, and no Elementor code in this plugin for
+ * it to reach, so nothing is locked: guideline 5 is about restricted
+ * functionality, and this is a description of a feature in another download.
+ *
+ * @param string $context   'upload' for the import-mode block, 'preview' for a banner.
+ * @param string $placement Campaign slug for the CTA link.
+ */
+function dtpost_render_elementor_promo(string $context, string $placement): void
+{
+	if (!dtpost_elementor_active()) {
+		return;
+	}
+
+	$url = dtpost_elementor_url($placement);
+
+	if ('preview' === $context) {
+		?>
+		<div class="dtpost-pro-banner dtpost-pro-banner--layout">
+			<span class="dtpost-pro-card__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
+			<p>
+				<?php esc_html_e('Using Elementor? This import will open there as one Text Editor widget. Pro imports the same document as separate containers, headings, text, images and tables, ready to edit. It works with free Elementor.', 'docxtowp'); ?>
+				<a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener"><?php esc_html_e('See how Elementor import works', 'docxtowp'); ?></a>
+			</p>
+		</div>
+		<?php
+		return;
+	}
+	?>
+	<div class="dtpost-mode-option dtpost-mode-option--locked">
+		<input type="checkbox" disabled aria-disabled="true" tabindex="-1" aria-describedby="dtpost-elementor-promo">
+		<span>
+			<span class="dtpost-mode-option__title">
+				<?php esc_html_e('Build an Elementor layout', 'docxtowp'); ?>
+				<span class="dtpost-pro-card__badge"><?php esc_html_e('Pro', 'docxtowp'); ?></span>
+			</span>
+			<span class="dtpost-mode-option__desc" id="dtpost-elementor-promo">
+				<?php esc_html_e('Your site runs Elementor. Pro imports a Word document straight into it: a new container at each Heading 2, with separate heading, text and image widgets that follow your global fonts and colours. It works with free Elementor. This plugin imports the document as a normal post, which opens in Elementor as one Text Editor widget.', 'docxtowp'); ?>
+				<a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener"><?php esc_html_e('See how Elementor import works', 'docxtowp'); ?></a>
+			</span>
+		</span>
+	</div>
+	<?php
+}
+
+/**
  * Renders the Pro feature card.
  *
  * This is an informational card on the plugin's own screens, it describes
@@ -321,6 +400,17 @@ function dtpost_render_pro_card(string $placement = 'upload-sidebar'): void
 			'desc' => __('Titles, descriptions and focus keyphrases for Yoast and Rank Math, from templates.', 'docxtowp'),
 		),
 	);
+
+	// On a site running Elementor this is the reason to look at Pro, so it leads.
+	if (dtpost_elementor_active()) {
+		array_unshift(
+			$features,
+			array(
+				'title' => __('Import straight into Elementor', 'docxtowp'),
+				'desc' => __('Containers and separate widgets from your Word document, not one text box. Works with free Elementor.', 'docxtowp'),
+			)
+		);
+	}
 	?>
 	<div class="dtpost-pro-card">
 		<div class="dtpost-pro-card__head">
@@ -617,7 +707,7 @@ function dtpost_ajax_dismiss_notice(): void
 	}
 
 	$key = sanitize_key($_POST['key'] ?? '');
-	if (!array_key_exists($key, dtpost_notice_thresholds()) && dtpost_bf_key() !== $key) {
+	if (!array_key_exists($key, dtpost_notice_thresholds()) && dtpost_bf_key() !== $key && dtpost_elementor_notice_key() !== $key) {
 		wp_send_json_error(array('message' => __('Unknown notice.', 'docxtowp')));
 	}
 
@@ -658,10 +748,25 @@ function dtpost_admin_notices(): void
 		return;
 	}
 
+	// Ahead of the usage notices, because it is about this site rather than how
+	// much it has imported, and it is only ever true where Elementor is running.
+	if (dtpost_elementor_active() && !dtpost_notice_dismissed(dtpost_elementor_notice_key())) {
+		dtpost_render_elementor_notice();
+		return;
+	}
+
 	$count = dtpost_conversion_count();
+
+	// The success screen asks for the review itself, in the card under the
+	// result, so the same ask should not also be sitting at the top of the page.
+	$on_success_screen = isset($_GET['dtpost_success']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 	foreach (dtpost_notice_thresholds() as $key => $threshold) {
 		if ($count < $threshold || dtpost_notice_dismissed($key)) {
+			continue;
+		}
+
+		if ('review' === $key && $on_success_screen) {
 			continue;
 		}
 
@@ -740,6 +845,30 @@ function dtpost_render_notice(string $key, int $count): void
 	<?php
 }
 
+function dtpost_elementor_notice_key(): string
+{
+	return 'elementor';
+}
+
+/**
+ * The Elementor notice. Dismissed through the same AJAX handler and user meta as
+ * the usage notices, by its .dtpost-usage-notice class.
+ */
+function dtpost_render_elementor_notice(): void
+{
+	?>
+	<div class="notice notice-info is-dismissible dtpost-usage-notice" data-dtpost-notice="<?php echo esc_attr(dtpost_elementor_notice_key()); ?>">
+		<p>
+			<strong><?php esc_html_e('Using Elementor? Import Word documents straight into it with DocxToWP Pro.', 'docxtowp'); ?></strong>
+			<?php esc_html_e('Instead of one Text Editor widget, you get a container for each section, with separate heading, text, image and table elements that follow your global fonts and colours. It works with free Elementor.', 'docxtowp'); ?>
+		</p>
+		<p>
+			<a href="<?php echo esc_url(dtpost_elementor_url('notice-elementor')); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e('See how it works', 'docxtowp'); ?></a>
+		</p>
+	</div>
+	<?php
+}
+
 /*
  * ── Black Friday 2026 (1.4.1) ─────────────────────────────────────────────
  *
@@ -790,7 +919,7 @@ function dtpost_render_bf_notice(): void
 			<?php
 			printf(
 				/* translators: %s: the discount code */
-				esc_html__('Use code %s at checkout. Pro adds bulk import of up to 100 documents, choosing Google Docs straight from your Drive, drip scheduling and SEO fields.', 'docxtowp'),
+				esc_html__('Use code %s at checkout. Pro adds import straight into Elementor, bulk import of up to 100 documents, choosing Google Docs from your Drive, drip scheduling and SEO fields.', 'docxtowp'),
 				'<code>BFDX2026</code>'
 			);
 			?>

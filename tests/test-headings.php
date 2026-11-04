@@ -165,7 +165,10 @@ $f = make_docx(
 	[ [ 'id' => 'Heading1', 'name' => 'heading 1' ], [ 'id' => 'TOCHeading', 'name' => 'TOC Heading', 'basedOn' => 'Heading1', 'outline' => '9' ] ]
 );
 $r = $parser->parse( $f, 'toc.docx' );
-check( 'TOC Heading (basedOn Heading1, outlineLvl 9) stays a paragraph', 'Real title' === $r['title'] && 'p' === tags( $r['content'] ), $r['title'] . ' | ' . tags( $r['content'] ) );
+// "Contents" is text before the Heading 1, so since 1.4.2 the heading is not
+// the title and stays in the body: 'p h1'. The point of this fixture is the
+// first tag, the TOC heading being a paragraph rather than an h1.
+check( 'TOC Heading (basedOn Heading1, outlineLvl 9) stays a paragraph', 'p h1' === tags( $r['content'] ), $r['title'] . ' | ' . tags( $r['content'] ) );
 
 // 8. Outline level set directly on the paragraph, no style at all.
 //
@@ -219,6 +222,23 @@ $f = make_docx(
 );
 $r = $parser->parse( $f, 'h1.docx' );
 check( 'H1 title: removed, and the H2 below it stays',              'The title' === $r['title'] && ! str_contains( $r['content'], 'The title' ) && str_contains( $r['content'], 'First section' ), $r['title'] . ' | ' . tags( $r['content'] ) );
+
+// A heading is the title only when it opens the document (1.4.2). It used to be
+// taken from anywhere, and then removed from the body, so a section lost its heading.
+$both = [ [ 'id' => 'Heading1', 'name' => 'heading 1' ], [ 'id' => 'Heading2', 'name' => 'heading 2' ], [ 'id' => 'Normal', 'name' => 'Normal' ] ];
+
+$f = make_docx( [ [ 'Normal', 'An opening paragraph.' ], [ 'Heading1', 'First section' ], [ 'Normal', 'Body.' ] ], $both );
+$r = $parser->parse( $f, 'meeting-notes.docx' );
+check( 'text before the H1: title comes from the file name',        'Meeting notes' === $r['title'], $r['title'] );
+check( 'and that H1 stays in the post',                             str_contains( $r['content'], 'First section</h1>' ), $r['content'] );
+
+$f = make_docx( [ [ 'Normal', 'An opening paragraph.' ], [ 'Heading2', 'First section' ] ], $both );
+$r = $parser->parse( $f, 'meeting-notes.docx' );
+check( 'text before an H2: the same',                               'Meeting notes' === $r['title'] && str_contains( $r['content'], 'First section</h2>' ), $r['title'] );
+
+$f = make_docx( [ [ 'Heading2', 'Opens with an H2' ], [ 'Heading1', 'A later H1' ], [ 'Normal', 'Body.' ] ], $both );
+$r = $parser->parse( $f, 'x.docx' );
+check( 'an H2 at the very top is the title, a later H1 stays',      'Opens with an H2' === $r['title'] && str_contains( $r['content'], 'A later H1</h1>' ) && ! str_contains( $r['content'], 'Opens with an H2' ), $r['title'] );
 
 $f = make_docx( [ [ 'Normal', 'Just a paragraph.' ] ], [ [ 'id' => 'Normal', 'name' => 'Normal' ] ] );
 $r = $parser->parse( $f, 'weekly-notes.docx' );

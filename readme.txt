@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.4.1
+Stable tag:        1.4.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,8 +40,9 @@ Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or
 
 = Why upgrade to Pro? =
 
-The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them.
+The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them, or a site built with Elementor.
 
+* **Import straight into Elementor.** Elementor opens an ordinary post as one Text Editor widget. Pro imports your Word document as a fully editable Elementor post instead: a new container at each Heading 2, with separate Heading, Text Editor, Image and Video widgets that follow your global fonts and colours. Each table is its own element, shaded paragraphs stay as boxes, and a line with [image] leaves space for a picture. Works with free Elementor. [See how it works](https://docxtowp.com/blog/how-to-import-word-document-into-elementor?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
 * **Bulk import, up to 100 files in one run.** Drop in .docx and .md files together. Review every title, featured image and SEO field before anything is created. A bad file fails on its own row and the rest keep going.
 * **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
 * **Yoast SEO and Rank Math fields** filled from templates, with per-document overrides.
@@ -72,6 +73,9 @@ The Upgrade screen inside the plugin compares Free and Pro side by side. [See Pr
 
 = What post types does this plugin support? =
 All registered public post types on your site. Posts, Pages, and any Custom Post Type. You can only create the types your user role already allows.
+
+= Does it work with Elementor? =
+Yes, as a normal post. Elementor draws pages from its own layout data, so a post imported with this plugin opens in Elementor as one Text Editor widget, with all of your content in it. To get a separate container for each section, with separate heading, text and image widgets, DocxToWP Pro can import straight into Elementor, including free Elementor.
 
 = Does it preserve formatting from Word? =
 Yes. Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, bulleted and numbered lists (including nested levels), tables with header rows, blockquotes, paragraph alignment, and hyperlinks all carry over.
@@ -148,6 +152,11 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.4.2 =
+* Fixed: a section heading further down a document is no longer taken as the title and removed from the post. A document that opens with a paragraph or two had its first Heading 1 or 2 used as the title, and that heading disappeared from the post. Now a heading is the title only when it opens the document, with nothing but pictures, embeds or empty lines above it. Otherwise the post is named after the document, and every heading stays where it was.
+* Added: on sites running Elementor, a dismissible notice, a note on the upload and preview screens and a line on the Upgrade screen about Pro's Elementor import. Sites without Elementor see none of these except the Upgrade screen. Only on this plugin's own screens, and importing is unchanged.
+* Added: a small card on the success screen asking for a review, once you have imported a few documents. It goes away for good once you follow it or choose No thanks, and so does the existing review notice.
 
 = 1.4.1 =
 * Added: a Black Friday notice, 20% off DocxToWP Pro with code BFDX2026. It appears only from 2 November to 1 December 2026, only on this plugin's own screens, and stays away for good once you dismiss it. Outside those dates nothing is shown, and the plugin still contacts no server to decide.
@@ -286,6 +295,9 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.4.2 =
+Fixes a section heading being taken as the title and removed from the post. Also adds dismissible mentions of Pro's Elementor import on sites running Elementor, on this plugin's own screens.
 
 = 1.4.1 =
 A dismissible Black Friday notice on the plugin's own screens, 2 November to 1 December only. Importing is unchanged.

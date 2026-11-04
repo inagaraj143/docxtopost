@@ -1275,13 +1275,28 @@ class DTPost_Parser {
 	 * heading repeated as the first line of the post.
 	 */
 	private function extract_title( string $html, string $file_path, string $original_name ): string {
-		foreach ( [ 'h1', 'h2' ] as $tag ) {
-			if ( preg_match( '/<' . $tag . '[^>]*>(.*?)<\/' . $tag . '>/is', $html, $m ) ) {
-				$t = trim( wp_strip_all_tags( $m[1] ) );
-				if ( '' !== $t ) {
-					$this->title_tag = $tag;
-					return $t;
-				}
+		/*
+		 * ── Only a heading that opens the document is its title ─────────────
+		 *
+		 * Up to 1.4.1 the first <h1>, or failing that the first <h2>, anywhere
+		 * in the document was taken, and then removed from the body. A document
+		 * that opens with a paragraph or two and has its first Heading 1 further
+		 * down, a set of notes, a Google Doc whose real title is its name, lost
+		 * that section heading from the post and was titled after it.
+		 *
+		 * Now the first h1/h2 is the title only when no text comes before it.
+		 * Pictures and video embeds above it are fine: a letterhead logo over
+		 * the title is the common case. Otherwise the title is the document's
+		 * name, and every heading stays where it was. The same rule as Pro.
+		 */
+		if ( preg_match( '/<(h[12])\b[^>]*>(.*?)<\/\1>/is', $html, $m, PREG_OFFSET_CAPTURE ) ) {
+			$before = substr( $html, 0, $m[0][1] );
+			$before = (string) preg_replace( '/<!--.*?-->|<figure\b.*?<\/figure>/is', '', $before );
+			$t      = trim( wp_strip_all_tags( $m[2][0] ) );
+
+			if ( '' !== $t && '' === trim( html_entity_decode( wp_strip_all_tags( $before ), ENT_QUOTES, 'UTF-8' ), " \t\n\r\0\x0B\xC2\xA0" ) ) {
+				$this->title_tag = strtolower( $m[1][0] );
+				return $t;
 			}
 		}
 
