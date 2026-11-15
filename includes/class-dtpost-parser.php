@@ -56,6 +56,13 @@ class DTPost_Parser {
 	private string $title_tag = '';
 
 	/**
+	 * Word's own Title and Keywords (File → Info), read once per document.
+	 *
+	 * @var array{title:string,keywords:string[]}
+	 */
+	private array $props = array( 'title' => '', 'keywords' => array() );
+
+	/**
 	 * numId → 'ol'|'ul', built from word/numbering.xml.
 	 *
 	 * Word gives bulleted and numbered lists the same paragraph style
@@ -68,12 +75,16 @@ class DTPost_Parser {
 	// =========================================================================
 
 	/**
-	 * @return array{title:string,content:string}|WP_Error
+	 * @return array{title:string,content:string,details:array<string,mixed>}|WP_Error
+	 *     `details` is what the document says about itself: see DTPost_Details.
+	 *     For a Word file that is its Keywords, as tags.
 	 */
 	public function parse( string $file_path, string $original_name = '' ): array|WP_Error {
 		if ( ! file_exists( $file_path ) ) {
 			return new WP_Error( 'dtpost_missing_file', __( 'Document file not found.', 'docxtowp' ) );
 		}
+
+		$this->props = DTPost_Details::word_properties( $file_path );
 
 		if ( class_exists( '\Mammoth\Mammoth' ) ) {
 			return $this->parse_with_mammoth( $file_path, $original_name );
@@ -109,8 +120,9 @@ class DTPost_Parser {
 			// Process and upload any base64-encoded images from Mammoth output.
 			$content = $this->reattach_images( $content, $file_path );
 			$content = $this->finalise_alignment( $content );
+			$details = $this->details();
 
-			return compact( 'title', 'content' );
+			return compact( 'title', 'content', 'details' );
 		} catch ( \Throwable $e ) {
 			return new WP_Error( 'dtpost_mammoth', $e->getMessage() );
 		}
@@ -187,8 +199,20 @@ class DTPost_Parser {
 		// Upload all embedded images from the DOCX to the WP Media Library.
 		$content = $this->reattach_images( $content, $file_path );
 		$content = $this->finalise_alignment( $content );
+		$details = $this->details();
 
-		return compact( 'title', 'content' );
+		return compact( 'title', 'content', 'details' );
+	}
+
+	/**
+	 * What a Word file says about itself: its Keywords, as tags.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function details(): array {
+		$details         = DTPost_Details::blank();
+		$details['tags'] = $this->props['keywords'];
+		return $details;
 	}
 
 	// =========================================================================
@@ -1301,6 +1325,13 @@ class DTPost_Parser {
 		}
 
 		$this->title_tag = '';
+
+		// No heading opens the document, so the Title in its Word properties
+		// comes next, before the file name. Leftovers such as "Document1" were
+		// already turned away by DTPost_Details::word_properties().
+		if ( '' !== $this->props['title'] ) {
+			return $this->props['title'];
+		}
 
 		// Capitalisation is DTPost_Title's business, see Settings → Content
 		// Format. A document that has a heading keeps that heading exactly as

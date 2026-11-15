@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.4.2
+Stable tag:        1.4.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,7 @@ Keeping those is what layout-preserving import in [DocxToWP Pro](https://docxtow
 = Can I import Markdown files? =
 Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables, horizontal rules and fenced code blocks are all supported, code blocks become real Code blocks in the editor. The first `# Heading` becomes the post title; if there is none, the filename is used.
 
-Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title; other keys such as slug, categories and dates are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones, upload them to the Media Library and add them in the editor.
+Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title, and `slug`, `excerpt`, `tags` and `categories` fill in the preview screen, where you can change them. A category your site does not have yet is marked "new" and created when you publish, unless you untick it. Other keys, such as dates, are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones, upload them to the Media Library and add them in the editor.
 
 = Can I import from Google Docs? =
 Yes. Open the Google Docs link tab on the upload screen and paste the link to the document. It has to be shared as "Anyone with the link" (view access is enough), because the plugin downloads it the way a browser with the link would. In DocxToWP Pro you can also choose private documents straight from Google Drive, several at once, with no sharing needed.
@@ -152,6 +152,11 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.4.3 =
+* Added: **Markdown front matter fills in the preview screen.** `slug`, `excerpt`, `tags` and `categories` (or `tag` and `category`) are now read, as `title:` already was, from Obsidian, Joplin, Jekyll, Hugo and hand-made files. You see them on the preview screen and can change them. Other keys are still ignored.
+* Added: categories a document names are ticked for you. One your site does not have yet is marked "new" and created when you publish, unless you untick it. Users who cannot create categories, such as Authors, are told instead, and nothing is created.
+* Added: **Word properties.** The Keywords in a Word file (File → Info) become tags, and its Title becomes the post title when no heading opens the document, before the file name is tried. Leftovers such as "Document1" are ignored.
 
 = 1.4.2 =
 * Fixed: a section heading further down a document is no longer taken as the title and removed from the post. A document that opens with a paragraph or two had its first Heading 1 or 2 used as the title, and that heading disappeared from the post. Now a heading is the title only when it opens the document, with nothing but pictures, embeds or empty lines above it. Otherwise the post is named after the document, and every heading stays where it was.
@@ -295,6 +300,9 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.4.3 =
+Markdown front matter now fills in the slug, excerpt, tags and categories, and a Word file's Keywords become tags. Everything shows on the preview screen first.
 
 = 1.4.2 =
 Fixes a section heading being taken as the title and removed from the post. Also adds dismissible mentions of Pro's Elementor import on sites running Elementor, on this plugin's own screens.

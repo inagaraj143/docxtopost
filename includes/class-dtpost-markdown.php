@@ -19,10 +19,10 @@
  *
  * What this class adds on top:
  *
- *   - YAML front matter is removed. A `title:` key becomes the post title
- *     and nothing else in it is read. Mapping slug, categories and dates
- *     from front matter is a separate feature, and half a mapping is worse
- *     than none, a silently ignored `categories:` line is a support ticket.
+ *   - YAML front matter is removed. A `title:` key becomes the post title,
+ *     and `slug`, `excerpt`, `tags` and `categories` (or `tag` and
+ *     `category`) fill in the preview screen, through DTPost_Details. Every
+ *     other key is ignored.
  *   - The first <h1> becomes the title and is removed from the body, as it
  *     is for .docx. There is no <h2> fallback: Markdown files routinely open
  *     with a section heading rather than the document title, and the
@@ -57,9 +57,10 @@ class DTPost_Markdown {
 	 *     images uploaded with the job; the single-file screen passes nothing
 	 *     and every relative image is reported. The parser stays ignorant of
 	 *     where images might come from, which is what keeps it testable.
-	 * @return array{title:string,content:string,warnings:string[],images:string[]}|WP_Error
+	 * @return array{title:string,content:string,warnings:string[],images:string[],details:array<string,mixed>}|WP_Error
 	 *     `images` lists the absolute URLs of every image kept in the body,
 	 *     resolved ones first-come, so a caller can pick a featured image.
+	 *     `details` is what the front matter says: see DTPost_Details.
 	 */
 	public function parse( string $markdown, string $original_name = '', ?callable $resolve_image = null ): array|WP_Error {
 		// A NUL byte never appears in text. Anything containing one is a
@@ -82,7 +83,8 @@ class DTPost_Markdown {
 		$markdown = str_replace( [ "\r\n", "\r" ], "\n", $markdown );
 
 		$front_title = '';
-		$markdown    = $this->strip_front_matter( $markdown, $front_title );
+		$details     = DTPost_Details::blank();
+		$markdown    = $this->strip_front_matter( $markdown, $front_title, $details );
 
 		if ( '' === trim( $markdown ) ) {
 			return new WP_Error( 'dtpost_empty', __( 'Document appears to be empty.', 'docxtowp' ) );
@@ -115,6 +117,7 @@ class DTPost_Markdown {
 			'content'  => $content,
 			'warnings' => $warnings,
 			'images'   => $images,
+			'details'  => $details,
 		];
 	}
 
@@ -141,15 +144,20 @@ class DTPost_Markdown {
 	// =========================================================================
 
 	/**
-	 * Removes a leading YAML front matter block, capturing its title.
+	 * Removes a leading YAML front matter block, capturing its title and the
+	 * keys DTPost_Details reads.
 	 *
 	 * Only a block that starts on the very first line counts. `---` further
 	 * down is a horizontal rule and stays.
+	 *
+	 * @param array<string, mixed> $details Filled in.
 	 */
-	private function strip_front_matter( string $markdown, string &$title ): string {
+	private function strip_front_matter( string $markdown, string &$title, array &$details ): string {
 		if ( ! preg_match( '/\A---[ \t]*\n(.*?)\n(?:---|\.\.\.)[ \t]*(?:\n|\z)/s', $markdown, $m ) ) {
 			return $markdown;
 		}
+
+		$details = array_merge( $details, DTPost_Details::from_front_matter( $m[1] ) );
 
 		if ( preg_match( '/^title:[ \t]*(.+?)[ \t]*$/mi', $m[1], $t ) ) {
 			$title = trim( $t[1] );

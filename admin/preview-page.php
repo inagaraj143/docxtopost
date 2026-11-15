@@ -192,6 +192,11 @@ $featured_image_id = absint( $session['featured_image_id'] );
 $original_name     = $session['original_name'];
 $current_user_id   = get_current_user_id();
 
+// What the document says about itself (1.4.3): front matter, or a Word file's
+// Keywords. Prefilled below, and every one of them can still be changed.
+$dtpost_details = array_merge( DTPost_Details::blank(), (array) ( $session['details'] ?? array() ) );
+$dtpost_slug    = '' !== $dtpost_details['slug'] ? sanitize_title( $dtpost_details['slug'] ) : sanitize_title( $post_title );
+
 // Default status.
 $allowed_statuses = array( 'publish', 'draft', 'private', 'pending' );
 $default_status   = (string) get_option( 'dtpost_default_status', 'draft' );
@@ -221,6 +226,15 @@ foreach ( $categories as $cat ) {
 if ( ! $cat_exists && ! empty( $categories ) ) {
 	$default_cat = (int) $categories[0]->term_id;
 }
+
+// Categories the document names. Ones the site has are ticked in place of the
+// default. Ones it lacks are offered as "new" to anyone who may create them,
+// and are created only if still ticked at publish. Anyone else is told.
+$dtpost_named_cats = DTPost_Details::match_categories( $dtpost_details['categories'] );
+$dtpost_can_create = current_user_can( 'manage_categories' );
+$dtpost_new_cats   = $dtpost_can_create ? $dtpost_named_cats['missing'] : array();
+$dtpost_lost_cats  = $dtpost_can_create ? array() : $dtpost_named_cats['missing'];
+$dtpost_doc_cats   = ! empty( $dtpost_named_cats['ids'] ) || ! empty( $dtpost_new_cats );
 
 $status_options = array(
 	'publish' => __( 'Published', 'docxtowp' ),
@@ -301,6 +315,25 @@ $status_options = array(
 	<?php endif; ?>
 
 	<?php
+	// Say what was read from the document, so a filled-in field is never a
+	// surprise.
+	$dtpost_read = DTPost_Details::summary( $dtpost_details );
+	if ( ! empty( $dtpost_read ) ) :
+		?>
+	<div class="notice notice-info inline dtpost-parse-warning dtpost-doc-details">
+		<p>
+			<?php
+			printf(
+				/* translators: %s: comma-separated names of fields, such as "URL slug, tags" */
+				esc_html__( 'Read from the document: %s. They are filled in below, and you can change them.', 'docxtowp' ),
+				esc_html( implode( ', ', $dtpost_read ) )
+			);
+			?>
+		</p>
+	</div>
+	<?php endif; ?>
+
+	<?php
 	/*
 	 * The layout hook, where Pro puts its import-mode toggle.
 	 *
@@ -342,10 +375,10 @@ $status_options = array(
 				>
 				<div class="dtpost-permalink-row">
 					<span class="dtpost-permalink-label"><?php esc_html_e( 'Permalink:', 'docxtowp' ); ?></span>
-					<span class="dtpost-permalink-base"><?php echo esc_url( trailingslashit( home_url() ) ); ?></span><span id="dtpost-slug-display" class="dtpost-permalink-slug"><?php echo esc_html( sanitize_title( $post_title ) ); ?></span><span class="dtpost-permalink-base">/</span>
+					<span class="dtpost-permalink-base"><?php echo esc_url( trailingslashit( home_url() ) ); ?></span><span id="dtpost-slug-display" class="dtpost-permalink-slug"><?php echo esc_html( $dtpost_slug ); ?></span><span class="dtpost-permalink-base">/</span>
 					<a href="#" id="dtpost-slug-edit-btn" class="dtpost-permalink-edit"><?php esc_html_e( 'Edit', 'docxtowp' ); ?></a>
 					<span id="dtpost-slug-edit-wrap" class="dtpost-slug-edit-wrap" style="display:none">
-						<input type="text" id="dtpost-post-slug" class="dtpost-slug-input" value="<?php echo esc_attr( sanitize_title( $post_title ) ); ?>">
+						<input type="text" id="dtpost-post-slug" class="dtpost-slug-input" value="<?php echo esc_attr( $dtpost_slug ); ?>"<?php echo '' !== $dtpost_details['slug'] ? ' data-from-document="1"' : ''; ?>>
 						<button type="button" id="dtpost-slug-ok" class="button button-small"><?php esc_html_e( 'OK', 'docxtowp' ); ?></button>
 						<button type="button" id="dtpost-slug-cancel" class="button button-small"><?php esc_html_e( 'Cancel', 'docxtowp' ); ?></button>
 					</span>
@@ -383,7 +416,7 @@ $status_options = array(
 					<span class="dtpost-panel-hint"><?php esc_html_e( 'Optional, shown in search results and archives', 'docxtowp' ); ?></span>
 				</div>
 				<textarea id="dtpost-excerpt" rows="3" class="dtpost-textarea"
-					placeholder="<?php esc_attr_e( 'Write a brief summary of this post…', 'docxtowp' ); ?>"></textarea>
+					placeholder="<?php esc_attr_e( 'Write a brief summary of this post…', 'docxtowp' ); ?>"><?php echo esc_textarea( $dtpost_details['excerpt'] ); ?></textarea>
 			</div>
 
 		</div><!-- /.dtpost-col-main -->
@@ -476,14 +509,36 @@ $status_options = array(
 					<span class="dtpost-panel-title-text"><?php esc_html_e( 'Categories', 'docxtowp' ); ?></span>
 				</div>
 				<div class="dtpost-cat-list">
-					<?php foreach ( $categories as $cat ) : ?>
+					<?php foreach ( $dtpost_new_cats as $dtpost_new_cat ) : ?>
 					<label class="dtpost-cat-row">
-						<input type="checkbox" name="dtpost_category[]" value="<?php echo esc_attr( $cat->term_id ); ?>" <?php if ( (int) $cat->term_id === (int) $default_cat ) echo 'checked="checked"'; ?>>
+						<input type="checkbox" name="dtpost_new_category[]" value="<?php echo esc_attr( $dtpost_new_cat ); ?>" checked="checked">
+						<span class="dtpost-cat-name"><?php echo esc_html( $dtpost_new_cat ); ?></span>
+						<span class="dtpost-cat-new"><?php esc_html_e( 'new', 'docxtowp' ); ?></span>
+					</label>
+					<?php endforeach; ?>
+					<?php foreach ( $categories as $cat ) : ?>
+					<?php $dtpost_cat_on = $dtpost_doc_cats ? in_array( (int) $cat->term_id, $dtpost_named_cats['ids'], true ) : (int) $cat->term_id === (int) $default_cat; ?>
+					<label class="dtpost-cat-row">
+						<input type="checkbox" name="dtpost_category[]" value="<?php echo esc_attr( $cat->term_id ); ?>" <?php if ( $dtpost_cat_on ) echo 'checked="checked"'; ?>>
 						<span class="dtpost-cat-name"><?php echo esc_html( $cat->name ); ?></span>
 						<span class="dtpost-cat-count"><?php echo absint( $cat->count ); ?></span>
 					</label>
 					<?php endforeach; ?>
 				</div>
+				<?php if ( ! empty( $dtpost_new_cats ) ) : ?>
+				<p class="dtpost-hint-text"><?php esc_html_e( 'Categories marked new are named in the document. They are created when you publish, unless you untick them.', 'docxtowp' ); ?></p>
+				<?php endif; ?>
+				<?php if ( ! empty( $dtpost_lost_cats ) ) : ?>
+				<p class="dtpost-hint-text">
+					<?php
+					printf(
+						/* translators: %s: comma-separated category names */
+						esc_html__( 'The document also names %s. This site has no such category and your role cannot create one, so ask an editor to add it.', 'docxtowp' ),
+						esc_html( implode( ', ', $dtpost_lost_cats ) )
+					);
+					?>
+				</p>
+				<?php endif; ?>
 			</div>
 
 			<!-- TAGS -->
@@ -497,7 +552,7 @@ $status_options = array(
 						placeholder="<?php esc_attr_e( 'Add tag, press Enter…', 'docxtowp' ); ?>" autocomplete="off">
 					<ul id="dtpost-tag-suggest" class="dtpost-tag-suggest" style="display:none"></ul>
 				</div>
-				<input type="hidden" id="dtpost-tags-hidden">
+				<input type="hidden" id="dtpost-tags-hidden" value="<?php echo esc_attr( implode( ',', $dtpost_details['tags'] ) ); ?>">
 				<p class="dtpost-hint-text" style="margin-top:6px"><?php esc_html_e( 'Separate with Enter or commas', 'docxtowp' ); ?></p>
 			</div>
 

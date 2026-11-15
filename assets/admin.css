@@ -602,6 +602,16 @@
 	color: #8c8f94;
 }
 
+/* A category the document names and the site does not have yet. */
+.dtpost-cat-new {
+	font-size: 11px;
+	line-height: 1.5;
+	padding: 0 6px;
+	border-radius: 3px;
+	color: #135e96;
+	background: #f0f6fc;
+}
+
 /* ── Tag input ───────────────────────────────────────────────────────────── */
 .dtpost-tag-input-box {
 	position: relative;

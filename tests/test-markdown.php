@@ -21,6 +21,7 @@ function _n( string $single, string $plural, int $number, string $domain = '' ):
 function esc_html( string $text ): string { return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8', false ); }
 function esc_attr( string $text ): string { return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8', false ); }
 function esc_url( string $url ): string { return $url; }
+function sanitize_title( $t ): string { return trim( preg_replace( '/[^a-z0-9]+/', '-', strtolower( (string) $t ) ), '-' ); }
 function wp_strip_all_tags( string $text ): string { return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\1>@si', '', $text ) ) ); }
 function attachment_url_to_postid( string $url ): int { return 0; }
 function serialize_block_attributes( array $attrs ): string {
@@ -46,6 +47,7 @@ function is_wp_error( mixed $thing ): bool { return $thing instanceof WP_Error; 
 function get_option( string $key, $default = false ) { return $default; }
 
 require dirname( __DIR__ ) . '/includes/class-dtpost-title.php';
+require dirname( __DIR__ ) . '/includes/class-dtpost-details.php';
 require dirname( __DIR__ ) . '/includes/lib/Parsedown.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-markdown.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-blocks.php';

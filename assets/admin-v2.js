@@ -377,7 +377,9 @@
 		}
 
 		/* ── Title → slug sync ─────────────────────────────────────────────── */
-		if (titleInput) {
+		// A slug the document gave is the author's choice, so editing the title
+		// does not overwrite it. It can still be edited by hand.
+		if (titleInput && !(slugInput && slugInput.getAttribute('data-from-document'))) {
 			titleInput.addEventListener('input', function() {
 				var s = slugify(this.value);
 				if (slugInput)   slugInput.value         = s;
@@ -442,7 +444,7 @@
 			           '<p><strong>Type:</strong> '    + esc(postType)    + '</p>' +
 			           '<p><strong>Status:</strong> '  + esc(statusLabel) + '</p>';
 
-			var cats = qsa('input[name="dtpost_category[]"]:checked').map(function(c) {
+			var cats = qsa('input[name="dtpost_category[]"]:checked, input[name="dtpost_new_category[]"]:checked').map(function(c) {
 				var lbl = c.closest('label');
 				return lbl ? (lbl.querySelector('.dtpost-cat-name') ? lbl.querySelector('.dtpost-cat-name').textContent.trim() : lbl.textContent.trim()) : '';
 			}).filter(Boolean).join(', ') || '-';
@@ -488,6 +490,7 @@
 			fd.append('post_type',    postTypeSel ? postTypeSel.value : 'post');
 
 			qsa('input[name="dtpost_category[]"]:checked').forEach(function(c) { fd.append('post_category[]', c.value); });
+			qsa('input[name="dtpost_new_category[]"]:checked').forEach(function(c) { fd.append('post_new_categories[]', c.value); });
 
 			var tagsHidden = qs('#dtpost-tags-hidden');
 			if (tagsHidden && tagsHidden.value) fd.append('post_tags', tagsHidden.value);
@@ -546,6 +549,15 @@
 			});
 			if (hidden) hidden.value = tags.join(',');
 		}
+
+		// Tags the document gave arrive in the hidden field. Show them as pills.
+		if (hidden && hidden.value) {
+			hidden.value.split(',').forEach(function(t) {
+				t = t.trim();
+				if (t && tags.indexOf(t) === -1) tags.push(t);
+			});
+		}
+		renderPills();
 
 		if (pillBox) pillBox.addEventListener('click', function(e) {
 			if (e.target.dataset.i !== undefined) { tags.splice(Number(e.target.dataset.i), 1); renderPills(); }

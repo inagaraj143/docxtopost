@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Import Word (.docx) and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.4.2
+ * Version:           1.4.3
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.4.2');
+define('DTPOST_VERSION', '1.4.3');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -68,6 +68,7 @@ require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-image.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-media-source.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-google-docs.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-title.php';
+require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-details.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-embeds.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-parser.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/lib/Parsedown.php';
@@ -1459,6 +1460,9 @@ function dtpost_ajax_upload_docx(): void
 				// Things the parser had to leave out, shown on the preview screen.
 				// Only the Markdown parser produces any today.
 				'warnings' => array_values(array_filter(array_map('strval', (array) ($result['warnings'] ?? array())))),
+				// What the document says about itself (1.4.3): front matter, or a
+				// Word file's Keywords. Filled into the preview screen.
+				'details' => (array) ($result['details'] ?? array()),
 			),
 			2 * HOUR_IN_SECONDS
 		);
@@ -1523,12 +1527,26 @@ function dtpost_ajax_publish_post(): void
 		if ($raw_author > 0 && $raw_author !== get_current_user_id() && !$permissions->can_set_author($post_type)) {
 			$raw_author = 0;
 		}
+		// Categories the document named that the site does not have yet, ticked
+		// on the preview screen. Created at publish, if this user may create them.
+		$new_categories = array_values(array_filter(array_map(
+			static fn($name): string => sanitize_text_field(wp_unslash((string) $name)),
+			(array) ($_POST['post_new_categories'] ?? array()) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		)));
+
+		// With only new categories ticked, the default category must not be
+		// added behind the user's back.
+		$category = isset($_POST['post_category']) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			? array_map('absint', (array) $_POST['post_category']) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			: ($new_categories ? array() : array((int) get_option('default_category', 1)));
+
 		$data = array(
 			'post_type' => $post_type,
 			'title' => sanitize_text_field(wp_unslash($_POST['post_title'] ?? '')), // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			'content' => wp_kses_post(wp_unslash($_POST['post_content'] ?? $session['content'])), // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			'excerpt' => sanitize_textarea_field(wp_unslash($_POST['post_excerpt'] ?? '')), // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			'category' => array_map('absint', (array) ($_POST['post_category'] ?? array(get_option('default_category', 1)))), // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			'category' => $category,
+			'new_categories' => $new_categories,
 			'tags' => sanitize_text_field(wp_unslash($_POST['post_tags'] ?? '')), // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			'author' => $raw_author > 0 ? $raw_author : get_current_user_id(),
 			'status' => $status,

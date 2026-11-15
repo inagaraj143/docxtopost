@@ -61,6 +61,15 @@ class DTPost_Publisher {
 			'post_name'    => sanitize_title( $data['slug'] ?? $data['title'] ?? '' ),
 		);
 
+		// Categories the document named and the preview screen marked as new.
+		// DTPost_Details checks the user may create categories at all.
+		if ( ! empty( $data['new_categories'] ) && is_object_in_taxonomy( $post_type, 'category' ) ) {
+			$data['category'] = array_merge(
+				(array) ( $data['category'] ?? array() ),
+				DTPost_Details::create_categories( (array) $data['new_categories'] )
+			);
+		}
+
 		// Categories (only applies to post types that support categories).
 		if ( ! empty( $data['category'] ) ) {
 			$post_arr['post_category'] = array_map( 'absint', (array) $data['category'] );
