@@ -63,6 +63,17 @@ class DTPost_Parser {
 	private array $props = array( 'title' => '', 'keywords' => array() );
 
 	/**
+	 * The document's footnotes and endnotes as HTML, keyed like the
+	 * placeholders parse_run() leaves: "footnote-3", "endnote-1".
+	 *
+	 * @var array<string, string>
+	 */
+	private array $notes = array();
+
+	/** True while a note itself is read, where a reference means nothing. */
+	private bool $in_note = false;
+
+	/**
 	 * numId → 'ol'|'ul', built from word/numbering.xml.
 	 *
 	 * Word gives bulleted and numbered lists the same paragraph style
@@ -146,6 +157,7 @@ class DTPost_Parser {
 		$doc_rels_xml  = $zip->getFromName( 'word/_rels/document.xml.rels' );
 		$numbering_xml = $zip->getFromName( 'word/numbering.xml' );
 		$styles_xml    = $zip->getFromName( 'word/styles.xml' );
+		$this->notes   = $this->read_notes( $zip );
 		$zip->close();
 
 		if ( false === $document_xml ) {
@@ -168,10 +180,12 @@ class DTPost_Parser {
 			 *
 			 * Text boxes are read now, so anything still reaching this point
 			 * with <w:t> in the file is text we genuinely cannot place:
-			 * headers, footers, footnotes and comments all live in separate
-			 * parts that are not loaded, and SmartArt keeps its text in a
-			 * diagram part. Saying which it is would mean parsing those parts
-			 * to find out, so the message says what to do instead.
+			 * headers, footers and comments live in separate parts that are
+			 * not loaded, and SmartArt keeps its text in a diagram part.
+			 * Footnotes are read from 1.5.0, but only through a reference in
+			 * the body, so a body with no text has none to show. Saying which
+			 * it is would mean parsing those parts to find out, so the message
+			 * says what to do instead.
 			 */
 			$has_text = false !== strpos( $document_xml, '<w:t>' )
 				|| false !== strpos( $document_xml, '<w:t ' );
@@ -179,7 +193,7 @@ class DTPost_Parser {
 			if ( $has_text ) {
 				return new WP_Error(
 					'dtpost_unsupported',
-					__( 'No importable text was found in the body of this document. Any text it contains is in a header, footer, footnote, comment or SmartArt graphic, which Word stores outside the document body. Copy the text into a blank document and import that.', 'docxtowp' )
+					__( 'No importable text was found in the body of this document. Any text it contains is in a header, footer, comment or SmartArt graphic, which Word stores outside the document body. Copy the text into a blank document and import that.', 'docxtowp' )
 				);
 			}
 
@@ -199,9 +213,65 @@ class DTPost_Parser {
 		// Upload all embedded images from the DOCX to the WP Media Library.
 		$content = $this->reattach_images( $content, $file_path );
 		$content = $this->finalise_alignment( $content );
+		$content = DTPost_Footnotes::render( $content, $this->notes );
 		$details = $this->details();
 
 		return compact( 'title', 'content', 'details' );
+	}
+
+	/**
+	 * The footnotes and endnotes, as HTML, keyed like parse_run()'s placeholders.
+	 *
+	 * Each note is read with the same run handling as the body, so bold, italics
+	 * and links come through. Links use the note part's own relationships file:
+	 * the body's would point a note's link at the wrong address. Pictures in a
+	 * note are left out, and Word's separator lines are not notes.
+	 *
+	 * @return array<string, string>
+	 */
+	private function read_notes( ZipArchive $zip ): array {
+		$notes = array();
+
+		foreach ( array( 'footnote' => 'footnotes', 'endnote' => 'endnotes' ) as $type => $part ) {
+			$xml = $zip->getFromName( 'word/' . $part . '.xml' );
+			if ( ! $xml ) {
+				continue;
+			}
+
+			$links = $this->build_link_map( (string) $zip->getFromName( 'word/_rels/' . $part . '.xml.rels' ) );
+
+			$previous = libxml_use_internal_errors( true );
+			$dom      = new DOMDocument();
+			$loaded   = $dom->loadXML( $xml, LIBXML_NONET );
+			libxml_clear_errors();
+			libxml_use_internal_errors( $previous );
+			if ( ! $loaded ) {
+				continue;
+			}
+
+			$this->in_note = true;
+			foreach ( $dom->getElementsByTagNameNS( self::W_NS, $type ) as $note ) {
+				$kind = $note->getAttributeNS( self::W_NS, 'type' );
+				if ( '' !== $kind && 'normal' !== $kind ) {
+					continue;
+				}
+
+				$lines = array();
+				foreach ( $note->getElementsByTagNameNS( self::W_NS, 'p' ) as $p ) {
+					$line = (string) preg_replace( '/<img\b[^>]*>/i', '', $this->get_paragraph_inner( $p, $links ) );
+					if ( '' !== trim( html_entity_decode( wp_strip_all_tags( $line ), ENT_QUOTES, 'UTF-8' ), " \t\n\r\0\x0B\xC2\xA0" ) ) {
+						$lines[] = trim( $line );
+					}
+				}
+
+				if ( $lines ) {
+					$notes[ $type . '-' . $note->getAttributeNS( self::W_NS, 'id' ) ] = $this->clean_html( implode( '<br>', $lines ) );
+				}
+			}
+			$this->in_note = false;
+		}
+
+		return $notes;
 	}
 
 	/**
@@ -659,6 +729,7 @@ class DTPost_Parser {
 		$strike = false;
 		$vert   = '';
 		$img_html = '';
+		$refs     = '';
 
 		foreach ( $r->childNodes as $child ) {
 			if ( XML_ELEMENT_NODE !== $child->nodeType ) { continue; }
@@ -702,6 +773,13 @@ class DTPost_Parser {
 				$text .= '<br>';
 			} elseif ( 'tab' === $local ) {
 				$text .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+			} elseif ( 'footnoteReference' === $local || 'endnoteReference' === $local ) {
+				// A footnote or endnote. Numbered later, by DTPost_Footnotes,
+				// once the document's final shape is known. Inside a note
+				// itself, its own number is w:footnoteRef and never this.
+				if ( ! $this->in_note ) {
+					$refs .= DTPost_Footnotes::placeholder( ( 'footnoteReference' === $local ? 'footnote-' : 'endnote-' ) . $child->getAttributeNS( self::W_NS, 'id' ) );
+				}
 			} elseif ( 'drawing' === $local ) {
 				// ── INLINE IMAGE (modern docx) ────────────────────────────────
 				$img_html .= $this->parse_drawing( $child );
@@ -734,7 +812,7 @@ class DTPost_Parser {
 			if ( $bold   ) { $text = '<strong>' . $text . '</strong>'; }
 		}
 
-		return $text . $img_html;
+		return $text . $refs . $img_html;
 	}
 
 	// ── Drawing (modern <w:drawing> / DrawingML) ───────────────────────────────

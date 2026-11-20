@@ -43,9 +43,23 @@ class DTPost_Publisher {
 		// keeps wp_kses_post() working on ordinary HTML, which is what it is
 		// built for, and leaves the delimiters we generate untouched.
 		$content = wp_kses_post( $data['content'] ?? '' );
+		$meta    = array();
 
 		if ( function_exists( 'dtpost_use_block_format' ) && dtpost_use_block_format( $post_type ) ) {
+			// Footnotes become core's Footnotes block where this post type has
+			// it. Otherwise, and in the classic editor, they stay the numbered
+			// list the parser made, which links both ways on its own.
+			$notes = DTPost_Footnotes::core_available( $post_type ) ? DTPost_Footnotes::to_core( $content ) : null;
+			if ( $notes ) {
+				$content           = $notes['content'];
+				$meta['footnotes'] = DTPost_Footnotes::meta_value( $notes['notes'] );
+			}
+
 			$content = DTPost_Blocks::serialize( $content );
+
+			if ( $notes ) {
+				$content .= DTPost_Footnotes::block_markup();
+			}
 		}
 
 		// comment_status is deliberately absent: WordPress fills it from the
@@ -60,6 +74,12 @@ class DTPost_Publisher {
 			'post_author'  => absint( $data['author'] ?? get_current_user_id() ),
 			'post_name'    => sanitize_title( $data['slug'] ?? $data['title'] ?? '' ),
 		);
+
+		// With the post, not after it: the Footnotes block reads its notes from
+		// this meta, and WordPress writes meta_input before its save hooks run.
+		if ( $meta ) {
+			$post_arr['meta_input'] = $meta;
+		}
 
 		// Categories the document named and the preview screen marked as new.
 		// DTPost_Details checks the user may create categories at all.

@@ -3,7 +3,7 @@
  * Plugin Name:       DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types
  * Plugin URI:        https://docxtowp.com
  * Description:       Import Word (.docx) and Markdown files into WordPress posts, pages and custom post types with preserved formatting. Upload, preview, and publish, no copy-paste needed.
- * Version:           1.4.3
+ * Version:           1.5.0
  * Author:            Nagaraj
  * Author URI:        https://twitter.com/Nagaraj_Dev143
  * License:           GPL-2.0+
@@ -30,7 +30,7 @@ if (defined('DTPOST_VERSION')) {
 	return;
 }
 
-define('DTPOST_VERSION', '1.4.3');
+define('DTPOST_VERSION', '1.5.0');
 define('DTPOST_PLUGIN_FILE', __FILE__);
 define('DTPOST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DTPOST_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -70,6 +70,7 @@ require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-google-docs.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-title.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-details.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-embeds.php';
+require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-footnotes.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-parser.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/lib/Parsedown.php';
 require_once DTPOST_PLUGIN_DIR . 'includes/class-dtpost-markdown.php';

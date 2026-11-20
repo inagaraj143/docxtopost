@@ -1,55 +1,70 @@
-=== DocxToPost – Convert DOCX & Markdown to WP Posts, Pages & Custom Post Types ===
+=== DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types ===
 Contributors:      nagarajdev
 Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.2.4
+Stable tag:        1.5.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Import .docx and Markdown files as WordPress Posts, Pages, or Custom Post Types in seconds. No copy-paste. No block editor fighting.
+Import Word (.docx) and Markdown files as WordPress posts, pages or custom post types. Images, headings and tables kept. No copy-paste.
 
 == Description ==
 
-**DocxToPost** is the easiest way to turn Microsoft Word documents (and Markdown files) into clean WordPress posts, pages, or custom post types.
+Copy a Word document into WordPress and it falls apart. Images go missing. Lists flatten. Tables lose their headers. You spend longer fixing the post than writing it.
 
-No more copy-pasting from Word and losing your formatting. Upload your .docx file and DocxToPost parses it into clean, semantic HTML that WordPress understands, including every embedded image, which is uploaded to your Media Library automatically.
+**DocxToPost** reads the .docx file itself, not the clipboard. Every heading, list, table and image comes through as real blocks, and every image lands in your Media Library with its alt text.
 
-Writing in Markdown instead? Drop in a `.md` file and it becomes the same clean set of blocks: headings, lists, tables, code blocks and all. Notes from Obsidian or Notion, a README, or the output of an AI assistant all import without reformatting.
+Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or an answer from ChatGPT or Claude all import without reformatting.
 
 **Everything in the free version:**
 
 * **Real blocks, not one big lump:** Your document arrives as proper paragraph, heading, list, image, table and quote blocks you can move and edit individually, not a single Classic block you have to fight. Running the classic editor instead? It detects that and gives you plain HTML.
 * **Undo an import:** Changed your mind? One link on the confirmation screen moves the post to the trash.
 * **Simple upload:** Drag and drop your .docx or .md file.
+* **Import from your Media Library:** Already have Word documents on your site? Pick a .docx from the Media Library and import it. The original is copied for the import and never changed or removed.
+* **Import from a Google Docs link:** Paste the link to a shared Google Doc and it imports with its headings, lists, tables and images, no downloading and re-uploading.
 * **Markdown too:** `.md` and `.markdown` files import with headings, emphasis, links, nested lists, blockquotes, tables and fenced code blocks intact. Code becomes a real Code block, not a paragraph in a monospace font.
 * **Formatting preserved:** Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, blockquotes and paragraph alignment all survive the trip.
+* **Footnotes and endnotes:** Numbered and linked both ways, into WordPress's own Footnotes block in the block editor, or a numbered list at the end of the post in the classic editor.
 * **Real lists:** Bulleted and numbered lists come through as proper lists, nested sub-bullets included.
 * **Tables with headers:** Header rows become real table headers, so your tables stay readable and accessible.
 * **Embedded image extraction:** Images inside your Word document are pulled out and added to the Media Library, with the alt text you set in Word.
 * **All public post types:** Publish to Posts, Pages, or any Custom Post Type registered on your site.
 * **Full status options:** Publish immediately, save as Draft, submit for Pending Review, or mark Private.
 * **Live preview:** See exactly how the post will look before you publish.
-* **Featured images:** Upload a featured image alongside your document.
+* **Featured images:** Upload a featured image alongside your document, or choose one already in your Media Library.
 * **Categories and tags:** Assign both while you import.
 * **Post meta:** Edit the slug, excerpt and author.
+* **Details from the document:** Markdown front matter fills in the slug, excerpt, tags and categories, and a Word file's Keywords become tags. You see them on the preview screen first.
 * **Role-based access:** Choose which user roles can use the plugin.
 
 = Why upgrade to Pro? =
 
-The free version is a complete, unrestricted DOCX and Markdown importer for one document at a time. Pro is for the day you have a folder of them:
+The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them, or a site built with Elementor.
 
-* **Bulk import, up to 100 files a run**, drag in .docx and .md files together. Each file uploads in its own request, so shared-hosting limits on upload count, post size and execution time never come into it. A corrupt document fails its own row and the rest carry on. Pause, resume, cancel, or retry only the failures, and close the tab if you like, because the queue lives in the database rather than the page.
-* **A whole notebook, images and all**: drop your `_resources`, `attachments` or exported image folder in with the Markdown files and every image referenced by a relative path is matched by filename and placed in its post. That is a Joplin notebook, an Obsidian vault or a Notion export moved across in one run, rather than image by image in the editor.
-* **Review everything before anything is created**: a table of every document with its detected title, featured image and SEO fields, each editable per row, and a toggle to leave any document out of the run. Nothing is written to your site until you say so.
-* **Drip publishing**, schedule a batch instead of publishing it all at once. "One post per weekday from Monday at 09:00" is two clicks, weekends are excluded by default, and you can override any single date by hand without disturbing the rest of the sequence.
-* **SEO automation**. SEO title, meta description and focus keyphrase for Yoast SEO and Rank Math, filled from templates using `{title}`, `{sitename}`, `{excerpt}`, `{filename}`, `{category}` and `{date}`, with per-document overrides.
-* **Smart image optimization**. JPEG and PNG images from your documents are converted to WebP as they are imported, but only when the WebP is genuinely smaller, so photographs shrink while flat logos and diagrams keep their original format. Transparency is preserved, your originals are never deleted, and each import reports how much it saved.
+* **Import straight into Elementor.** Elementor opens an ordinary post as one Text Editor widget. Pro imports your Word document as a fully editable Elementor post instead: a new container at each Heading 2, with separate Heading, Text Editor, Image and Video widgets that follow your global fonts and colours. Each table is its own element, shaded paragraphs stay as boxes, and a line with [image] leaves space for a picture. Works with free Elementor. [See how it works](https://docxtowp.com/blog/how-to-import-word-document-into-elementor?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
+* **Bulk import, up to 100 files in one run.** Drop in .docx and .md files together. Review every title, featured image and SEO field before anything is created. A bad file fails on its own row and the rest keep going.
+* **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
+* **Keep each document's original date** when moving an archive, so old posts take their place by year instead of all landing on today.
+* **Yoast SEO and Rank Math fields** filled from templates, with per-document overrides.
+* **One-click undo of a whole batch**, plus full import history.
+* **Choose from Google Drive.** Pick private Google Docs straight from your Drive, several at once, with no sharing needed. Importing one again updates the same post.
+* **Keep newsletter and brochure layouts** as responsive columns instead of one long column.
+* **WebP image optimization**, only when it actually makes the file smaller.
 
-Pro also adds one-click rollback of an entire import, import history with rollback from any past job, duplicate handling (skip, import anyway, or update the existing post), a featured-image cascade that matches companion images to their documents by filename, an activity log with re-import, automatic updates, and email support from the developer.
+Watch the bulk import, start to finish:
 
-Learn more at [docxtowp.com](https://docxtowp.com)
+https://youtu.be/egCNjhdjiqY
+
+Pro starts at $49/year for one site. Pro is a separate plugin, not a licence key for this one: install Pro, then deactivate this plugin, because both use the same admin menu. Your imported posts are not affected.
+
+The Upgrade screen inside the plugin compares Free and Pro side by side. [See Pro plans](https://docxtowp.com/pricing?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
+
+= More from the developer =
+
+[BackupScope](https://wordpress.org/plugins/backupscope/) is a free WordPress backup plugin that shows what is inside a backup before you need it, and [BackupScope Storage Insights](https://wordpress.org/plugins/backupscope-storage-insights/) shows what uses your disk space, read-only. Both are listed on the plugin's More Tools screen.
 
 == Installation ==
 
@@ -62,13 +77,30 @@ Learn more at [docxtowp.com](https://docxtowp.com)
 = What post types does this plugin support? =
 All registered public post types on your site. Posts, Pages, and any Custom Post Type. You can only create the types your user role already allows.
 
+= Does it work with Elementor? =
+Yes, as a normal post. Elementor draws pages from its own layout data, so a post imported with this plugin opens in Elementor as one Text Editor widget, with all of your content in it. To get a separate container for each section, with separate heading, text and image widgets, DocxToWP Pro can import straight into Elementor, including free Elementor.
+
 = Does it preserve formatting from Word? =
 Yes. Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, bulleted and numbered lists (including nested levels), tables with header rows, blockquotes, paragraph alignment, and hyperlinks all carry over.
+
+= Can it keep my newsletter's columns and background panels? =
+The free plugin reads every word in a document built from text boxes, which newsletters, brochures and flyers are, and gives you that text as ordinary formatted content in one column. It does not reproduce the page: the columns, the coloured panels behind them and the photographs they sit on are not rebuilt.
+
+Keeping those is what layout-preserving import in [DocxToWP Pro](https://docxtowp.com) does. It reads where each text box sits on the page, infers the rows, columns and background panels from the geometry, and rebuilds the design as a responsive layout that stacks on a phone. It aims at a faithful web layout, not a pixel-for-pixel copy of a printed page.
 
 = Can I import Markdown files? =
 Yes. Upload a `.md` or `.markdown` file the same way you would a .docx. Headings, paragraphs, bold, italic, strikethrough, links, nested lists, blockquotes, tables, horizontal rules and fenced code blocks are all supported, code blocks become real Code blocks in the editor. The first `# Heading` becomes the post title; if there is none, the filename is used.
 
 Front matter (the `---` block some tools put at the top) is removed rather than shown in the post. Its `title:` is used as the post title, and `slug`, `excerpt`, `tags` and `categories` fill in the preview screen, where you can change them. A category your site does not have yet is marked "new" and created when you publish, unless you untick it. Other keys, such as dates, are not read. Images with a full `https://` URL are kept as external images. Images with a relative path like `images/photo.jpg` cannot be resolved from a single uploaded file, so they are left out and the preview screen tells you which ones, upload them to the Media Library and add them in the editor.
+
+= Can I import from Google Docs? =
+Yes. Open the Google Docs link tab on the upload screen and paste the link to the document. It has to be shared as "Anyone with the link" (view access is enough), because the plugin downloads it the way a browser with the link would. In DocxToWP Pro you can also choose private documents straight from Google Drive, several at once, with no sharing needed.
+
+= Can I import many Word documents at once? =
+The free plugin imports one file at a time, with no limit on how many. DocxToWP Pro imports up to 100 .docx and .md files in one run, with a review step before anything is created and one-click undo of the whole batch.
+
+= How much is Pro, and how do I install it? =
+Pro starts at $49/year for one site, with plans for more sites at [docxtowp.com/pricing](https://docxtowp.com/pricing?utm_source=wporg&utm_medium=readme&utm_campaign=faq-pricing). It is a separate plugin: buy it, install the Pro .zip, deactivate this plugin, then enter your licence key under DocxToWP Pro → Licence. Your imported posts are ordinary WordPress posts and are not affected.
 
 = Where does Markdown from ChatGPT, Notion or Obsidian fit? =
 Save or export it as a `.md` file and upload that. All three produce standard Markdown, which is what the importer reads. Notion's export puts images in a folder next to the file, see the previous answer for how those are handled.
@@ -95,7 +127,20 @@ No. By default the plugin looks at which editor your post type actually uses and
 Not any more. Each paragraph, heading, list, image, table and quote becomes its own block, so you can drag, duplicate and edit them the same as anything you wrote in the editor. Anything with no block equivalent is kept intact in an HTML block rather than being dropped.
 
 = Does the plugin send my documents anywhere? =
-No. Everything is parsed on your own server, and the plugin makes no outbound requests.
+No. Everything is parsed on your own server, and your documents, their contents and the posts they become never leave your site. The plugin makes one kind of outbound request, and only when you ask for it: importing from a Google Docs link downloads that document from docs.google.com. See External services below.
+
+= What happens when I click one of the links to docxtowp.com? =
+It opens our site in a new tab, and as with any link you click anywhere on the web, your browser tells that site which page you came from. WordPress sends only the address of your site, never the full admin URL. We use it to see which sites find the upgrade pages useful.
+
+If you would rather not send it, right-click the link and copy it instead of clicking, or use your browser's setting for referrers. Nothing in the plugin depends on it, and the plugin never contacts us unless you click a link. Its only request of its own is downloading a Google Doc you ask it to import.
+
+== External services ==
+
+This plugin connects to one external service, and only when you use the feature that needs it.
+
+**Google Docs (docs.google.com)**, to import a document from a Google Docs link. When you paste a link on the Google Docs link tab and click Convert & Preview, your site requests that one document from Google as a Word (.docx) file: `https://docs.google.com/document/d/{document id}/export?format=docx`. The request contains only the document's id, taken from the link you pasted, plus what any web request carries, such as your server's IP address. No account details, no site data and none of your other content are sent. Nothing is sent to Google if you do not use this feature.
+
+The service is provided by Google: [Terms of Service](https://policies.google.com/terms), [Privacy Policy](https://policies.google.com/privacy).
 
 == Screenshots ==
 
@@ -103,8 +148,90 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 2. Preview and publish: the parsed document with post type, status, author, featured image, categories and tags
 3. Confirmation after the post is created
 4. Settings: file size limit, post defaults and which roles may use the plugin
+5. DocxToWP Pro bulk import, step 1: drop up to 100 .docx files at once, with images named after their documents to become featured images
+6. DocxToWP Pro bulk import, step 2: review every title and matched featured image, untick any document to leave it out, and set post type, status, author and tags for the whole batch
+7. DocxToWP Pro SEO details for one document: SEO title, focus keyphrase and meta description for Yoast SEO and Rank Math, with the batch template shown in grey
+8. DocxToWP Pro bulk import, step 3: live progress, edit and view links for each new post, and one-click undo of the whole batch
+9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.5.0 =
+* Added: **footnotes and endnotes from Word.** A footnote's number used to disappear from the text, and its note was never imported. Now each reference is numbered in the order it appears and linked to its note, and the note links back.
+* Added: in the block editor the notes go into WordPress's own Footnotes block, so you edit them the way you would edit any footnote. In the classic editor, or for a post type without the Footnotes block, they become a numbered list at the end of the post, linked both ways.
+* Added: footnotes and endnotes share one list, in the order they appear. Formatting and links in a note are kept; pictures in a note are left out.
+* Changed: the message for a document with no importable text no longer lists footnotes among the places Word keeps text outside the body.
+
+= 1.4.3 =
+* Added: **Markdown front matter fills in the preview screen.** `slug`, `excerpt`, `tags` and `categories` (or `tag` and `category`) are now read, as `title:` already was, from Obsidian, Joplin, Jekyll, Hugo and hand-made files. You see them on the preview screen and can change them. Other keys are still ignored.
+* Added: categories a document names are ticked for you. One your site does not have yet is marked "new" and created when you publish, unless you untick it. Users who cannot create categories, such as Authors, are told instead, and nothing is created.
+* Added: **Word properties.** The Keywords in a Word file (File → Info) become tags, and its Title becomes the post title when no heading opens the document, before the file name is tried. Leftovers such as "Document1" are ignored.
+
+= 1.4.2 =
+* Fixed: a section heading further down a document is no longer taken as the title and removed from the post. A document that opens with a paragraph or two had its first Heading 1 or 2 used as the title, and that heading disappeared from the post. Now a heading is the title only when it opens the document, with nothing but pictures, embeds or empty lines above it. Otherwise the post is named after the document, and every heading stays where it was.
+* Added: on sites running Elementor, a dismissible notice, a note on the upload and preview screens and a line on the Upgrade screen about Pro's Elementor import. Sites without Elementor see none of these except the Upgrade screen. Only on this plugin's own screens, and importing is unchanged.
+* Added: a small card on the success screen asking for a review, once you have imported a few documents. It goes away for good once you follow it or choose No thanks, and so does the existing review notice.
+
+= 1.4.1 =
+* Added: a Black Friday notice, 20% off DocxToWP Pro with code BFDX2026. It appears only from 2 November to 1 December 2026, only on this plugin's own screens, and stays away for good once you dismiss it. Outside those dates nothing is shown, and the plugin still contacts no server to decide.
+
+= 1.4.0 =
+* Added: **import from a Google Docs link.** A new Google Docs link tab on the upload screen: paste the link to a shared Google Doc and it is downloaded as a Word file and imported the same way as an upload, with its headings, lists, tables and images, and a preview before anything is published. The document has to be shared as "Anyone with the link"; view access is enough.
+* Added: clear messages for the links that will not work: a Google Sheet, a Slides deck, a Drive file, a document that is not shared, and a host that blocks outgoing connections.
+* Changed: the plugin now makes one kind of outbound request, only when you import from a Google Docs link, to docs.google.com, for that document. It is described under External services and in the FAQ.
+
+= 1.3.2 =
+* Changed: the plugin is now called **DocxToPost – Import Word (DOCX) & Markdown to Posts, Pages & Custom Post Types**, which says what it does in the words people use. Nothing else about it changes, and your settings and imported posts are untouched.
+* Changed: clearer plugin description, and new answers on importing from Google Docs, importing many documents at once, and how Pro is priced and installed.
+
+= 1.3.1 =
+* Fixed: **1.3.0 could not be activated.** A file the new Media Library import needs was missing from the release, so WordPress stopped the plugin with a fatal error and paused it in recovery mode. Nothing on your site was changed. Update to 1.3.1 and resume or reactivate the plugin.
+
+= 1.3.0 =
+* Added: **import a Word document that is already in your Media Library.** WordPress accepts .docx uploads, so many sites already have documents sitting there. Choose one with the Media Library tab on the upload screen and it imports like an upload. The original is copied for the import and never changed or removed.
+* Added: **choose the featured image from your Media Library**, as well as uploading one.
+* Changed: the upload screen has tabs for where the document comes from, Upload a file or Media Library, and the same for the featured image. Upload is selected by default, switching clears the one you left, and the screen does not jump in height as you switch.
+
+= 1.2.10 =
+* Added: the upload and preview screens now describe **layout-preserving import**, a DocxToWP Pro feature that keeps a document's columns, background panels and headings as a responsive layout instead of one column of text. This plugin imports every document as plain formatted text, which it will keep doing; nothing here is locked or restricted, and no part of that feature's code ships in the free plugin.
+* Note: if your documents are newsletters, brochures or flyers built from text boxes, the free importer still reads every word in them, as of 1.2.9. What it does not do is keep them in columns.
+
+= 1.2.9 =
+* Fixed: **documents whose text is inside Word text boxes imported as "Document appears to be empty".** Newsletters, brochures and most designed templates put every word in floating text boxes, and those live outside the document body where the importer was looking. Their text is now read, using the same paragraph, formatting, list and table handling as ordinary text.
+* Fixed: text boxes are no longer imported twice. Word stores the same shape in two forms, a modern one and a legacy fallback, and reading both duplicated the entire document. Only one is used now.
+* Added: text inside legacy VML text boxes, and inside a text box nested in another text box.
+* Fixed: **pictures used as a shape's background are now imported.** A photo placed as the fill of a shape, which is how most newsletter and brochure templates place their images, sits in a different part of the document from an ordinary inserted picture and was skipped. Shapes containing both a background picture and text now give you both.
+* Note: a shape's picture is stored twice in the file, once for each of the two formats Word writes, so only one copy is imported. Importing both would put a duplicate of every image in your Media Library.
+* Changed: when a document really does have no importable text, the message now says where the text probably is (a header, footer, footnote, comment or SmartArt graphic, all of which Word stores outside the document body) rather than calling the document empty.
+* Note: text boxes are positioned on the page rather than sequenced in the document, so there is no reading order to recover. They are imported in document order, which may not match how a multi-column layout reads on paper, and they are placed after the main body text.
+
+= 1.2.8 =
+* Added: **a Free and Pro comparison table** on the Upgrade screen, so the difference is one table rather than six sections of prose.
+* Added: **a More Tools screen** listing the developer's other plugins: DocxToWP Pro; BackupScope, a free backup plugin; BackupScope Pro; and BackupScope Storage Insights, a free plugin that shows what uses your disk space. Each shows whether it is installed or active on your site, and free plugins install through WordPress's own installer.
+* Added: dropping several files on the upload box now says why only the first was taken, instead of silently ignoring the rest.
+* Added: the duplicate-title warning on the preview screen mentions that Pro can skip duplicates or update the existing post.
+* Added: on sites running Yoast SEO or Rank Math, the Settings screen mentions that Pro can fill their SEO fields from templates. On other sites nothing is shown.
+* Added: a one-time notice after 25 imported documents about Pro's import history and rollback. Like the others it appears only on this plugin's screens, and stays gone once dismissed.
+* Changed: the confirmation screen quotes how many documents you have converted, once there are a few.
+* Fixed: the Bulk Import screen's top heading read "Scheduling is a Pro feature". It now says bulk import.
+* Removed: the lifetime-offer notice and its code. The offer ended on 30 September 2026 and the notice had already stopped showing; this removes what was left.
+* Note: importing is unchanged. Documents, Markdown, images, embeds and settings behave exactly as in 1.2.7.
+
+= 1.2.7 =
+* Changed: **links to docxtowp.com no longer suppress the referrer.** They carried rel="noreferrer", so clicking one told us nothing about where it was clicked from. They now behave like an ordinary web link: your browser passes the address of your site, and WordPress's own referrer policy means only the site address is sent, never the full admin URL. The security half of that attribute, rel="noopener", is unchanged on every link, and links to WordPress.org keep both. The plugin still makes no outbound requests of its own and never contacts us unless you click a link. See the new FAQ entry.
+* Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.6.
+
+= 1.2.6 =
+* Added: **Upgrade and Leave a review buttons in the header** of the import, Bulk Import and Upgrade screens, where they are on screen the moment the page loads. Both already existed and both were easy to miss: Pro was a sidebar card that falls below the fold on a short window, and the review ask was a one-time dismissible notice, so anyone who swiped it away had nowhere to go back to it.
+* Changed: **the Pro call to action now appears at the top of the Bulk Import and Upgrade screens**, not only at the bottom. The detail is still below, and the Upgrade screen keeps the "Already bought Pro?" block at the top.
+* Fixed: the "Or see everything else Pro adds" link rendered left of centre inside a centred panel. It carried a max-width with no automatic margins, so the text centred inside a box that sat hard left.
+* Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.5.
+
+= 1.2.5 =
+* Added: **"Already bought Pro? Start here"** on the Upgrade screen, above the feature list. Pro is a separate plugin rather than a key that unlocks this one, and nothing on that screen said so. People who had already paid came looking for a licence box, found a sales pitch, and had to write in.
+* Added: Settings and Review links on the plugin's row on the Plugins screen, next to the existing Go Pro link. The review nudge after a good run is still there, but it shows once and is dismissible, so there was nowhere to come back to it.
+* Note: there is deliberately no licence field in this plugin. The paid features are not present and disabled, they are not here at all. WordPress.org guidelines do not permit shipping locked functionality, so a key would have nothing to unlock. The licence box is inside DocxToWP Pro, which is a separate download.
+* Note: nothing about importing changed. Documents, Markdown, images, video embeds and settings all behave exactly as they did in 1.2.4.
 
 = 1.2.4 =
 * Added: **a YouTube or Vimeo link on a line of its own becomes a playable video.** Paste a video URL into a document, import it, and the post has the video in it rather than a link to it. Works with youtube.com/watch, youtu.be, YouTube Shorts, the mobile m.youtube.com address and vimeo.com, including links Word has turned into hyperlinks for you.
@@ -182,6 +309,27 @@ No. Everything is parsed on your own server, and the plugin makes no outbound re
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+Footnotes and endnotes in Word documents are now imported, numbered and linked, into WordPress's Footnotes block in the block editor.
+
+= 1.4.3 =
+Markdown front matter now fills in the slug, excerpt, tags and categories, and a Word file's Keywords become tags. Everything shows on the preview screen first.
+
+= 1.4.2 =
+Fixes a section heading being taken as the title and removed from the post. Also adds dismissible mentions of Pro's Elementor import on sites running Elementor, on this plugin's own screens.
+
+= 1.4.1 =
+A dismissible Black Friday notice on the plugin's own screens, 2 November to 1 December only. Importing is unchanged.
+
+= 1.4.0 =
+Adds importing from a Google Docs link. Uploads and the Media Library work as before.
+
+= 1.3.2 =
+A clearer plugin name and description. Importing is unchanged.
+
+= 1.2.8 =
+Adds a Free and Pro comparison and a More Tools screen, and fixes a wrong heading on the Bulk Import screen. Importing is unchanged.
 
 = 1.2.2 =
 Stops a document's heading being repeated as the first line of the post, and adds a setting for how a filename becomes a title. Recommended for everyone.

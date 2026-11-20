@@ -4,7 +4,7 @@ Tags:              docx, word, markdown, importer, converter
 Requires at least: 6.0
 Tested up to:      7.1.2
 Requires PHP:      8.0
-Stable tag:        1.4.3
+Stable tag:        1.5.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,7 @@ Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or
 * **Import from a Google Docs link:** Paste the link to a shared Google Doc and it imports with its headings, lists, tables and images, no downloading and re-uploading.
 * **Markdown too:** `.md` and `.markdown` files import with headings, emphasis, links, nested lists, blockquotes, tables and fenced code blocks intact. Code becomes a real Code block, not a paragraph in a monospace font.
 * **Formatting preserved:** Headings, paragraphs, bold, italic, underline, strikethrough, superscript, subscript, blockquotes and paragraph alignment all survive the trip.
+* **Footnotes and endnotes:** Numbered and linked both ways, into WordPress's own Footnotes block in the block editor, or a numbered list at the end of the post in the classic editor.
 * **Real lists:** Bulleted and numbered lists come through as proper lists, nested sub-bullets included.
 * **Tables with headers:** Header rows become real table headers, so your tables stay readable and accessible.
 * **Embedded image extraction:** Images inside your Word document are pulled out and added to the Media Library, with the alt text you set in Word.
@@ -36,6 +37,7 @@ Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or
 * **Featured images:** Upload a featured image alongside your document, or choose one already in your Media Library.
 * **Categories and tags:** Assign both while you import.
 * **Post meta:** Edit the slug, excerpt and author.
+* **Details from the document:** Markdown front matter fills in the slug, excerpt, tags and categories, and a Word file's Keywords become tags. You see them on the preview screen first.
 * **Role-based access:** Choose which user roles can use the plugin.
 
 = Why upgrade to Pro? =
@@ -45,6 +47,7 @@ The free plugin imports one document at a time, with no limit. Pro is for the da
 * **Import straight into Elementor.** Elementor opens an ordinary post as one Text Editor widget. Pro imports your Word document as a fully editable Elementor post instead: a new container at each Heading 2, with separate Heading, Text Editor, Image and Video widgets that follow your global fonts and colours. Each table is its own element, shaded paragraphs stay as boxes, and a line with [image] leaves space for a picture. Works with free Elementor. [See how it works](https://docxtowp.com/blog/how-to-import-word-document-into-elementor?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
 * **Bulk import, up to 100 files in one run.** Drop in .docx and .md files together. Review every title, featured image and SEO field before anything is created. A bad file fails on its own row and the rest keep going.
 * **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
+* **Keep each document's original date** when moving an archive, so old posts take their place by year instead of all landing on today.
 * **Yoast SEO and Rank Math fields** filled from templates, with per-document overrides.
 * **One-click undo of a whole batch**, plus full import history.
 * **Choose from Google Drive.** Pick private Google Docs straight from your Drive, several at once, with no sharing needed. Importing one again updates the same post.
@@ -152,6 +155,12 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 9. DocxToWP Pro import history: every past bulk import with its result, and Undo for any of them
 
 == Changelog ==
+
+= 1.5.0 =
+* Added: **footnotes and endnotes from Word.** A footnote's number used to disappear from the text, and its note was never imported. Now each reference is numbered in the order it appears and linked to its note, and the note links back.
+* Added: in the block editor the notes go into WordPress's own Footnotes block, so you edit them the way you would edit any footnote. In the classic editor, or for a post type without the Footnotes block, they become a numbered list at the end of the post, linked both ways.
+* Added: footnotes and endnotes share one list, in the order they appear. Formatting and links in a note are kept; pictures in a note are left out.
+* Changed: the message for a document with no importable text no longer lists footnotes among the places Word keeps text outside the body.
 
 = 1.4.3 =
 * Added: **Markdown front matter fills in the preview screen.** `slug`, `excerpt`, `tags` and `categories` (or `tag` and `category`) are now read, as `title:` already was, from Obsidian, Joplin, Jekyll, Hugo and hand-made files. You see them on the preview screen and can change them. Other keys are still ignored.
@@ -300,6 +309,9 @@ The service is provided by Google: [Terms of Service](https://policies.google.co
 * Role-based access control
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+Footnotes and endnotes in Word documents are now imported, numbered and linked, into WordPress's Footnotes block in the block editor.
 
 = 1.4.3 =
 Markdown front matter now fills in the slug, excerpt, tags and categories, and a Word file's Keywords become tags. Everything shows on the preview screen first.

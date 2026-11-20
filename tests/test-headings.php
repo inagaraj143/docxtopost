@@ -39,6 +39,7 @@ class DTPost_Image { public function __call( string $n, array $a ): int { return
 require dirname( __DIR__ ) . '/includes/class-dtpost-title.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-details.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-embeds.php';
+require dirname( __DIR__ ) . '/includes/class-dtpost-footnotes.php';
 require dirname( __DIR__ ) . '/includes/class-dtpost-parser.php';
 
 // ── Fixture builder ─────────────────────────────────────────────────────────

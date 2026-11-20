@@ -74,6 +74,7 @@ class DTPost_Image { public function __call( string $n, array $a ): int { return
 $inc = dirname( __DIR__ ) . '/includes/';
 require $inc . 'class-dtpost-title.php';
 require $inc . 'class-dtpost-embeds.php';
+require $inc . 'class-dtpost-footnotes.php';
 require $inc . 'class-dtpost-details.php';
 require $inc . 'class-dtpost-parser.php';
 require $inc . 'lib/Parsedown.php';
