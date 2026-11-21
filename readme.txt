@@ -42,8 +42,9 @@ Markdown works the same way. Notes from Obsidian, Notion or Joplin, a README, or
 
 = Why upgrade to Pro? =
 
-The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them, or a site built with Elementor.
+The free plugin imports one document at a time, with no limit. Pro is for the day you have a folder of them, a site built with Elementor, or an AI assistant writing your drafts.
 
+* **Connect your AI assistant (MCP).** Ask Claude Code, Claude Desktop or Cursor to write a post, and it arrives on your site as a properly formatted draft: headings, tables, images, categories, tags, Yoast SEO or Rank Math fields and Elementor layouts, with an edit and a preview link. Drafts only: the AI cannot publish or delete anything, and you approve every post. Uses the AI subscription you already have, no credits to buy. [See how it works](https://docxtowp.com/wordpress-mcp?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
 * **Import straight into Elementor.** Elementor opens an ordinary post as one Text Editor widget. Pro imports your Word document as a fully editable Elementor post instead: a new container at each Heading 2, with separate Heading, Text Editor, Image and Video widgets that follow your global fonts and colours. Each table is its own element, shaded paragraphs stay as boxes, and a line with [image] leaves space for a picture. Works with free Elementor. [See how it works](https://docxtowp.com/blog/how-to-import-word-document-into-elementor?utm_source=wporg&utm_medium=readme&utm_campaign=pro-section)
 * **Bulk import, up to 100 files in one run.** Drop in .docx and .md files together. Review every title, featured image and SEO field before anything is created. A bad file fails on its own row and the rest keep going.
 * **Drip publishing.** Spread a batch across days or weeks instead of publishing it all at once.
